@@ -26,7 +26,7 @@ for i in range(2,col):
 
         tg = driver.find_element(By.XPATH,"/html/body/div[1]/div[1]/div[4]/div[2]/div[1]/div[1]/div[1]/div/div[2]/div[2]/div/h3")
         # print(tg.text)
-        ws.cell(row+1,i).value = float(tg.text)
+        ws.cell(row+1,i).value = float(tg.text)*int(ws.cell(2,i).value)
         driver.quit() #關閉網頁 
     except:
         ws.cell(row+1,i).value = '資料輸入錯誤'
