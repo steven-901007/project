@@ -91,53 +91,110 @@ skew.plot_barbs(p[idx], u[idx], v[idx])
 #計算變數
 def cl_h(tg):
     return str(round(float(str(tg)[:str(round(tg)).index('h')])))
+def cl_j(tg):
+    return str(round(float(str(tg)[:str(round(tg)).index('j')]),1))
 def cl_d(tg):
     return str(round(float(str(tg)[:str(round(tg)).index('d')]),1))
+def cl_del_d(tg):
+    return str(round(float(str(tg)[:str(tg).index('d')][1:len(str(tg)[:str(tg).index('d')])-2]),1))
 td0 = str(round(df['T'][0]-((100-df['U'][0])/5),1))
-#LCL
+
+#LCL(抬升凝結高度)
 lcl_p,lcl_t = mpcalc.lcl(p[0], T[0], Td[0])
-# print(lcl_p)
+print(lcl_p,lcl_t)
 
 if str(lcl_p)[:3] == 'nan':
-    lcl = 'None'
+    lcl_p = '\nL.C.L= None'
+    lcl_t = '\n$T_{LCL}$= None'
 else:
-    lcl = cl_h(lcl_p)+'hPa'
-# LFC
+    lcl_p = '\nL.C.L= '+cl_h(lcl_p)+'hPa'
+    lcl_t = '\n$T_{LCL}$='+cl_d(lcl_t)+r'$\degree$C'
+
+#CCL(對流凝結高度)
+ccl_p,ccl_t,t_c = mpcalc.ccl(p,T,Td)
+# print(ccl_p,ccl_t,t_c)
+if str(ccl_p)[:3] == 'nan':
+    ccl_p = '\nC.C.L= None'
+    ccl_t = '  $T_{CCL}$= None'
+else:
+    ccl_p = '\nC.C.L= '+cl_h(ccl_p)+'hPa'
+    ccl_t = '  $T_{CCL}$='+cl_d(ccl_t)+r'$\degree$C'
+
+# LFC(自由對流高度)
 lfc_p, lfc_t = mpcalc.lfc(p, T, Td,which='bottom')
 # print(lfc_p,lfc_t)
-
 if str(lfc_p)[:3] == 'nan':
-    lfc = 'None'
+    lfc_p = '\nL.F.C= None'
+    lfc_t = '\n$T_{LFC}$= None'
 else:
-    lfc = cl_h(lfc_p) +'hPa'
+    lfc_p = '\nL.F.C= '+cl_h(lfc_p) +'hPa'
+    lfc_t = '\n$T_{LFC}$='+cl_d(lfc_t) +r'$\degree$C'
 
+#EL(平衡高度)
 el_p, el_t = mpcalc.el(p, T, Td)
 # print(el_p)
-
 if str(el_p)[:3] == 'nan':
-    el = 'None'
+    el_p = '\nE.L= None'
+    el_t = '  $T_{EL}$= None'
 else:
-    el = cl_h(el_p) +'hPa'
+    el_p = '\nE.L= '+cl_h(el_p) +'hPa'
+    el_t = '  $T_{EL}$='+cl_d(el_t) +r'$\degree$C'
 
-tti =  mpcalc.total_totals_index(p,T,Td) #總指標
+#K indx(K指標)
+k_index = mpcalc.k_index(p,T,Td)
+# print(k_index)
+if str(k_index)[:3] == 'nan':
+    k_index = '\nK. INDX= None'
+else:
+    k_index = '\nK. INDX= '+cl_d(k_index)
+
+#TTL(總指標)
+tti =  mpcalc.total_totals_index(p,T,Td) 
 # print(tti)
 if str(tti)[:3] == 'nan':
-    tti = 'None'
+    tti = '  TOTAL.= None'
 else:
-    tti = cl_d(tti)
+    tti = '  TOTAL.= '+cl_d(tti)
 
 #地面氣塊抬升的模擬線
 prof = mpcalc.parcel_profile(p, T[0], Td[0]).to('degC')
 skew.plot(p, prof, 'k', linewidth=2)
 
-
+#LI(抬升指數)
 li = mpcalc.lifted_index(p,T,prof) # 抬升指數
-print(li)
+# print(li)
 if str(li)[:3] == 'nan':
-    li = 'None'
+    li = '\nLifted INDX.= None'
 else:
-    li = str(round(float(str(li)[:str(li).index('d')][1:len(str(li)[:str(li).index('d')])-2]),1))
+    li = '\nLifted INDX.= '+cl_del_d(li)
 
+#Showalter index
+si = mpcalc.showalter_index(p,T,Td)
+# print(si)
+if str(si)[:3] == 'nan':
+    si = '\nShowalter INDX.= None'
+else:
+    si = '\nShowalter INDX.= '+cl_del_d(si)
+
+#Sweat index
+sweatindex = mpcalc.sweat_index(p,T,Td,wind_speed,wind_dir)
+# print(sweatindex)
+if str(sweatindex)[:3] == 'nan':
+    sweatindex = '\nSWEAT INDX.= None'
+else:
+    sweatindex = '\nSWEAT INDX.= '+cl_del_d(sweatindex)
+
+#CAPE CIN
+cape,cin = mpcalc.cape_cin(p,T,Td,prof)
+# print(cape,cin)
+if str(cape)[:3] == 'nan':
+    cape = '\nCAPE= None'
+else:
+    cape = '\nCAPE= '+cl_j(cape)+ r'$m^2s^2$'
+if str(cin)[:3] == 'nan':
+    cin = '\nCIN= None'
+else:
+    cin = '\nCIN= '+cl_j(cin)+ r'$m^2s^2$'
 
 
 #画能量
@@ -148,7 +205,7 @@ skew.shade_cape(p, T, prof)
 
 
 #計算變數，數據文字
-text = r'$P_{0}$='+str(df['P'][0])+r' $T_{0}$='+str(df['T'][0])+r' $Td_{0}$='+td0+'\nL.C.L= '+lcl+'\nL.F.C= '+lfc+'\nE.L= '+el+'\nTTI= '+tti+'\nLI= '+li
+text = r'$P_{0}$='+str(df['P'][0])+r'$T_{0}$='+str(df['T'][0])+r'$Td_{0}$='+td0+lcl_p+ccl_p+lfc_p+el_p+lcl_t+ccl_t+lfc_t+el_t+k_index+tti+li+si+sweatindex+cape+cin
 
 plt.text(-43,103,text, horizontalalignment='right',verticalalignment='top',backgroundcolor='w',multialignment='left')    
 
