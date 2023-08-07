@@ -89,9 +89,10 @@ skew.plot_barbs(p[idx], u[idx], v[idx])
 
 
 #計算變數
-def cl(tg):
+def cl_h(tg):
     return str(round(float(str(tg)[:str(round(tg)).index('h')])))
-
+def cl_d(tg):
+    return str(round(float(str(tg)[:str(round(tg)).index('d')]),1))
 td0 = str(round(df['T'][0]-((100-df['U'][0])/5),1))
 #LCL
 lcl_p,lcl_t = mpcalc.lcl(p[0], T[0], Td[0])
@@ -100,15 +101,15 @@ lcl_p,lcl_t = mpcalc.lcl(p[0], T[0], Td[0])
 if str(lcl_p)[:3] == 'nan':
     lcl = 'None'
 else:
-    lcl = cl(lcl_p)+'hPa'
+    lcl = cl_h(lcl_p)+'hPa'
 # LFC
 lfc_p, lfc_t = mpcalc.lfc(p, T, Td,which='bottom')
-print(lfc_p,lfc_t)
+# print(lfc_p,lfc_t)
 
 if str(lfc_p)[:3] == 'nan':
     lfc = 'None'
 else:
-    lfc = cl(lfc_p) +'hPa'
+    lfc = cl_h(lfc_p) +'hPa'
 
 el_p, el_t = mpcalc.el(p, T, Td)
 # print(el_p)
@@ -116,12 +117,28 @@ el_p, el_t = mpcalc.el(p, T, Td)
 if str(el_p)[:3] == 'nan':
     el = 'None'
 else:
-    el = cl(el_p) +'hPa'
+    el = cl_h(el_p) +'hPa'
 
+tti =  mpcalc.total_totals_index(p,T,Td) #總指標
+# print(tti)
+if str(tti)[:3] == 'nan':
+    tti = 'None'
+else:
+    tti = cl_d(tti)
 
 #地面氣塊抬升的模擬線
 prof = mpcalc.parcel_profile(p, T[0], Td[0]).to('degC')
 skew.plot(p, prof, 'k', linewidth=2)
+
+
+li = mpcalc.lifted_index(p,T,prof) # 抬升指數
+print(li)
+if str(li)[:3] == 'nan':
+    li = 'None'
+else:
+    li = str(round(float(str(li)[:str(li).index('d')][1:len(str(li)[:str(li).index('d')])-2]),1))
+
+
 
 #画能量
 skew.shade_cin(p, T, prof)
@@ -131,7 +148,7 @@ skew.shade_cape(p, T, prof)
 
 
 #計算變數，數據文字
-text = r'$P_{0}$='+str(df['P'][0])+r' $T_{0}$='+str(df['T'][0])+r' $Td_{0}$='+td0+'\nL.C.L= '+lcl+'\nL.F.C= '+lfc+'\nE.L= '+el
+text = r'$P_{0}$='+str(df['P'][0])+r' $T_{0}$='+str(df['T'][0])+r' $Td_{0}$='+td0+'\nL.C.L= '+lcl+'\nL.F.C= '+lfc+'\nE.L= '+el+'\nTTI= '+tti+'\nLI= '+li
 
 plt.text(-43,103,text, horizontalalignment='right',verticalalignment='top',backgroundcolor='w',multialignment='left')    
 
