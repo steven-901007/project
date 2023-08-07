@@ -7,7 +7,7 @@ from scipy.signal import medfilt
 import numpy as np
 
 station = '46692'
-time = '2022080500'
+time = '2022051500'
 file = "C:/Users/steve/Desktop/python相關資料/NTU探空/sounding/"+time[:8]+"/"+station+"-"+time+".edt.txt"
 
 data = []
