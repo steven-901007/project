@@ -4,7 +4,7 @@ from metpy.plots import SkewT
 from metpy.units import units
 import matplotlib.pyplot as plt
 from scipy.signal import medfilt
-
+import numpy as np
 
 station = '46692'
 time = '2022080500'
@@ -75,10 +75,20 @@ skew.plot(p, T, 'blue') #溫度
 skew.plot(p, Td, 'r') #露點溫度
 
 
+#風標設定
+
+# 設定間距
+spacing = 100  
+
+# 计算需要绘制的行索引
+idx = np.arange(0, len(p), spacing)
+
+# 繪製風標
+skew.plot_barbs(p[idx], u[idx], v[idx])
 
 
-# skew.plot_barbs(p, u, v)
 
+#計算變數
 def cl(tg):
     return str(round(float(str(tg)[:str(round(tg)).index('h')])))
 
@@ -118,9 +128,9 @@ skew.shade_cin(p, T, prof)
 skew.shade_cape(p, T, prof)
 # cin_area = skew.ax.get_children()[0].get_facecolor()[0]
 # print(cin_area)
+
+
 #計算變數，數據文字
-
-
 text = r'$P_{0}$='+str(df['P'][0])+r' $T_{0}$='+str(df['T'][0])+r' $Td_{0}$='+td0+'\nL.C.L= '+lcl+'\nL.F.C= '+lfc+'\nE.L= '+el
 
 plt.text(-43,103,text, horizontalalignment='right',verticalalignment='top',backgroundcolor='w',multialignment='left')    
