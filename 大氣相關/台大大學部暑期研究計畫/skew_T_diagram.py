@@ -101,7 +101,7 @@ td0 = str(round(df['T'][0]-((100-df['U'][0])/5),1))
 
 #LCL(抬升凝結高度)
 lcl_p,lcl_t = mpcalc.lcl(p[0], T[0], Td[0])
-print(lcl_p,lcl_t)
+# print(lcl_p,lcl_t)
 
 if str(lcl_p)[:3] == 'nan':
     lcl_p = '\nL.C.L= None'
@@ -185,6 +185,7 @@ else:
     sweatindex = '\nSWEAT INDX.= '+cl_del_d(sweatindex)
 
 #CAPE CIN
+
 cape,cin = mpcalc.cape_cin(p,T,Td,prof)
 # print(cape,cin)
 if str(cape)[:3] == 'nan':
