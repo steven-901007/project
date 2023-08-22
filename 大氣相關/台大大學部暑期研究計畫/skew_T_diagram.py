@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 from scipy.signal import medfilt
 import numpy as np
 
+#metpy要用1.4.1版本CIN的地方才會正確
+
 station = '46692'
 time = '2022051500'
 file = "C:/Users/steve/Desktop/python相關資料/NTU探空/sounding/"+time[:8]+"/"+station+"-"+time+".edt.txt"
