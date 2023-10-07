@@ -1,6 +1,8 @@
 import xlrd
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
+import numpy as np
+
 
 wb = xlrd.open_workbook("G:/我的雲端硬碟/學校/大氣/測計學/PSP_20081005.xls")
 ws = wb.sheet_by_index(0)
@@ -44,16 +46,23 @@ for row in range(ws.nrows):
             max_time = cell_0
             max_num = C     
         # print(cell_0)
-print(max_time)
+print(max_time)a
 print(max_num)
 # 创建图表
+
+corrcoef = np.corrcoef(nm_300,nm_700)[0,1]
+print(corrcoef)
+
 fig, ax = plt.subplots()
 
 # 绘制数据
-# plt.plot(time, 300, color='r', marker="*", linestyle='--',label = '')
-plt.plot(time, nm_300, color='r', marker="*", linestyle='--',label = '300')
+# plt.plot(time, nm_300, color='r', marker="*", linestyle='--',label = '300')
 # plt.plot(time, nm_400, color='g', marker="*", linestyle='--',label = '400')
 # plt.plot(time, nm_700, color='b', marker="*", linestyle='--',label = '700')
+# plt.plot(time, aba, color='r', marker="*", linestyle='--',label = 'aba')
+# plt.plot(time, bca, color='g', marker="*", linestyle='--',label = 'bca')
+# plt.plot(time, cb, color='b', marker="*", linestyle='--',label = 'cb')
+plt.plot(time, az, color='y', marker="*", linestyle='--',label = 'az')
 # 设置X轴刻度
 ax.xaxis.set_major_locator(MaxNLocator(10))  # 仅显示10个刻度
 plt.legend()
