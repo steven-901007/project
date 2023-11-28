@@ -8,14 +8,14 @@ import statistics
 plt.rcParams['font.sans-serif'] = [u'MingLiu'] #設定字體為'細明體'
 plt.rcParams['axes.unicode_minus'] = False #用來正常顯示正負號
 
-files = glob.glob("G:/我的雲端硬碟/學校/大氣/測計學/作業4/data/*.csv")
+files = glob.glob("G:/我的雲端硬碟/學校/大氣/測計學/homework4/data/*.csv")
 for path in files:
     # print(path)
     print(path[29:37])
 
     day = path[29:37]
     # day = '20181001'
-    path = "G:/我的雲端硬碟/學校/大氣/測計學/作業4/data/"+day+".csv"
+    path = "G:/我的雲端硬碟/學校/大氣/測計學/homework4/data/"+day+".csv"
     level = [[],[],[],[],[]] #[風向、風速、U、V、time]
     X = []
 
@@ -90,9 +90,9 @@ for path in files:
     plt.legend()
     plt.title(day+'UV')
     if level != ave:
-        plt.savefig("G:/我的雲端硬碟/學校/大氣/測計學/作業4/pic/wind/1min/UV-"+day)
+        plt.savefig("G:/我的雲端硬碟/學校/大氣/測計學/homework4/pic/wind/1min/UV-"+day)
     else:
-        plt.savefig("G:/我的雲端硬碟/學校/大氣/測計學/作業4/pic/wind/ave/UV_ave-"+day)
+        plt.savefig("G:/我的雲端硬碟/學校/大氣/測計學/homework4/pic/wind/ave/UV_ave-"+day)
 
 
     fig = plt.figure() #取得一張空白的map
@@ -108,9 +108,9 @@ for path in files:
     plt.legend()
     plt.title(day+'風向')
     if level != ave:
-        plt.savefig("G:/我的雲端硬碟/學校/大氣/測計學/作業4/pic/wind/1min/D-"+day)
+        plt.savefig("G:/我的雲端硬碟/學校/大氣/測計學/homework4/pic/wind/1min/D-"+day)
     else:
-        plt.savefig("G:/我的雲端硬碟/學校/大氣/測計學/作業4/pic/wind/ave/D_ave-"+day)
+        plt.savefig("G:/我的雲端硬碟/學校/大氣/測計學/homework4/pic/wind/ave/D_ave-"+day)
 
     fig = plt.figure() #取得一張空白的map
     axes = fig.add_subplot(1,1,1)
@@ -121,7 +121,7 @@ for path in files:
     plt.legend()
     plt.title(day+'風速')
     if level != ave:
-        plt.savefig("G:/我的雲端硬碟/學校/大氣/測計學/作業4/pic/wind/1min/V-"+day)
+        plt.savefig("G:/我的雲端硬碟/學校/大氣/測計學/homework4/pic/wind/1min/V-"+day)
     else:
-        plt.savefig("G:/我的雲端硬碟/學校/大氣/測計學/作業4/pic/wind/ave/V_ave-"+day)
+        plt.savefig("G:/我的雲端硬碟/學校/大氣/測計學/homework4/pic/wind/ave/V_ave-"+day)
 # plt.show()

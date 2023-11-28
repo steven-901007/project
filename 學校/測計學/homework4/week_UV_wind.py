@@ -8,14 +8,14 @@ import numpy as np
 
 level = [[],[],[],[]] #[風向、風速、U、V]
 X = []
-files = glob.glob("G:/我的雲端硬碟/學校/大氣/測計學/作業4/data/*.csv")
+files = glob.glob("G:/我的雲端硬碟/學校/大氣/測計學/homework4/data/*.csv")
 for path in files:
     # print(path)
     print(path[29:37])
 
     day = path[29:37]
 # day = '20181001'
-    path = "G:/我的雲端硬碟/學校/大氣/測計學/作業4/data/"+day+".csv"
+    path = "G:/我的雲端硬碟/學校/大氣/測計學/homework4/data/"+day+".csv"
 
 
     data = pd.read_csv(path,header=None,error_bad_lines=False)

@@ -3,14 +3,14 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import glob
 
-files = glob.glob("G:/我的雲端硬碟/學校/大氣/測計學/作業4/data/*.csv")
+files = glob.glob("G:/我的雲端硬碟/學校/大氣/測計學/homework4/data/*.csv")
 for path in files:
     # print(path)
     print(path[29:37])
 
     day = path[29:37]
 
-    path = "G:/我的雲端硬碟/學校/大氣/測計學/作業4/data/"+day+".csv"
+    path = "G:/我的雲端硬碟/學校/大氣/測計學/homework4/data/"+day+".csv"
 
 
     data = pd.read_csv(path,header=None,error_bad_lines=False)
@@ -50,4 +50,4 @@ for path in files:
     plt.legend()
     plt.title(day)
     # plt.show()
-    plt.savefig("C:/Users/steve/GitHub/project/學校/測計學/作業4/pic/溫度"+day)
+    plt.savefig("C:/Users/steve/GitHub/project/學校/測計學/homework4/pic/溫度"+day)

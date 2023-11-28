@@ -255,18 +255,18 @@ try:
 except:pass
 
 
-fig1.savefig("C:/Users/steve/Desktop/python相關資料/need data information/"+day+"/picture/confidence_level="+str(confidence_level)+"sigma="+str(sigma)+" 風標圖+散布圖.png")
-fig2.savefig("C:/Users/steve/Desktop/python相關資料/need data information/"+day+"/picture/confidence_level="+str(confidence_level)+"sigma="+str(sigma)+" 風標圖.png")
-fig3.savefig("C:/Users/steve/Desktop/python相關資料/need data information/"+day+"/picture/confidence_level="+str(confidence_level)+"sigma="+str(sigma)+" 長條圖.png")
-fig4.savefig("C:/Users/steve/Desktop/python相關資料/need data information/"+day+"/picture/confidence_level="+str(confidence_level)+"sigma="+str(sigma)+" 長條圖缺藍.png")
-fig5.savefig("C:/Users/steve/Desktop/python相關資料/need data information/"+day+"/picture/confidence_level="+str(confidence_level)+"sigma="+str(sigma)+" 長條圖缺藍缺綠.png")
-print(day+'\nconfidence '+str(confidence_level)+'\nsigma '+str(sigma))
+# fig1.savefig("C:/Users/steve/Desktop/python相關資料/need data information/"+day+"/picture/confidence_level="+str(confidence_level)+"sigma="+str(sigma)+" 風標圖+散布圖.png")
+# fig2.savefig("C:/Users/steve/Desktop/python相關資料/need data information/"+day+"/picture/confidence_level="+str(confidence_level)+"sigma="+str(sigma)+" 風標圖.png")
+# fig3.savefig("C:/Users/steve/Desktop/python相關資料/need data information/"+day+"/picture/confidence_level="+str(confidence_level)+"sigma="+str(sigma)+" 長條圖.png")
+# fig4.savefig("C:/Users/steve/Desktop/python相關資料/need data information/"+day+"/picture/confidence_level="+str(confidence_level)+"sigma="+str(sigma)+" 長條圖缺藍.png")
+# fig5.savefig("C:/Users/steve/Desktop/python相關資料/need data information/"+day+"/picture/confidence_level="+str(confidence_level)+"sigma="+str(sigma)+" 長條圖缺藍缺綠.png")
+# print(day+'\nconfidence '+str(confidence_level)+'\nsigma '+str(sigma))
 
 endTime = T.time()
 
 print('程式執行了%s秒' %(endTime-startTime))
 
-# plt.show()
+plt.show()
 
 
 
