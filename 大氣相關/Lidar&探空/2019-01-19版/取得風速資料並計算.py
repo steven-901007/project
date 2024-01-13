@@ -9,7 +9,7 @@ import math
 import os
 
 #起始高度=50m
-circle = 63 #一個迴圈資料數量(50~1600)有機筆
+circle = 63 #一個迴圈資料數量(50~1600)有幾筆
 files  =glob.glob("C:/Users/steve/Desktop/python/松山剖風儀/2019-01-19/wind_reconstruction_data/*")
 for file in files:
         file = file + '/*.csv'
