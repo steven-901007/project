@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 import math
 from openpyxl import load_workbook
 import matplotlib as mpl
-import math
 import cmath
 from math import *
 #風標圖
