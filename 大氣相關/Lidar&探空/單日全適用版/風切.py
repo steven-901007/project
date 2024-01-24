@@ -1,7 +1,7 @@
 from openpyxl import load_workbook,Workbook
 import math
 import glob
-import time as Ti
+import time as T
 
 def windcut(u1,v1,h1,u2,v2,h2):
     return pow((pow(((u1-u2)/(h1-h2)),2) + pow(((v1-v2)/(h1-h2)),2)),(1/2)) #  風切 = ( (du/dx)^2 + (dv/dx)^2 )^(1/2)
@@ -12,7 +12,7 @@ year = '108'
 day = "2019-04-20"
 confidence_level = 100
 sigma = 1
-startTime = Ti.time()
+startTime = T.time()
 
 
 try:
@@ -71,6 +71,6 @@ try:
     wb.save("C:/Users/steve/Desktop/python相關資料/need data information/"+day+"/confidence_level="+str(confidence_level)+"sigma="+str(sigma)+" windcut.xlsx")
     print(day+'\nconfidence '+str(confidence_level)+'\nsigma '+str(sigma))
 except:print(day + 'ERROR')
-endTime = Ti.time()
+endTime = T.time()
 
 print('程式執行了%s秒' %(endTime-startTime))
