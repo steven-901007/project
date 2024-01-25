@@ -94,7 +94,7 @@ for long_name_month in months:
 
                         wb_name = os.path.basename(hour)    #檔案名稱
                         # print(wb_name)                        
-                new_wb.save("C:/Users/steve/python_data/lidar&sonding/one_year_version/"+locate+"/"+day+"/need_data/"+wb_name+".xlsx")
+                new_wb.save("C:/Users/steve/python_data/lidar&sonding/one_year_version/"+locate+"/lidar/"+day+"/need_data/"+wb_name+".xlsx")
                 new_wb.close()
                 print(wb_name)
 
