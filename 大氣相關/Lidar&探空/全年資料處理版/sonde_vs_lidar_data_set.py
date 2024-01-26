@@ -28,7 +28,7 @@ def file_concat(path_a,path_b): #合併檔案(若檔案被誤分成兩分)
     data_a_plus_b.to_csv(path_b)
     os.remove(path_a)
 
-def time_chack(file_a,file_b):
+def time_chack(file_a,file_b):  #確認時間差最短的檔案,以及資料的位置cell(1,location)
     wb_a = load_workbook(file_a)
     wb_b = load_workbook(file_b)
     ws_a = wb_a['Altitude']
@@ -39,11 +39,11 @@ def time_chack(file_a,file_b):
     time_b = int(time_b[len(time_b)-2:])
     # print(time_a,time_b)
     if 60-time_a>time_b:
-        print(file_b)
-        return file_b
+        # print(file_b)
+        return file_b ,1
     else:
-        print(file_a)
-        return file_a
+        # print(file_a)
+        return file_a ,ws_a.max_row
     
 
 wb = Workbook()
@@ -91,7 +91,8 @@ for sonding_long_name_month in sonding_months:
                         long_name_hour_b = hours[long_name_hour]
                         # print(long_name_hour_a)
                         # print(long_name_hour_b)
-                        time_chack(long_name_hour_a,long_name_hour_b)   #確認哪個時間最接近目標時間
+                        file,cell_location = time_chack(long_name_hour_a,long_name_hour_b)  #確認哪個時間最接近目標時間
+                        print(file,cell_location)
                         
 
 
