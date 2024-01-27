@@ -80,7 +80,7 @@ for long_name_month in months:
                             ws.cell(1,data_location).value = time
                             #data set
                                         
-                            infs = old_data[round(old_data['Elevation [財'] )== 75].groupby(['Altitude [m]'])[sheet_list_name[list]].sum()
+                            infs = old_data[round(old_data['Elevation [財'] )== 75].groupby(['Altitude [m]'])[sheet_list_name[list]].sum()      
                         
                             # print(infs)
                             for inf in range(len(infs)):    #data的長度(高度)

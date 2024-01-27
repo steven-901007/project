@@ -11,8 +11,19 @@ locate = '松山'
 year = '108'
 
 
+def fileset(path):    #建立資料夾
+    if not os.path.exists(path):
+        os.makedirs(path)
+        print(path + " 已建立") 
+    else:
+        print(path + " 建立過了")  
+
+
 startTime = T.time()
-files = glob.glob('C:/Users/steve/Desktop/python相關資料/raw data/' + locate + '/' + year + '/**')
+
+fileset("C:/Users/steve/python_data/lidar&sonding/need_data_information/")
+
+files = glob.glob('C:/Users/steve/python_data/lidar&sonding/lidar_raw_data/' + locate + '/' + year + '/**')
 for file in files:
 
     day = file[50:] #日期
@@ -39,18 +50,19 @@ for file in files:
 
     hight = []
 
-    files  =glob.glob("C:/Users/steve/Desktop/python相關資料/raw data/" + locate + "/" + year + "/**")
+    files  =glob.glob("C:/Users/steve/python_data/lidar&sonding/lidar_raw_data/" + locate + "/" + year + "/**")
     for file in files:
-        break
-    # print(file)
-    fs = glob.glob(file+'/wind_reconstruction_data/**')
-    for f in fs:
-        break
-    # print(f)
-    fh = glob.glob(f + '/*.csv')
-    for f_hight in fh:
-        break
-    # print(f_hight)
+
+        print(file)
+        fs = glob.glob(file+'/wind_reconstruction_data/**')
+        for f in fs:
+            print(f)
+
+    
+            fh = glob.glob(f + '/*.csv')
+            for f_hight in fh:
+                print(f_hight)
+                break
 
     with open(f_hight,newline='') as csvfile:
         rows = csv.DictReader(csvfile,delimiter=';')
@@ -77,7 +89,7 @@ for file in files:
     time = 2 #00-00起始X座標
     y = 2 #時間起始Y座標
     #建立時間座標
-    files  =glob.glob("C:/Users/steve/Desktop/python相關資料/raw data/" + locate + "/" + year + "/"+day+"/wind_reconstruction_data/*")
+    files  =glob.glob("C:/Users/steve/python_data/lidar&sonding/lidar_raw_data/" + locate + "/" + year + "/"+day+"/wind_reconstruction_data/*")
     for file in files:
             file = file + '/*.csv'
 
@@ -194,7 +206,7 @@ for file in files:
             if wsb.cell(row,col).value == None:
                 wsb.cell(row,col).value = 0
     
-    wb.save("C:/Users/steve/Desktop/python相關資料/need data information/" + locate + "/" + year + "/need_information_read/" + day + ".xlsx")
+    wb.save("C:/Users/steve/python_data/lidar_sonding/need_data_information/" + locate + "/" + year + "/need_information_read/" + day + ".xlsx")
     wb.close()
     print(day)
 endTime = T.time()

@@ -33,7 +33,7 @@ def time_chack(file_a,file_b):  #確認時間差最短的檔案,以及資料的�
     wb_b = load_workbook(file_b)
     ws_a = wb_a['Altitude']
     ws_b = wb_b['Altitude']
-    time_a = ws_a.cell(1,ws_a.max_row).value
+    time_a = ws_a.cell(1,ws_a.max_column).value
     time_a = int(time_a[len(time_a)-2:])
     time_b = ws_b.cell(1,1).value
     time_b = int(time_b[len(time_b)-2:])
@@ -43,12 +43,13 @@ def time_chack(file_a,file_b):  #確認時間差最短的檔案,以及資料的�
         return file_b ,1
     else:
         # print(file_a)
-        return file_a ,ws_a.max_row
+        return file_a ,ws_a.max_column
     
 
 wb = Workbook()
-ws_sonding = wb.active
-ws_sonding.title = 'sonding'
+ws_altitude = wb.active
+ws_altitude.title = ' Altitude'
+ws_sonding = wb.create_sheet('sonding')
 ws_lidar = wb.create_sheet('lidar')
 
 # sonding
@@ -93,7 +94,22 @@ for sonding_long_name_month in sonding_months:
                         # print(long_name_hour_b)
                         file,cell_location = time_chack(long_name_hour_a,long_name_hour_b)  #確認哪個時間最接近目標時間
                         print(file,cell_location)
+
+
+                        #所需資料設定
+                            #資料位置
+                        sonding_file = sonding_long_name_day    #探空資料file path
+                        lidar_file = file   #lidar資料file path
+                            #wb,ws設定
+                        lidar_location = cell_location    #lidar資料的cell位置ws.cell(1,lidar_location)
+                        new_file_data_time = 1  #建立data的行位置
+
                         
+
+
+
+                        
+
 
 
 # lidar_path = "C:/Users/steve/python_data/lidar&sonding/one_year_version/松山/2019-01-01/need_data/"+time+"-00.xlsx"
