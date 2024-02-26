@@ -205,10 +205,12 @@ for day in Day[100:130 ]: #分區繪圖(數字代表間隔 要改不然會無法
     norm1 = mcolors.BoundaryNorm(level, nlevel,extend='max')
     im = cm.ScalarMappable(norm=norm1, cmap=cmap1)
     cbar1 = fig1.colorbar(im,extend='max', ticks=level)
+    # ------colorbar-------
+
     plt.axvline(x = 8,c = "r" , ls = "--" , lw = 1)
     plt.axvline(x = 20,c = "r" , ls = "--" , lw = 1)
     plt.title (day)
-    # ------colorbar-------
+    
 
 
     fig2,axes2 = plt.subplots(figsize=(19,9))
@@ -225,6 +227,8 @@ for day in Day[100:130 ]: #分區繪圖(數字代表間隔 要改不然會無法
     norm1 = mcolors.BoundaryNorm(level, nlevel,extend='max')
     im = cm.ScalarMappable(norm=norm1, cmap=cmap1)
     cbar2 = fig2.colorbar(im,extend='max', ticks=level)
+    # ------colorbar-------
+
     plt.axvline(x = 8,c = "r" , ls = "--" , lw = 1)
     plt.axvline(x = 20,c = "r" , ls = "--" , lw = 1)    
     plt.title (day)

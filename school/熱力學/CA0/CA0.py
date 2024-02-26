@@ -8,13 +8,13 @@ import datetime
 
 # file path
 map_file_path = "C:/Users/steve/python_data/thermodynamics/CA0/TOPO.nc"
-data_file_path = 'C:/Users/steve/python_data/thermodynamics/CA0/tpe20110802cln.L.Thermodynamic-000048.nc'
+
+
 
 # read file
 map = nc.Dataset(map_file_path)
 # print(map)
-data = nc.Dataset(data_file_path)
-print(data)
+
 
 # nb = 0
 # for i in data.variables.keys():
@@ -40,7 +40,13 @@ x = locate(lon, longitude)  # west_east
 # print(lat)
 
 
+
 #data data
+
+data_file_path = 'C:/Users/steve/python_data/thermodynamics/CA0/tpe20110802cln.L.Thermodynamic-000048.nc'
+data = nc.Dataset(data_file_path)
+print(data)
+
 tg_qv = []
 tg_height = []
 
