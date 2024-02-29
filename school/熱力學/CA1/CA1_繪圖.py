@@ -6,11 +6,33 @@ from openpyxl import load_workbook
 
 wb = load_workbook("C:/Users/steve/python_data/thermodynamics/CA1/Temperature.xlsx")
 ws = wb['Temperature']
-
-#繪圖區
 X = ws.max_column-1
 Y = ws.max_row-1
 print(X,Y)
+
+DATA = []
+P = []
+H = []
+#有效資料認證
+for h in range(Y-1):
+    data_list = []
+    for t in range(X-2):
+        data = ws.cell(h+2,t+3).value
+        # print(data)        
+        data_list.append(data)
+    if data_list.count(-999) == 0:
+        DATA.append(data_list)
+        P.append(ws.cell(h+2,1).value)
+        H.append(ws.cell(h+2,2).value)
+# print(DATA) [T]
+# print(P) [pa]
+# print(H) [m]
+
+        2021/03/01 資料處理完畢剩下繪圖
+
+
+#繪圖區
+
 #散佈圖
 plt.rcParams['font.sans-serif'] = [u'MingLiu'] #細明體
 plt.rcParams['axes.unicode_minus'] = False 
@@ -21,14 +43,14 @@ hight = []
 for i in range(Y):
     hight.append(ws.cell(i+2,1).value/1000)
 # print(hight)
-    
-
+            
 for i in range(X):
     data = []
-    for d in range(Y):
-        data.append(ws.cell(d+2,i+2).value)
+    for h in range(Y):
+        data.append(ws.cell(h+2,i+2).value)
     # print(data)
     ax.plot(data,hight)
+
 
 
 data_ave = []

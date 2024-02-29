@@ -74,12 +74,17 @@ for f in result:
     # print(thrermodynamics_data)
     # print(thrermodynamics_data.variables["zc"][:])
     potential_temps = thrermodynamics_data.variables["th"][0]
-    print(potential_temps[0][y][x])  #potential temp
+    specific_humidity = thrermodynamics_data.variables["qv"][0]
+    # print(potential_temps[0][y][x])  #potential temp
     temperature = []
     for i in range(len(potential_temps)):
         pt = potential_temps[i][y][x]
-        T = round(pt*((float(P[i])/100000)**(0.286))-273.15,5)
-        # print(T)
+        qv = specific_humidity[i][y][x]
+        if qv!=0:
+            T = round(pt*((float(P[i])/100000)**(0.286))-273.15,5)
+        else:
+            T = -999
+        # print(qv)
         temperature.append(T)
     Temperature.append(temperature)
 
@@ -89,22 +94,31 @@ wb = Workbook()
 ws = wb.active
 ws.title = 'Temperature'
 
-
+#寫入data
 for i in range(len(Temperature)):
     for j in range(len(Temperature[0])):
-        ws.cell(j+2,i+2 ).value = Temperature[i][j]
-
+        if Temperature[i][j] != -999:
+            ws.cell(j+2,i+3).value = Temperature[i][j]
+        else:
+            ws.cell(j+2,i+3).value = -999
 
 #加上高度
 hight = thrermodynamics_data.variables["zc"]
 for i in range(len(hight)):
-    ws.cell(i+2,1).value =round(float(hight[i]))
+    qv = specific_humidity[i][y][x]
+    ws.cell(i+2,2).value =round(float(hight[i]))
+ws.cell(1,2).value = 'hight'
+#加上壓力
+for i in range(len(P)):
+    ws.cell(i+2,1).value =round(float(P[i]))
+ws.cell(1,1).value = 'pressure'
 #加上時間
-lc = 2
+lc = 3
 for i in range(0,24): 
-    for j in range(0,51,10):   
+    for j in range(0,51,10):    
         time = str(i).zfill(2)+':'+str(j).zfill(2)
         ws.cell(1,lc).value = time
         lc +=1
 ws.cell(1,lc).value = '24:00'
+            
 wb.save("C:/Users/steve/python_data/thermodynamics/CA1/Temperature.xlsx")
