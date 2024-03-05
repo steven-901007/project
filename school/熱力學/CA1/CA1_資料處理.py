@@ -3,7 +3,7 @@ import glob
 import re
 from openpyxl import Workbook
 import numpy as np
-
+import os
 # map file
 def locate(list,number):
     return np.abs(list-number).argmin()
@@ -31,15 +31,15 @@ def map(path,latitude,longitude):
     # print(lat)
     return x , y
 
-map_file_path = "C:/Users/steve/python_data/thermodynamics/CA1/TOPO.nc"
+map_file_path = "C:/Users/steve/python_data/thermodynamics/TOPO.nc"
 x,y = map(map_file_path,24.56457,120.82458)    #苗栗座標
 # x,y = map(map_file_path,24.95930,121.52000)    #座標
 # print(x,y)    
 
 
 #pressure file
-def pressure():
-    pressure_file_path = "C:/Users/steve/python_data/thermodynamics/CA1/pressure.txt"
+def pressure(path):
+    pressure_file_path = path
 
     delimiter_pattern = re.compile(r'\s+|\n|\   ')
     pressure_data = []
@@ -54,7 +54,7 @@ def pressure():
     # print(len(pressure_data))
     # print(pressure_data)    #從第一層到第70層
     return pressure_data
-P = pressure()  #[pa]
+P = pressure("C:/Users/steve/python_data/thermodynamics/pressure.txt")  #[pa]
 # print(P)    
 
 
@@ -62,7 +62,7 @@ P = pressure()  #[pa]
 
 Temperature = []
 
-thermodynamics_folder = "C:/Users/steve/python_data/thermodynamics/CA1/archive/"
+thermodynamics_folder = "C:/Users/steve/python_data/thermodynamics/archive/"
 
 result  =glob.glob(thermodynamics_folder+'**')
 for f in result:

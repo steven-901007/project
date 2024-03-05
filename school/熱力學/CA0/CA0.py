@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import datetime
 
 # file path
-map_file_path = "C:/Users/steve/python_data/thermodynamics/CA0/TOPO.nc"
+map_file_path = "C:/Users/steve/python_data/thermodynamics/TOPO.nc"
 
 
 
