@@ -36,8 +36,8 @@ def map(path,latitude,longitude):
     return x , y
 
 map_file_path = "C:/Users/steve/python_data/thermodynamics/TOPO.nc"
-x,y = map(map_file_path,24.56457,120.82458)    #苗栗座標
-
+# x,y = map(map_file_path,24.56457,120.82458)    #苗栗座標
+x,y = map(map_file_path,23.96,120.30586)    #座標
 # print(x,y)
 
 
@@ -59,7 +59,7 @@ def pressure(path):
     # print(pressure_data)    #從第一層到第70層
     return pressure_data
 P = pressure("C:/Users/steve/python_data/thermodynamics/pressure.txt")  #[pa]
-# print(P[0])
+# print(P[2])
 
 
 # wth(surface flux of potential temperature)
@@ -74,7 +74,7 @@ for wth_file_path in result:
     wth = wth_data.variables['wth'][0][x][y]
     # print(wth)
     wth_time_list.append(wth)
-# print(wth_time_list)
+print(wth_time_list)
 
 
 #Cp(speccific heat at constant pressure)
@@ -84,7 +84,7 @@ Cp = 1004
 #Q(sensible heat flux)[J*hPa/(m^2*s)]
 Q_time_list = []
 for i in range(len(wth_time_list)):
-    Q = float(wth_time_list[i])*1004*((float(P[0])/100000)**0.286)
+    Q = float(wth_time_list[i])*1004*((float(P[2])/100000)**0.286)
     Q = round(Q,2)
     Q_time_list.append(Q)
 # print(Q_time_list)
