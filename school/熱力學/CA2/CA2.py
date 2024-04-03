@@ -81,7 +81,7 @@ print(wth_time_list)
 Cp = 1004
 
 
-#Q(sensible heat flux)[J*hPa/(m^2*s)]
+#Q(sensible heat flux)[J/(m^2*s)]
 Q_time_list = []
 for i in range(len(wth_time_list)):
     Q = float(wth_time_list[i])*1004*((float(P[2])/100000)**0.286)
@@ -147,7 +147,7 @@ a1 = fig.add_subplot()
 a1.plot(Y,Q_time_list,color =  'r',linestyle = '-',label ='sensible heat flux')
 a1.set_xticks(time_count,time_tick,fontsize = 15,rotation = 60)
 a1.set_xlabel('Time [s]',fontsize = 20)
-a1.set_ylabel('temperature [°C]',fontsize = 20)
+a1.set_ylabel('sensible heat flux [J/(m^2*s)]',fontsize = 20)
 plt.legend(fontsize = 15)
 plt.yticks(fontsize = 20)
 a1.set_ylim(0)
