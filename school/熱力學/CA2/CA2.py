@@ -74,7 +74,7 @@ for wth_file_path in result:
     wth = wth_data.variables['wth'][0][x][y]
     # print(wth)
     wth_time_list.append(wth)
-print(wth_time_list)
+# print(wth_time_list)
 
 
 #Cp(speccific heat at constant pressure)
@@ -88,6 +88,12 @@ for i in range(len(wth_time_list)):
     Q = round(Q,2)
     Q_time_list.append(Q)
 # print(Q_time_list)
+add_Q_time_list = [0]
+for i in range(len(Q_time_list)):
+    add_Q_time_list.append(add_Q_time_list[i]+Q_time_list[i])
+
+add_Q_time_list.remove(add_Q_time_list[0])
+# print(add_Q_time_list)
 
 
 # T0 [C] 模式氣溫
@@ -98,7 +104,11 @@ for i in range(ws.max_column-2):
     T = round(ws.cell(4,i+3).value,2)
     T0_time_list.append(T) 
 # print(T0_time_list)
-    
+add_T0_time_list = [0]
+for i in range(len(T0_time_list)):
+    add_T0_time_list.append(add_T0_time_list[i]+T0_time_list[i])
+
+add_T0_time_list.remove(add_T0_time_list[0])   
 
 # dt [s]
 dt = 600
@@ -112,6 +122,11 @@ for i in range(len(T0_time_list)):
     T = round(T0+q/1004*600,2)
     T_time_list.append(T)
 # print(T_time_list)
+add_T_time_list = [0]
+for i in range(len(T_time_list)):
+    add_T_time_list.append(add_T_time_list[i]+T_time_list[i])
+
+add_T_time_list.remove(add_T_time_list[0])
 
 
 #time
@@ -144,7 +159,7 @@ plt.rcParams['font.sans-serif'] = [u'MingLiu'] #細明體
 plt.rcParams['axes.unicode_minus'] = False 
 fig = plt.figure()
 a1 = fig.add_subplot()
-a1.plot(Y,Q_time_list,color =  'r',linestyle = '-',label ='sensible heat flux')
+a1.plot(Y,add_Q_time_list,color =  'r',linestyle = '-',label ='sensible heat flux')
 a1.set_xticks(time_count,time_tick,fontsize = 15,rotation = 60)
 a1.set_xlabel('Time [s]',fontsize = 20)
 a1.set_ylabel('sensible heat flux [J/(m^2*s)]',fontsize = 20)
@@ -155,10 +170,10 @@ plt.title('tpe20110802cln surver(140.112.66.200)\n苗栗站(24.56457N,120.82458E
 
 fig = plt.figure()
 a2 = fig.add_subplot()
-a2.plot(Y,T0_time_list,color =  'g',linestyle = '-',label = 'near-surface air temperature')
-a2.plot(Y,T_time_list,color =  'y',linestyle = '-',label = 'estimation by the sensible heat')
-plt.fill_between(Y,T0_time_list, T_time_list, color= (1.0, 0.647, 0.0), alpha=0.3)
-plt.fill_between(Y,T0_time_list, color= (0,1,0), alpha=0.3)
+a2.plot(Y,add_T0_time_list,color =  'g',linestyle = '-',label = 'near-surface air temperature')
+a2.plot(Y,add_T_time_list,color =  'y',linestyle = '-',label = 'estimation by the sensible heat')
+plt.fill_between(Y,add_T0_time_list, add_T_time_list, color= (1.0, 0.647, 0.0), alpha=0.3)
+plt.fill_between(Y,add_T0_time_list, color= (0,1,0), alpha=0.3)
 a2.set_xticks(time_count,time_tick,fontsize = 15,rotation = 60)
 a2.set_xlabel('Time [s]',fontsize = 20)
 a2.set_ylabel('temperature [°C]',fontsize = 20)
