@@ -87,7 +87,7 @@ for i in range(len(wth_time_list)):
     Q = float(wth_time_list[i])*1004*((float(P[2])/100000)**0.286)
     Q = round(Q,2)
     Q_time_list.append(Q)
-# print(Q_time_list)
+print(Q_time_list)
 add_Q_time_list = [0]
 for i in range(len(Q_time_list)):
     add_Q_time_list.append(add_Q_time_list[i]+Q_time_list[i])
@@ -150,8 +150,8 @@ for i in range(0,len(Time)):
     # else:
         # print(Time[3:])
         # time_tick.append(' ')
-# print(len(time_tick))
-# print(len(Y))
+print(len(time_tick))
+print(len(Y))
 
 
 #繪圖

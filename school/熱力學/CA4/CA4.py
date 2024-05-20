@@ -75,7 +75,7 @@ potential_temps = thrermodynamics_data.variables["th"][0]
 for i in range(len(potential_temps)):
     pt = potential_temps[i][y][x]
     pt_list.append(pt)
-print(pt_list)
+# print(pt_list)
 
 add_wth_list = [0]
 for i in range(len(pt_list)):
