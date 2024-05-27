@@ -18,8 +18,6 @@ def map(path,latitude,longitude):
     map = nc.Dataset(map_file_path)
     # print(map)
 
-
-
     # map data
     lat = map.variables["lat"][:]
     lon = map.variables["lon"][:]
