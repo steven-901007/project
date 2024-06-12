@@ -4,31 +4,25 @@ import cartopy.feature as cfeature
 from cartopy.io.shapereader import Reader
 from cartopy.feature import ShapelyFeature
 import re
+from openpyxl import load_workbook
+
 
 ## 讀取雨量站經緯度資料
 def rain_station_location_data():
-    data_path = "C:/Users/steve/python_data/研究所/雨量資料/2021_06/06/20210601/202106010000.QPESUMS_GAUGE.10M.mdf"
+    data_path = "C:/Users/steve/python_data/研究所/雨量資料/2021測站範圍內測站數.xlsx"
     lon_data_list = []  # 經度
     lat_data_list = []  # 緯度
-    count_for_station_number = 0 #雨量站數量
-    tatal_count_for_station_number = 0 #實際雨量站數量(包含不列入研究考量)之雨量站
+    count_for_station_number = 0 #採計之雨量站數量
+    wb = load_workbook(data_path)
+    ws = wb['station range inside']
+    for i in range(ws.max_column):
+        lon_data_list.append(ws.cell(3,i+1).value)
+        lat_data_list.append(ws.cell(2,i+1).value)
+        count_for_station_number += 1
+    wb.close()
+    return lon_data_list,lat_data_list,count_for_station_number
 
-    line = 0
-    with open(data_path, 'r') as files:
-        for file in files:
-            if line >=3:
-                data = re.split(re.compile(r'\s+|\n|\*'),file.strip())
-                print(data)
-                if 120 <float(data[4])< 122.1 and 21.5 <float(data[3])< 25.5:
-                    lon_data_list.append(float(data[4]))
-                    lat_data_list.append(float(data[3]))
-                    count_for_station_number += 1
-                tatal_count_for_station_number += 1 
-            line +=1
-    print(tatal_count_for_station_number)
-    return lon_data_list, lat_data_list ,count_for_station_number ,tatal_count_for_station_number
-
-lon_data_list, lat_data_list ,count_for_station_number ,tatal_count_for_station_number = rain_station_location_data()
+lon_data_list, lat_data_list ,count_for_station_number = rain_station_location_data()
 
 ## 繪圖
 
