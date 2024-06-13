@@ -7,7 +7,7 @@ month = '06' #月份
 
 ## 建立存檔file
 wb = Workbook()
-ws = wb.active
+wb.active
 wb.remove(wb['Sheet'])
 
 
@@ -25,6 +25,7 @@ for day_path in result:
     ws = wb[day]
     time_lc = 1
     ## 讀取每日資料
+
     result  =glob.glob(day_path+'/*')
     for rain_data_path in result:
         ten_min = rain_data_path[64:68]
@@ -58,5 +59,7 @@ for day_path in result:
         time_lc += 1
 
 
-wb.save("C:/Users/steve/python_data/研究所/雨量資料/"+year+"_"+month+".xlsx")
+
+
+wb.save("C:/Users/steve/python_data/研究所/雨量資料/對流性降雨data/"+year+"/"+year+"_"+month+".xlsx")
 
