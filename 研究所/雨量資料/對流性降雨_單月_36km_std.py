@@ -11,10 +11,12 @@ import matplotlib.colors as mcolors
 import matplotlib.cm as cm
 import matplotlib as mpl
 from openpyxl import load_workbook
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+
 
 year = '2021' #年分
 month = '06' #月份
-day = '29'  #日期
+
 
 
 ## 讀取雨量站經緯度資料
@@ -145,12 +147,12 @@ cmap1.set_under('black')
 norm1 = mcolors.Normalize(vmin=min(level), vmax=max(level))
 norm1 = mcolors.BoundaryNorm(level, nlevel, extend='max')
 im = cm.ScalarMappable(norm=norm1, cmap=cmap1)
-cbar1 = plt.colorbar(im, extend='neither', ticks=level)
+divider = make_axes_locatable(ax)
+cax = divider.append_axes("right", size="5%", pad=0.1, axes_class=plt.Axes)
+cbar1 = plt.colorbar(im,cax=cax, extend='neither', ticks=level)
 
 
 # 加入標籤
-plt.xlabel('Longitude')
-plt.ylabel('Latitude')
 
 ax.set_title('雨量>10mm/10min 事件數')
 
