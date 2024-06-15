@@ -60,8 +60,11 @@ for rain_data_path in result:
     print(hour+":"+minute)
 
 
-    ## 每日資料處理 rain data >10mm (10min)
+
+    ## 每10分鐘資料處理 rain data >10mm (10min)
     line = 0
+
+    chack_station_not_record_list = []
     with open(rain_data_path, 'r') as files:
         for file in files:
             elements = re.split(re.compile(r'\s+|\n|\*'),file.strip())
@@ -69,6 +72,7 @@ for rain_data_path in result:
             # print(len(elements))
             if line >= 3 :
                 station_name = elements[0]
+                
                 rain_data_of_10min = float(elements[7]) #MIN_10
                 if 120 <float(elements[4])< 122.1 and 21.5 <float(elements[3])< 25.5:
                     if rain_data_of_10min >= 0: #排除無資料(data = -998.00)
@@ -77,15 +81,22 @@ for rain_data_path in result:
                         rain_data_of_12_hour = float(elements[10]) #HOUR_12
                         rain_data_of_24_hour = float(elements[11]) #HOUR_24
                         if 10<=rain_data_of_10min <= rain_data_of_3_hour <= rain_data_of_12_hour <= rain_data_of_24_hour: #QC
+                            # print(station_name)
                             lc = name_data_list.index(station_name) + 1  #在excel的座標
                             i = 4
                             while ws.cell(i,lc).value != None:
-                                count_tg_number_list[name_data_list.index(ws.cell(i,lc).value)] +=1
-                                i += 1
+                                if chack_station_not_record_list.count(ws.cell(i,lc).value) == 0:
+                                    chack_station_not_record_list.append(ws.cell(i,lc).value)
+                                    count_tg_number_list[name_data_list.index(ws.cell(i,lc).value)] += 1
 
+                                i += 1
             line += 1
 
-print(count_tg_number_list)
+
+
+# ##debug區
+# print(sum(count_tg_number_list))
+
 
 
 

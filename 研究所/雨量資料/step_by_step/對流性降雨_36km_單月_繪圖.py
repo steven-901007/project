@@ -9,20 +9,21 @@ import matplotlib.cm as cm
 import matplotlib as mpl
 from openpyxl import load_workbook
 
-##記錄強降雨發生的地點
 
 
 year = '2021' #年分
 month = '06' #月份
 
+
+
 ## 讀取雨量站經緯度資料
 def rain_station_location_data():
-    data_path = "C:/Users/steve/python_data/研究所/雨量資料/2021測站範圍內測站數.xlsx"
+    data_path = "C:/Users/steve/python_data/研究所/雨量資料/"+year+"測站範圍內測站數.xlsx"
     lon_data_list = []  # 經度
     lat_data_list = []  # 緯度
     name_data_list = []  #測站名稱
     wb = load_workbook(data_path)
-    ws = wb['6月']
+    ws = wb[str(int(month))+'月']
     for i in range(ws.max_column):
         lon_data_list.append(ws.cell(3,i+1).value)
         lat_data_list.append(ws.cell(2,i+1).value)
@@ -32,41 +33,48 @@ def rain_station_location_data():
 
 lon_data_list, lat_data_list ,name_data_list = rain_station_location_data()
 
-    
-rain_data_name_of_station_nonstd_list = [] #地點
 
-## 讀取降雨資料
-rain_data_path = "C:/Users/steve/python_data/研究所/雨量資料/對流性降雨data/2021/2021_06.xlsx"
+##36 km統計雨量資料
+rain_data_path = "C:/Users/steve/python_data/研究所/雨量資料/對流性降雨36km統計/"+year+"/"+year+"_"+month+"_36km.xlsx"
 wb_rain_data = load_workbook(rain_data_path)
-month_list = wb_rain_data.sheetnames
-# print(month_list)
-for month in month_list:
-    ws_rain_data = wb_rain_data[month]
-    print('月份：'+month)
+day_list = wb_rain_data.sheetnames
+
+
+rain_36km_list = [] #站點名稱
+rain_36km_count_list = [] #降雨次數
+rain_36km_lon_list = []
+rain_36km_lat_list = []
+
+##降雨資料讀取
+for day in day_list:
+    ws_rain_data = wb_rain_data[day]
+    print('日期：'+day)
     max_col_rain_data = ws_rain_data.max_column
+
     for col in range(1,max_col_rain_data+1):
         row = 2
-        print(col)
+
         while ws_rain_data.cell(row,col).value != None:
-            rain_data_name_of_station_nonstd_list.append(ws_rain_data.cell(row,col).value)
-            print(ws_rain_data.cell(row,col).value)            
+            rain_data = ws_rain_data.cell(row,col).value
+            rain_data_style = ws_rain_data.cell(row,col).font.bold  #判斷資料是否為粗體
+            # print(rain_data_style)
+            if rain_data_style == False:
+                if rain_36km_list.count(rain_data) == 0:
+                    rain_36km_list.append(rain_data)
+                    rain_36km_count_list.append(1)
+                    rain_36km_lon_list.append(lon_data_list[name_data_list.index(rain_data)])
+                    rain_36km_lat_list.append(lat_data_list[name_data_list.index(rain_data)])
+                else:
+                    rain_36km_count_list[rain_36km_list.index(rain_data)] += 1
+            
             row += 1
 
+print(rain_36km_count_list)
+# print(len(rain_36km_list))
 
-
-#統計每個站點的降雨次數
-# rain_data_name_of_station_list = []
-rain_data_lon_list = []
-rain_data_lat_list = []
-rain_count = [] #降雨次數
-for data in rain_data_name_of_station_nonstd_list:
-    rain_count.append(rain_data_name_of_station_nonstd_list.count(data))
-    rain_data_lon_list.append(lon_data_list[name_data_list.index(data)])
-    rain_data_lat_list.append(lat_data_list[name_data_list.index(data)])
-
-# print(rain_count)
-print(sum(rain_count))
-
+# ##debug區
+print(sum(rain_36km_count_list))
+# # 初步判定資料無誤(2024/06/15)
 
 
 
@@ -98,15 +106,15 @@ gridlines.right_labels = False
 
 ## 計算某個地方達到10mm/10min的次數 + colorbar
 color_list = []
-level = [0,3,5,10,15,20,30,35]
-color_box = ['none','black','grey','silver','whitesmoke','gold','lightcoral','orangered']
 
+level = [0,50,100,150,200,300,350,400,500]
+color_box = ['silver','purple','darkviolet','blue','g','y','orange','r']
 
-for nb in rain_count:
+for nb in rain_36km_count_list:
     more_then_maxma_or_not = 0
     for j in range(len(level)-1):
         if level[j]<nb<=level[j+1]:
-            color_list.append(color_box[j+1])
+            color_list.append(color_box[j])
             more_then_maxma_or_not = 1
             break
     if more_then_maxma_or_not == 0:
@@ -116,7 +124,7 @@ for nb in rain_count:
 
 
 # 標記經緯度點
-ax.scatter(rain_data_lon_list, rain_data_lat_list, color=color_list, s=3, zorder=5)
+ax.scatter(rain_36km_lon_list, rain_36km_lat_list, color=color_list, s=3, zorder=5)
 
 # colorbar setting
 
@@ -134,7 +142,18 @@ cbar1 = plt.colorbar(im, extend='neither', ticks=level)
 plt.xlabel('Longitude')
 plt.ylabel('Latitude')
 
-ax.set_title('雨量>10mm/10min 事件數')
+ax.set_title(year+"年"+month+"月"+'\n雨量>10mm/10min 事件數\nmax = '+ str(max(rain_36km_count_list)))
+
+
+## 這是用來確認colorbar的配置
+fig,ax1 = plt.subplots()
+X = [i for i in range(len(rain_36km_count_list))]
+Y = sorted(rain_36km_count_list)
+ax1.plot(X,Y,color =  'black',marker = "*",linestyle = '--') #折線圖
+ax1.set_title('這是用來確認colorbar的配置')
+
 
 # 顯示地圖
 plt.show()
+
+

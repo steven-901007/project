@@ -1,7 +1,4 @@
 import glob
-import re
-import math
-import time
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
@@ -11,12 +8,16 @@ import matplotlib.colors as mcolors
 import matplotlib.cm as cm
 import matplotlib as mpl
 from openpyxl import load_workbook
-from mpl_toolkits.axes_grid1 import make_axes_locatable
 
+##記錄強降雨發生的地點
+
+
+year = '2021' #年分
+month = '06' #月份
 
 ## 讀取雨量站經緯度資料
 def rain_station_location_data():
-    data_path = "C:/Users/steve/python_data/研究所/雨量資料/2021測站範圍內測站數.xlsx"
+    data_path = "C:/Users/steve/python_data/研究所/雨量資料/"+year+"測站範圍內測站數.xlsx"
     lon_data_list = []  # 經度
     lat_data_list = []  # 緯度
     name_data_list = []  #測站名稱
@@ -31,39 +32,44 @@ def rain_station_location_data():
 
 lon_data_list, lat_data_list ,name_data_list = rain_station_location_data()
 
+    
+rain_data_name_of_station_nonstd_list = [] #地點
+
+## 讀取降雨資料
+rain_data_path = "C:/Users/steve/python_data/研究所/雨量資料/對流性降雨data/"+year+"/"+year+"_"+month+".xlsx"
+wb_rain_data = load_workbook(rain_data_path)
+day_list = wb_rain_data.sheetnames
+# print(month_list)
+for day in day_list:
+    ws_rain_data = wb_rain_data[day]
+    print('日期：'+day)
+    max_col_rain_data = ws_rain_data.max_column
+    for col in range(1,max_col_rain_data+1):
+        row = 2
+        print(col)
+        while ws_rain_data.cell(row,col).value != None:
+            rain_data_name_of_station_nonstd_list.append(ws_rain_data.cell(row,col).value)
+            print(ws_rain_data.cell(row,col).value)            
+            row += 1
 
 
-## 測站位置檔案讀取(6月)
-wb = load_workbook("C:/Users/steve/python_data/研究所/雨量資料/2021測站範圍內測站數.xlsx")
-ws = wb['6月']
 
-count_tg_number_list = [0 for i in range(len(name_data_list))] #計算符合範圍強降雨(36 km)的事件數 對應位置代表name data list
-rain_data_path = "C:/Users/steve/python_data/研究所/雨量資料/2021_06/06/20210629/202106290930.QPESUMS_GAUGE.10M.mdf"
+#統計每個站點的降雨次數
+rain_data_name_of_station_list = [] # 降雨測站名稱
+rain_data_lon_list = []
+rain_data_lat_list = []
+rain_count_list = [] # 降雨次數
+print(len(rain_data_name_of_station_nonstd_list))
+for data in rain_data_name_of_station_nonstd_list:
+    if rain_data_name_of_station_list.count(data) == 0:
+        rain_data_name_of_station_list.append(data)
+        rain_count_list.append(rain_data_name_of_station_nonstd_list.count(data))
+        rain_data_lon_list.append(lon_data_list[name_data_list.index(data)])
+        rain_data_lat_list.append(lat_data_list[name_data_list.index(data)])
 
-## 每日資料處理 rain data >10mm (10min)
-line = 0
-with open(rain_data_path, 'r') as files:
-    for file in files:
-        elements = re.split(re.compile(r'\s+|\n|\*'),file.strip())
-        # print(elements)
-        # print(len(elements))
-        if line >= 3 :
-            station_name = elements[0]
-            rain_data_of_10min = float(elements[7]) #MIN_10
-            if 120 <float(elements[4])< 122.1 and 21.5 <float(elements[3])< 25.5:
-                if rain_data_of_10min >= 0: #排除無資料(data = -998.00)
-                    rain_data_of_3_hour = float(elements[8]) #HOUR_3
-                    rain_data_of_6_hour = float(elements[9]) #HOUR_6
-                    rain_data_of_12_hour = float(elements[10]) #HOUR_12
-                    rain_data_of_24_hour = float(elements[11]) #HOUR_24
-                    if 10<=rain_data_of_10min <= rain_data_of_3_hour <= rain_data_of_12_hour <= rain_data_of_24_hour: #QC
-                        lc = name_data_list.index(station_name) + 1  #在excel的座標
-                        i = 4
-                        while ws.cell(i,lc).value != None:
-                            count_tg_number_list[name_data_list.index(ws.cell(i,lc).value)] +=1
-                            i += 1
+print(len(rain_data_lon_list),len(rain_data_lat_list))
 
-        line += 1
+
 
 ## 繪圖
 
@@ -93,23 +99,25 @@ gridlines.right_labels = False
 
 ## 計算某個地方達到10mm/10min的次數 + colorbar
 color_list = []
-level = [0,1,2,3,4]
-color_box = ['whitesmoke','r','orange','y','g']
+level = [0,3,5,10,15,20,30,35]
+color_box = ['silver','darkviolet','blue','g','y','orange','r']
 
-for i in range(len(count_tg_number_list)):
+
+for nb in rain_count_list:
     more_then_maxma_or_not = 0
-    lon_lat_count = count_tg_number_list[i]
     for j in range(len(level)-1):
-        if level[j]<=lon_lat_count<level[j+1]:
+        if level[j]<nb<=level[j+1]:
             color_list.append(color_box[j])
             more_then_maxma_or_not = 1
             break
     if more_then_maxma_or_not == 0:
-        color_list.append('black')
+        color_list.append('lime')
+        print(nb)
+# print(len(color_list))
 
 
 # 標記經緯度點
-ax.scatter(lon_data_list,lat_data_list, color=color_list, s=3, zorder=5)
+ax.scatter(rain_data_lon_list, rain_data_lat_list, color=color_list, s=3, zorder=5)
 
 # colorbar setting
 
@@ -120,15 +128,14 @@ cmap1.set_under('black')
 norm1 = mcolors.Normalize(vmin=min(level), vmax=max(level))
 norm1 = mcolors.BoundaryNorm(level, nlevel, extend='max')
 im = cm.ScalarMappable(norm=norm1, cmap=cmap1)
-divider = make_axes_locatable(ax)
-cax = divider.append_axes("right", size="5%", pad=0.1, axes_class=plt.Axes)
-cbar1 = plt.colorbar(im,cax=cax, extend='neither', ticks=level)
-
-
+cbar1 = plt.colorbar(im, extend='neither', ticks=level)
 
 
 # 加入標籤
-ax.set_title('全台雨量站座標')
+plt.xlabel('Longitude')
+plt.ylabel('Latitude')
+
+ax.set_title(year+"年"+month+"月"+'\n雨量>10mm/10min 事件數\nmax = '+ str(max(rain_count_list)))
 
 # 顯示地圖
 plt.show()

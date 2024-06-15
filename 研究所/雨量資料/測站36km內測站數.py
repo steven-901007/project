@@ -87,7 +87,7 @@ dis = 36
 #儲存位置建立
 wb = Workbook() 
 ws = wb.active
-ws.title = "6月" #創第一個sheet
+ws.title = str(int(month))+"月" #創第一個sheet
 
 
 for i in range(len(station_name_data_list)):
@@ -104,4 +104,4 @@ for i in range(len(station_name_data_list)):
 
 
 
-wb.save("C:/Users/steve/python_data/研究所/雨量資料/2021測站範圍內測站數.xlsx")
+wb.save("C:/Users/steve/python_data/研究所/雨量資料/"+year+"測站範圍內測站數.xlsx")

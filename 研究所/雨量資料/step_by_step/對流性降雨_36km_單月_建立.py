@@ -9,9 +9,9 @@ month = '06' #月份
 
 
 ## 測站數file 讀取
-station_number_path = "C:/Users/steve/python_data/研究所/雨量資料/2021測站範圍內測站數.xlsx"
+station_number_path = "C:/Users/steve/python_data/研究所/雨量資料/"+year+"測站範圍內測站數.xlsx"
 wb_station_number = load_workbook(station_number_path)
-ws_station_number = wb_station_number['6月']
+ws_station_number = wb_station_number[str(int(month))+'月']
 station_name_count = ws_station_number.max_column #站點數量
 
 
@@ -22,7 +22,7 @@ wb_rain_more_10mm_36km_setting.remove(wb_rain_more_10mm_36km_setting['Sheet'])
 
 
 ## 強降雨測站file 讀取
-rain_more_10mm_data_path = "C:/Users/steve/python_data/研究所/雨量資料/對流性降雨data/2021/"+year+"_"+month+".xlsx"
+rain_more_10mm_data_path = "C:/Users/steve/python_data/研究所/雨量資料/對流性降雨data/"+year+"/"+year+"_"+month+".xlsx"
 wb_rain_more_10mm_data = load_workbook(rain_more_10mm_data_path)
 sheet_name_list = wb_rain_more_10mm_data.sheetnames #月份
 # print(sheet_name_list)
@@ -32,7 +32,7 @@ sheet_name_list = wb_rain_more_10mm_data.sheetnames #月份
 for sheet in sheet_name_list: #日期
     ws_rain_more_10mm_data = wb_rain_more_10mm_data[sheet]
     max_col_for_rain_more_10mm_data = ws_rain_more_10mm_data.max_column # time
-    print('月份: '+sheet)
+    print('日期: '+sheet)
     wb_rain_more_10mm_36km_setting.create_sheet(sheet)
     ws_rain_more_10mm_36km_setting = wb_rain_more_10mm_36km_setting[sheet]
 
