@@ -105,3 +105,4 @@ for i in range(len(station_name_data_list)):
 
 
 wb.save("C:/Users/steve/python_data/研究所/雨量資料/"+year+"測站範圍內測站數.xlsx")
+print("已建立\nC:/Users/steve/python_data/研究所/雨量資料/"+year+"測站範圍內測站數.xlsx")

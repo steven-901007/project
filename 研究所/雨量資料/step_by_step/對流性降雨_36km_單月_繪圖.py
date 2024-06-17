@@ -35,7 +35,7 @@ lon_data_list, lat_data_list ,name_data_list = rain_station_location_data()
 
 
 ##36 km統計雨量資料
-rain_data_path = "C:/Users/steve/python_data/研究所/雨量資料/對流性降雨36km統計/"+year+"/"+year+"_"+month+"_36km.xlsx"
+rain_data_path = "C:/Users/steve/python_data/研究所/雨量資料/對流性降雨36km統計/"+year+"/"+year+"_"+month+"_36km_rain_data.xlsx"
 wb_rain_data = load_workbook(rain_data_path)
 day_list = wb_rain_data.sheetnames
 
@@ -46,28 +46,27 @@ rain_36km_lon_list = []
 rain_36km_lat_list = []
 
 ##降雨資料讀取
-for day in day_list:
-    ws_rain_data = wb_rain_data[day]
-    print('日期：'+day)
-    max_col_rain_data = ws_rain_data.max_column
 
-    for col in range(1,max_col_rain_data+1):
-        row = 2
+ws_rain_data = wb_rain_data[month]
+max_col_rain_data = ws_rain_data.max_column
 
-        while ws_rain_data.cell(row,col).value != None:
-            rain_data = ws_rain_data.cell(row,col).value
-            rain_data_style = ws_rain_data.cell(row,col).font.bold  #判斷資料是否為粗體
-            # print(rain_data_style)
-            if rain_data_style == False:
-                if rain_36km_list.count(rain_data) == 0:
-                    rain_36km_list.append(rain_data)
-                    rain_36km_count_list.append(1)
-                    rain_36km_lon_list.append(lon_data_list[name_data_list.index(rain_data)])
-                    rain_36km_lat_list.append(lat_data_list[name_data_list.index(rain_data)])
-                else:
-                    rain_36km_count_list[rain_36km_list.index(rain_data)] += 1
-            
-            row += 1
+for col in range(1,max_col_rain_data+1):
+    row = 2
+    print(col)
+    while ws_rain_data.cell(row,col).value != None:
+        rain_data = ws_rain_data.cell(row,col).value
+        rain_data_style = ws_rain_data.cell(row,col).font.bold  #判斷資料是否為粗體
+        # print(rain_data_style)
+        if rain_data_style == False:
+            if rain_36km_list.count(rain_data) == 0:
+                rain_36km_list.append(rain_data)
+                rain_36km_count_list.append(1)
+                rain_36km_lon_list.append(lon_data_list[name_data_list.index(rain_data)])
+                rain_36km_lat_list.append(lat_data_list[name_data_list.index(rain_data)])
+            else:
+                rain_36km_count_list[rain_36km_list.index(rain_data)] += 1
+        
+        row += 1
 
 print(rain_36km_count_list)
 # print(len(rain_36km_list))

@@ -36,21 +36,18 @@ lon_data_list, lat_data_list ,name_data_list = rain_station_location_data()
 rain_data_name_of_station_nonstd_list = [] #地點
 
 ## 讀取降雨資料
-rain_data_path = "C:/Users/steve/python_data/研究所/雨量資料/對流性降雨data/"+year+"/"+year+"_"+month+".xlsx"
+rain_data_path = "C:/Users/steve/python_data/研究所/雨量資料/對流性降雨data/"+year+"/"+year+"_"+month+"_rain_data.xlsx"
 wb_rain_data = load_workbook(rain_data_path)
-day_list = wb_rain_data.sheetnames
-# print(month_list)
-for day in day_list:
-    ws_rain_data = wb_rain_data[day]
-    print('日期：'+day)
-    max_col_rain_data = ws_rain_data.max_column
-    for col in range(1,max_col_rain_data+1):
-        row = 2
-        print(col)
-        while ws_rain_data.cell(row,col).value != None:
-            rain_data_name_of_station_nonstd_list.append(ws_rain_data.cell(row,col).value)
-            print(ws_rain_data.cell(row,col).value)            
-            row += 1
+ws_rain_data = wb_rain_data[month]
+
+max_col_rain_data = ws_rain_data.max_column
+for col in range(1,max_col_rain_data+1):
+    row = 2
+    print(col)
+    while ws_rain_data.cell(row,col).value != None:
+        rain_data_name_of_station_nonstd_list.append(ws_rain_data.cell(row,col).value)
+        print(ws_rain_data.cell(row,col).value)            
+        row += 1
 
 
 

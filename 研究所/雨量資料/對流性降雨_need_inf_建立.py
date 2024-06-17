@@ -7,8 +7,9 @@ month = '06' #月份
 
 ## 建立存檔file
 wb = Workbook()
-wb.active
-wb.remove(wb['Sheet'])
+ws = wb.active
+ws.title = month
+
 
 
 
@@ -18,19 +19,18 @@ wb.remove(wb['Sheet'])
 
 month_path = "C:/Users/steve/python_data/研究所/雨量資料/"+year+"_"+month+"/"+month
 result  =glob.glob(month_path+"/*")
+time_lc = 1
 for day_path in result:
     day = day_path[53:] #日期   
-    wb.create_sheet(day) #建立所屬sheet
     print('日期:'+day)
-    ws = wb[day]
-    time_lc = 1
+    
     ## 讀取每日資料
 
     result  =glob.glob(day_path+'/*')
     for rain_data_path in result:
-        ten_min = rain_data_path[64:68]
-        print('時間:'+ten_min)
-        ws.cell(1,time_lc).value = ten_min
+        time = day+rain_data_path[64:68]
+        # print('時間:'+ten_min)
+        ws.cell(1,time_lc).value = time
         data_lc = 2 #資料紀錄起始位置
 
         # 每10分鐘資料處理 rain data >10mm (10min)
@@ -61,5 +61,6 @@ for day_path in result:
 
 
 
-wb.save("C:/Users/steve/python_data/研究所/雨量資料/對流性降雨data/"+year+"/"+year+"_"+month+".xlsx")
+wb.save("C:/Users/steve/python_data/研究所/雨量資料/對流性降雨data/"+year+"/"+year+"_"+month+"_rain_data.xlsx")
+print("已建立\nC:/Users/steve/python_data/研究所/雨量資料/對流性降雨data/"+year+"/"+year+"_"+month+"_rain_data.xlsx")
 

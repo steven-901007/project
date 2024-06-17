@@ -4,12 +4,11 @@ import glob
 import pandas as pd
 
 year = '2021'
-month = '01'  #要檢查var end_dat的日期是否正確
+month = '01'  
 
 flash_time_list = []
-flash_sample_time_list = []
-flash_lon_time_list = []
-flash_lat_time_list = []
+flash_lon_list = []
+flash_lat_list = []
 flash_ic_or_cg = []
 
 
@@ -27,8 +26,8 @@ try:
             elements = re.split(delimiter_pattern, line.strip())
             # print(elements) #以列表顯示
             flash_time_list.append(elements[0])
-            flash_lon_time_list.append(elements[2])
-            flash_lat_time_list.append(elements[3])
+            flash_lon_list.append(elements[2])
+            flash_lat_list.append(elements[3])
             flash_ic_or_cg.append(elements[5])
 except:
     with open(data_path, 'r') as file:
@@ -37,12 +36,14 @@ except:
             elements = re.split(delimiter_pattern, line.strip())
             # print(elements) #以列表顯示
             flash_time_list.append(elements[0])
-            flash_lon_time_list.append(elements[2])
-            flash_lat_time_list.append(elements[3])
+            flash_lon_list.append(elements[2])
+            flash_lat_list.append(elements[3])
             flash_ic_or_cg.append(elements[5])
+
 flash_time_list.pop(0)
-flash_lon_time_list.pop(0)
-flash_lat_time_list.pop(0)
+flash_lon_list.pop(0)
+flash_lat_list.pop(0)
 flash_ic_or_cg.pop(0)
-print(flash_time_list)
+print(flash_lon_list,flash_lat_list)
+
 
