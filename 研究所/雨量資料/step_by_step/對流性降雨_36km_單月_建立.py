@@ -6,10 +6,11 @@ from openpyxl.styles import Font
 
 year = '2021' #年分
 month = '06' #月份
-
+data_top_path = "C:/Users/steve/python_data"
+data_top_path = "C:/Users/steve/python_data"
 
 ## 測站數file 讀取
-station_number_path = "C:/Users/steve/python_data/研究所/雨量資料/"+year+"測站範圍內測站數.xlsx"
+station_number_path = data_top_path+"/研究所/雨量資料/"+year+"測站範圍內測站數.xlsx"
 wb_station_number = load_workbook(station_number_path)
 ws_station_number = wb_station_number[str(int(month))+'月']
 station_name_count = ws_station_number.max_column #站點數量
@@ -23,7 +24,7 @@ ws_rain_more_10mm_36km_setting.title = month
 
 
 ## 強降雨測站file 讀取
-rain_more_10mm_data_path = "C:/Users/steve/python_data/研究所/雨量資料/對流性降雨data/"+year+"/"+year+"_"+month+"_rain_data.xlsx"
+rain_more_10mm_data_path = data_top_path+"/研究所/雨量資料/對流性降雨data/"+year+"/"+year+"_"+month+"_rain_data.xlsx"
 wb_rain_more_10mm_data = load_workbook(rain_more_10mm_data_path)
 sheet_name_list = wb_rain_more_10mm_data.sheetnames #日期
 # print(sheet_name_list)
@@ -80,5 +81,5 @@ for col in range(1,max_col_for_rain_more_10mm_data+1): #分鐘
 
 
 
-wb_rain_more_10mm_36km_setting.save("C:/Users/steve/python_data/研究所/雨量資料/對流性降雨36km統計/"+year+"/"+year+"_"+month+"_36km_rain_data.xlsx")
-print("已建立\nC:/Users/steve/python_data/研究所/雨量資料/對流性降雨36km統計/"+year+"/"+year+"_"+month+"_36km_rain_data.xlsx")
+wb_rain_more_10mm_36km_setting.save(data_top_path+"/研究所/雨量資料/對流性降雨36km統計/"+year+"/"+year+"_"+month+"_36km_rain_data.xlsx")
+print("已建立\n"+data_top_path+"/研究所/雨量資料/對流性降雨36km統計/"+year+"/"+year+"_"+month+"_36km_rain_data.xlsx")

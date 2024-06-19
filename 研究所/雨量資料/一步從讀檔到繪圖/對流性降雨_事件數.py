@@ -17,10 +17,13 @@ from openpyxl import load_workbook
 
 year = '2021' #年分
 month = '06' #月份
+data_top_path = "C:/Users/steve/python_data"
+data_top_path = "C:/Users/steve/python_data"
+
 
 ## 讀取雨量站經緯度資料
 def rain_station_location_data():
-    data_path = "C:/Users/steve/python_data/研究所/雨量資料/2021測站範圍內測站數.xlsx"
+    data_path = data_top_path+"/研究所/雨量資料/2021測站範圍內測站數.xlsx"
     lon_data_list = []  # 經度
     lat_data_list = []  # 緯度
     name_data_list = []  #測站名稱
@@ -43,7 +46,7 @@ data_lon_list = []
 data_lat_list = []
 
 ## 讀取每月資料
-month_path = "C:/Users/steve/python_data/研究所/雨量資料/"+year+"_"+month+"/"+month
+month_path = data_top_path+"/研究所/雨量資料/"+year+"_"+month+"/"+month
 result  =glob.glob(month_path+"/*")
 for day_path in result:
     # print(day_path)
@@ -101,7 +104,7 @@ for day_path in result:
 # plt.rcParams['axes.unicode_minus'] = False  # 用來正常顯示正負號
 
 # # 加載台灣的行政邊界
-# taiwan_shapefile = "C:/Users/steve/python_data/研究所/Taiwan_map_data/COUNTY_MOI_1090820.shp"  # 你需要提供台灣邊界的shapefile文件
+# taiwan_shapefile = data_top_path+"/研究所/Taiwan_map_data/COUNTY_MOI_1090820.shp"  # 你需要提供台灣邊界的shapefile文件
 # shape_feature = ShapelyFeature(Reader(taiwan_shapefile).geometries(),
 #                                ccrs.PlateCarree(), edgecolor='black', facecolor='white')
 # ax.add_feature(shape_feature)

@@ -16,7 +16,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 ## 讀取雨量站經緯度資料
 def rain_station_location_data():
-    data_path = "C:/Users/steve/python_data/研究所/雨量資料/2021測站範圍內測站數.xlsx"
+    data_path = data_top_path+"/研究所/雨量資料/2021測站範圍內測站數.xlsx"
     lon_data_list = []  # 經度
     lat_data_list = []  # 緯度
     name_data_list = []  #測站名稱
@@ -34,11 +34,11 @@ lon_data_list, lat_data_list ,name_data_list = rain_station_location_data()
 
 
 ## 測站位置檔案讀取(6月)
-wb = load_workbook("C:/Users/steve/python_data/研究所/雨量資料/2021測站範圍內測站數.xlsx")
+wb = load_workbook(data_top_path+"/研究所/雨量資料/2021測站範圍內測站數.xlsx")
 ws = wb['6月']
 
 count_tg_number_list = [0 for i in range(len(name_data_list))] #計算符合範圍強降雨(36 km)的事件數 對應位置代表name data list
-rain_data_path = "C:/Users/steve/python_data/研究所/雨量資料/2021_06/06/20210601/202106010350.QPESUMS_GAUGE.10M.mdf"
+rain_data_path = data_top_path+"/研究所/雨量資料/2021_06/06/20210601/202106010350.QPESUMS_GAUGE.10M.mdf"
 
 ## 每10分鐘資料處理 rain data >10mm (10min)
 line = 0
@@ -93,7 +93,7 @@ plt.rcParams['font.sans-serif'] = [u'MingLiu']  # 設定字體為'細明體'
 plt.rcParams['axes.unicode_minus'] = False  # 用來正常顯示正負號
 
 # 加載台灣的行政邊界
-taiwan_shapefile = "C:/Users/steve/python_data/研究所/Taiwan_map_data/COUNTY_MOI_1090820.shp"  # 你需要提供台灣邊界的shapefile文件
+taiwan_shapefile = data_top_path+"/研究所/Taiwan_map_data/COUNTY_MOI_1090820.shp"  # 你需要提供台灣邊界的shapefile文件
 shape_feature = ShapelyFeature(Reader(taiwan_shapefile).geometries(),
                                ccrs.PlateCarree(), edgecolor='black', facecolor='white')
 ax.add_feature(shape_feature)

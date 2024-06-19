@@ -5,6 +5,9 @@ import glob
 
 year = '2021' #年分
 month = '06' #月份
+data_top_path = "C:/Users/steve/python_data"
+data_top_path = "C:/Users/steve/python_data"
+
 
 def rain_station_location_data(path):
     data_path = path
@@ -29,7 +32,7 @@ lon_data_list, lat_data_list ,station_name_data_list = [],[],[]
 
 ##確認所有資料的測站都有被記錄
 ## 讀取每月資料
-month_path = "C:/Users/steve/python_data/研究所/雨量資料/"+year+"_"+month+"/"+month
+month_path = data_top_path+"/研究所/雨量資料/"+year+"_"+month+"/"+month
 result  =glob.glob(month_path+"/*")
 for day_path in result:
     # print(day_path)
@@ -104,5 +107,5 @@ for i in range(len(station_name_data_list)):
 
 
 
-wb.save("C:/Users/steve/python_data/研究所/雨量資料/"+year+"測站範圍內測站數.xlsx")
-print("已建立\nC:/Users/steve/python_data/研究所/雨量資料/"+year+"測站範圍內測站數.xlsx")
+wb.save(data_top_path+"/研究所/雨量資料/"+year+"測站範圍內測站數.xlsx")
+print("已建立\n"+data_top_path+"/研究所/雨量資料/"+year+"測站範圍內測站數.xlsx")

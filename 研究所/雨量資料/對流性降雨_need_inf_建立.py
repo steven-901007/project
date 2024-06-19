@@ -4,6 +4,7 @@ import re
 
 year = '2021' #年分
 month = '06' #月份
+data_top_path = "C:/Users/steve/python_data"
 
 ## 建立存檔file
 wb = Workbook()
@@ -17,7 +18,7 @@ ws.title = month
 
 
 
-month_path = "C:/Users/steve/python_data/研究所/雨量資料/"+year+"_"+month+"/"+month
+month_path = data_top_path+"/研究所/雨量資料/"+year+"_"+month+"/"+month
 result  =glob.glob(month_path+"/*")
 time_lc = 1
 for day_path in result:
@@ -61,6 +62,6 @@ for day_path in result:
 
 
 
-wb.save("C:/Users/steve/python_data/研究所/雨量資料/對流性降雨data/"+year+"/"+year+"_"+month+"_rain_data.xlsx")
+wb.save(data_top_path+"/研究所/雨量資料/對流性降雨data/"+year+"/"+year+"_"+month+"_rain_data.xlsx")
 print("已建立\nC:/Users/steve/python_data/研究所/雨量資料/對流性降雨data/"+year+"/"+year+"_"+month+"_rain_data.xlsx")
 

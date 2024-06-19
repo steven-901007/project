@@ -56,7 +56,7 @@ except:
 
 
 
-## 建立閃電儲存檔案.xlsx
+## 閃電儲存檔案基本設定(時間)
 wb_light_data = Workbook()
 ws_light_data = wb_light_data.active
 ws_light_data.title = month
@@ -111,4 +111,4 @@ ws_light_data.cell(1,max_col+1).value = None
 
 
 
-wb_light_data.save("C:/Users/steve/python_data/研究所/閃電資料/閃電資料時間線/"+year+'/'+year+"_"+month+'_flash_data.xlsx')
+wb_light_data.save(data_top_path+"/研究所/閃電資料/need_inf_for_lighting/"+year+'/'+year+"_"+month+'_flash_data.xlsx')
