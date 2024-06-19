@@ -7,15 +7,18 @@ import cartopy.feature as cfeature
 
 ## 無縣市邊界
 
+data_top_path = "C:/Users/steve/python_data"
 
 # 設定標記點的經緯度
-point_lon = [120.8369]
-point_lat = [23.9637]
+point_lon = [120.3542,120.05,120.08,120.06,119.34]
+point_lat = [22.334,22.18,22.20,22.18,22.18]
 
 ## 繪圖
 
+
+
 # 設定經緯度範圍
-lon_min, lon_max = 120, 122.1
+lon_min, lon_max = 119, 122.1
 lat_min, lat_max = 21.5, 25.5
 
 plt.figure(figsize=(10, 10))
