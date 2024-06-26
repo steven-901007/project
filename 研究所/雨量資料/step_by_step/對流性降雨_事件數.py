@@ -25,7 +25,7 @@ def rain_station_location_data():
     lat_data_list = []  # 緯度
     name_data_list = []  #測站名稱
     wb = load_workbook(data_path)
-    ws = wb['6月']
+    ws = wb[month]
     for i in range(ws.max_column):
         lon_data_list.append(ws.cell(3,i+1).value)
         lat_data_list.append(ws.cell(2,i+1).value)

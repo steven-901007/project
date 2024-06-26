@@ -27,7 +27,7 @@ def rain_station_location_data():
     lat_data_list = []  # 緯度
     name_data_list = []  #測站名稱
     wb = load_workbook(data_path)
-    ws = wb['6月']
+    ws = wb[month]
     for i in range(ws.max_column):
         lon_data_list.append(ws.cell(3,i+1).value)
         lat_data_list.append(ws.cell(2,i+1).value)
@@ -40,7 +40,7 @@ lon_data_list, lat_data_list ,name_data_list = rain_station_location_data()
 
 ## 測站位置檔案讀取(6月)
 wb = load_workbook(data_top_path+"/研究所/雨量資料/2021測站範圍內測站數.xlsx")
-ws = wb['6月']
+ws = wb[month]
 
 
 count_tg_number_list = [0 for i in range(len(name_data_list))] #計算符合範圍強降雨(36 km)的事件數 對應位置代表name data list

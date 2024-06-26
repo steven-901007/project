@@ -12,7 +12,7 @@ data_top_path = "C:/Users/steve/python_data"
 ## 測站數file 讀取
 station_number_path = data_top_path+"/研究所/雨量資料/"+year+"測站範圍內測站數.xlsx"
 wb_station_number = load_workbook(station_number_path)
-ws_station_number = wb_station_number[str(int(month))+'月']
+ws_station_number = wb_station_number[month]
 station_name_count = ws_station_number.max_column #站點數量
 
 
