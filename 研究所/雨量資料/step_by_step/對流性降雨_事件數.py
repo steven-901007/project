@@ -15,7 +15,7 @@ from openpyxl import load_workbook
 year = '2021' #年分
 month = '06' #月份
 data_top_path = "C:/Users/steve/python_data"
-data_top_path = "C:/Users/steve/python_data"
+
 
 
 ## 讀取雨量站經緯度資料

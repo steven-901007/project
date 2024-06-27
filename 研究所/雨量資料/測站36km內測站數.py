@@ -6,7 +6,7 @@ import glob
 year = '2021' #年分
 month = '06' #月份
 data_top_path = "C:/Users/steve/python_data"
-data_top_path = "C:/Users/steve/python_data"
+
 
 
 def rain_station_location_data(path):
@@ -26,6 +26,7 @@ def rain_station_location_data(path):
                     lat_data_list.append(float(data[3]))
                     name_data_list.append(data[0])
             line +=1
+    
     return lon_data_list, lat_data_list ,name_data_list
 
 lon_data_list, lat_data_list ,station_name_data_list = [],[],[]
@@ -90,7 +91,7 @@ dis = 36
 #儲存位置建立
 wb = Workbook() 
 ws = wb.active
-ws.title = str(int(month))+"月" #創第一個sheet
+ws.title = month #創第一個sheet
 
 
 for i in range(len(station_name_data_list)):

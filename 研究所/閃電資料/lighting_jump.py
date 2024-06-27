@@ -103,6 +103,8 @@ except:
             raw_data_lon_list.append(raw_data_lon)
             raw_data_lat_list.append(raw_data_lat)
             # print(t,raw_data_lon,raw_data_lat)
+file.close()
+
 
 
 row = 1

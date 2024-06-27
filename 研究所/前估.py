@@ -1,4 +1,7 @@
-import glob
+from openpyxl import load_workbook
+from openpyxl.styles import Font
+from datetime import datetime, timedelta
+from tqdm import tqdm
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
@@ -7,7 +10,6 @@ from cartopy.feature import ShapelyFeature
 import matplotlib.colors as mcolors
 import matplotlib.cm as cm
 import matplotlib as mpl
-from openpyxl import load_workbook
 
 
 
@@ -15,9 +17,7 @@ year = '2021' #年分
 month = '06' #月份
 data_top_path = "C:/Users/steve/python_data"
 
-
-
-## 讀取雨量站經緯度資料
+##測站資料
 def rain_station_location_data():
     data_path = data_top_path+"/研究所/雨量資料/"+year+"測站範圍內測站數.xlsx"
     lon_data_list = []  # 經度
@@ -31,54 +31,79 @@ def rain_station_location_data():
         name_data_list.append(ws.cell(1,i+1).value)
     wb.close()
     return lon_data_list, lat_data_list ,name_data_list
-
 lon_data_list, lat_data_list ,name_data_list = rain_station_location_data()
 
 
-##36 km統計雨量資料
+##雨量資料
 rain_data_path = data_top_path+"/研究所/雨量資料/對流性降雨36km統計/"+year+"/"+year+"_"+month+"_36km_rain_data.xlsx"
 wb_rain_data = load_workbook(rain_data_path)
 ws_rain_data = wb_rain_data[month]
-max_col_rain_data = ws_rain_data.max_column
+rain_data_max_col = ws_rain_data.max_column
+
+##閃電資料
+lighting_jump_path = data_top_path+"/研究所/閃電資料/lighting_jump/"+year+"_"+month+"_lighting_jump.xlsx"
+wb_lighting_jump = load_workbook(lighting_jump_path)
+ws_lighting_jump = wb_lighting_jump[month]
+flash_data_max_row = ws_lighting_jump.max_row
+
+#建立閃電資料測站在excel的位置
+flash_station_lc_list = [] #位置在list的lc+1
+for lc in range(1,flash_data_max_row+1):
+    flash_station_lc_list.append(ws_lighting_jump.cell(lc,1).value)
+# print(flash_station_lc_list)
 
 
 
-rain_36km_list = [] #站點名稱
-rain_36km_count_list = [] #降雨次數
-rain_36km_lon_list = []
-rain_36km_lat_list = []
-
-##降雨資料讀取
 
 
-for col in range(1,max_col_rain_data+1):
-    row = 2
-    print(col)
-    while ws_rain_data.cell(row,col).value != None:
-        rain_data = ws_rain_data.cell(row,col).value
-        rain_data_style = ws_rain_data.cell(row,col).font.bold  #判斷資料是否為粗體
-        # print(rain_data_style)
+##前估
+#個測站命中的list
+prefigurance_hit_list = [0 for n in name_data_list]
+
+
+#資料讀取
+for rain_data_col in tqdm(range(1,rain_data_max_col+1),desc='前估'):
+    
+    rain_data_row = 2
+    end_rain_time = datetime.strptime(ws_rain_data.cell(1,rain_data_col).value, "%d%H%M")
+    start_rain_time = end_rain_time - timedelta(minutes=50)
+    end_rain_time = end_rain_time.strftime("%d%H%M")
+    start_rain_time = start_rain_time.strftime("%d%H%M")
+    # print(start_rain_time,end_rain_time)
+
+    while ws_rain_data.cell(rain_data_row,rain_data_col).value != None:
+        rain_data_style = ws_rain_data.cell(rain_data_row,rain_data_col).font.bold 
+
         if rain_data_style == False:
-            if rain_36km_list.count(rain_data) == 0:
-                rain_36km_list.append(rain_data)
-                rain_36km_count_list.append(1)
-                rain_36km_lon_list.append(lon_data_list[name_data_list.index(rain_data)])
-                rain_36km_lat_list.append(lat_data_list[name_data_list.index(rain_data)])
-            else:
-                rain_36km_count_list[rain_36km_list.index(rain_data)] += 1
-        
-        row += 1
+            rain_data_station = ws_rain_data.cell(rain_data_row,rain_data_col).value
+            # print(rain_data_station)
 
-print(rain_36km_count_list)
-# print(len(rain_36km_list))
+            lighting_jump_col = 2
+            while ws_lighting_jump.cell(flash_station_lc_list.index(rain_data_station)+1,lighting_jump_col).value != None:
+                lighting_jump_data = ws_lighting_jump.cell(flash_station_lc_list.index(rain_data_station)+1,lighting_jump_col).value
+                lighting_jump_data = datetime.strptime(lighting_jump_data,"%Y-%m-%d %H:%M").strftime("%d%H%M")
 
-# ##debug區
-print(sum(rain_36km_count_list))
-# # 初步判定資料無誤(2024/06/15)
+                if start_rain_time <= lighting_jump_data <= end_rain_time:
+                    # print(rain_data_station)
+                    prefigurance_hit_list[name_data_list.index(rain_data_station)] += 1
+                lighting_jump_col += 1
+            # print(rain_data_station)
+        rain_data_row += 1
+
+# print(prefigurance_hit_list)
+
+
+#清除資料為0的測站
+while prefigurance_hit_list.count(0) != 0:
+    lc = prefigurance_hit_list.index(0)
+    prefigurance_hit_list.pop(lc)
+    lon_data_list.pop(lc)
+    lat_data_list.pop(lc)
+    
 
 
 
-## 繪圖
+##前估繪圖
 
 # 設定經緯度範圍
 lon_min, lon_max = 120, 122.1
@@ -107,10 +132,10 @@ gridlines.right_labels = False
 ## 計算某個地方達到10mm/10min的次數 + colorbar
 color_list = []
 
-level = [0,50,100,150,200,300,350,400,500]
+level = [0,5,10,20,30,40,50,60,70]
 color_box = ['silver','purple','darkviolet','blue','g','y','orange','r']
 
-for nb in rain_36km_count_list:
+for nb in prefigurance_hit_list:
     more_then_maxma_or_not = 0
     for j in range(len(level)-1):
         if level[j]<nb<=level[j+1]:
@@ -119,12 +144,12 @@ for nb in rain_36km_count_list:
             break
     if more_then_maxma_or_not == 0:
         color_list.append('lime')
-        print(nb)
+        # print(nb)
 # print(len(color_list))
 
 
 # 標記經緯度點
-ax.scatter(rain_36km_lon_list, rain_36km_lat_list, color=color_list, s=3, zorder=5)
+ax.scatter(lon_data_list, lat_data_list, color=color_list, s=3, zorder=5)
 
 # colorbar setting
 
@@ -142,18 +167,16 @@ cbar1 = plt.colorbar(im, extend='neither', ticks=level)
 plt.xlabel('Longitude')
 plt.ylabel('Latitude')
 
-ax.set_title(year+"年"+month+"月"+'\n雨量>10mm/10min 事件數\nmax = '+ str(max(rain_36km_count_list)))
+ax.set_title(year+"年"+month+"月"+'\n前估 max = '+ str(max(prefigurance_hit_list)))
 
 
 ## 這是用來確認colorbar的配置
 fig,ax1 = plt.subplots()
-X = [i for i in range(len(rain_36km_count_list))]
-Y = sorted(rain_36km_count_list)
+X = [i for i in range(len(prefigurance_hit_list))]
+Y = sorted(prefigurance_hit_list)
 ax1.plot(X,Y,color =  'black',marker = "*",linestyle = '--') #折線圖
 ax1.set_title('這是用來確認colorbar的配置')
 
 
 # 顯示地圖
 plt.show()
-
-

@@ -7,7 +7,7 @@ from openpyxl.styles import Font
 year = '2021' #年分
 month = '06' #月份
 data_top_path = "C:/Users/steve/python_data"
-data_top_path = "C:/Users/steve/python_data"
+
 
 ## 測站數file 讀取
 station_number_path = data_top_path+"/研究所/雨量資料/"+year+"測站範圍內測站數.xlsx"
