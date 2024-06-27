@@ -46,57 +46,61 @@ wb_lighting_jump = load_workbook(lighting_jump_path)
 ws_lighting_jump = wb_lighting_jump[month]
 lighting_jump_data_max_row = ws_lighting_jump.max_row
 
-#建立閃電資料測站在excel的位置
-lighting_jump_station_lc_list = [] #位置在list的lc+1
-for lc in range(1,lighting_jump_data_max_row+1):
-    lighting_jump_station_lc_list.append(ws_lighting_jump.cell(lc,1).value)
-# print(lighting_jump_station_lc_list)
+##降雨資料時間list
+rain_time_lc_list = []
+for lc in range(1,rain_data_max_col+1):
+    rain_time_lc_list.append(ws_rain_data.cell(1,lc).value)
+# print(rain_time_lc_list)
 
 
-
-
-
-##前估
-#個測站命中的list
-prefigurance_hit_list = [0 for n in name_data_list]
+##後符
+post_agreement_hit_list = [0 for n in name_data_list]
 
 
 #資料讀取
-for rain_data_col in tqdm(range(1,rain_data_max_col+1),desc='前估'):
-    
-    rain_data_row = 2
-    end_rain_time = datetime.strptime(ws_rain_data.cell(1,rain_data_col).value, "%d%H%M")
-    start_rain_time = end_rain_time - timedelta(minutes=50)
-    end_rain_time = end_rain_time.strftime("%d%H%M")
-    start_rain_time = start_rain_time.strftime("%d%H%M")
-    # print(start_rain_time,end_rain_time)
+for lighting_jump_data_row in tqdm(range(1,lighting_jump_data_max_row+1),desc='後符'):
 
-    while ws_rain_data.cell(rain_data_row,rain_data_col).value != None:
-        rain_data_style = ws_rain_data.cell(rain_data_row,rain_data_col).font.bold 
+    lighting_jump_station_name = ws_lighting_jump.cell(lighting_jump_data_row,1).value
+    # print(lighting_jump_station_name)
+    lighting_jump_data_col = 2
+    while ws_lighting_jump.cell(lighting_jump_data_row,lighting_jump_data_col).value != None:
+        lighting_jump_data = ws_lighting_jump.cell(lighting_jump_data_row,lighting_jump_data_col).value
+        start_lighting_jump_time = lighting_jump_data[:len(lighting_jump_data)-1] + '0'
+        start_lighting_jump_time = datetime.strptime(start_lighting_jump_time, "%Y-%m-%d %H:%M")
+        if start_lighting_jump_time.minute % 10 != 0:
+            end_lighting_jump_time = start_lighting_jump_time + timedelta(minutes=50)            
+        else: 
+            start_lighting_jump_time = start_lighting_jump_time + timedelta(minutes=10)
+            end_lighting_jump_time = start_lighting_jump_time + timedelta(minutes=40)
+        # print(lighting_jump_data)    
+        start_lighting_jump_time = start_lighting_jump_time.strftime("%d%H%M")
+        end_lighting_jump_time = end_lighting_jump_time.strftime("%d%H%M")
 
-        if rain_data_style == False:
-            rain_data_station = ws_rain_data.cell(rain_data_row,rain_data_col).value
-            # print(rain_data_station)
+        # print(start_lighting_jump_time,end_lighting_jump_time)
+        start_lighting_jump_lc = rain_time_lc_list.index(start_lighting_jump_time)
+        end_lighting_jump_lc = rain_time_lc_list.index(end_lighting_jump_time)
 
-            lighting_jump_col = 2
-            while ws_lighting_jump.cell(lighting_jump_station_lc_list.index(rain_data_station)+1,lighting_jump_col).value != None:
-                lighting_jump_data = ws_lighting_jump.cell(lighting_jump_station_lc_list.index(rain_data_station)+1,lighting_jump_col).value
-                lighting_jump_data = datetime.strptime(lighting_jump_data,"%Y-%m-%d %H:%M").strftime("%d%H%M")
+        for lc in range(start_lighting_jump_lc+1,end_lighting_jump_lc+2):
+            # print(ws_rain_data.cell(1,lc).value)
+            rain_data_row = 2
+            while ws_rain_data.cell(rain_data_row,lc).value != None:
+                rain_data =  ws_rain_data.cell(rain_data_row,lc).value
+                if lighting_jump_station_name == rain_data:
+                    post_agreement_hit_list[name_data_list.index(lighting_jump_station_name)] += 1
+                    # print(lc)
+                    break
+                rain_data_row += 1
 
-                if start_rain_time <= lighting_jump_data <= end_rain_time:
-                    # print(rain_data_station)
-                    prefigurance_hit_list[name_data_list.index(rain_data_station)] += 1
-                lighting_jump_col += 1
-            # print(rain_data_station)
-        rain_data_row += 1
+        
+        lighting_jump_data_col += 1
 
-# print(prefigurance_hit_list)
 
+# print(post_agreement_hit_list)
 
 #清除資料為0的測站
-while prefigurance_hit_list.count(0) != 0:
-    lc = prefigurance_hit_list.index(0)
-    prefigurance_hit_list.pop(lc)
+while post_agreement_hit_list.count(0) != 0:
+    lc = post_agreement_hit_list.index(0)
+    post_agreement_hit_list.pop(lc)
     lon_data_list.pop(lc)
     lat_data_list.pop(lc)
     
@@ -104,7 +108,7 @@ wb_lighting_jump.close()
 wb_rain_data.close()
 
 
-##前估繪圖
+##後符繪圖
 
 # 設定經緯度範圍
 lon_min, lon_max = 120, 122.1
@@ -136,7 +140,7 @@ color_list = []
 level = [0,5,10,20,30,40,50,60,70]
 color_box = ['silver','purple','darkviolet','blue','g','y','orange','r']
 
-for nb in prefigurance_hit_list:
+for nb in post_agreement_hit_list:
     more_then_maxma_or_not = 0
     for j in range(len(level)-1):
         if level[j]<nb<=level[j+1]:
@@ -168,13 +172,13 @@ cbar1 = plt.colorbar(im,ax=ax, extend='neither', ticks=level)
 plt.xlabel('Longitude')
 plt.ylabel('Latitude')
 
-ax.set_title(year+"年"+month+"月"+'\n前估 max = '+ str(max(prefigurance_hit_list)))
+ax.set_title(year+"年"+month+"月"+'\n後符 max = '+ str(max(post_agreement_hit_list)))
 
 
 ## 這是用來確認colorbar的配置
 fig,ax1 = plt.subplots()
-X = [i for i in range(len(prefigurance_hit_list))]
-Y = sorted(prefigurance_hit_list)
+X = [i for i in range(len(post_agreement_hit_list))]
+Y = sorted(post_agreement_hit_list)
 ax1.plot(X,Y,color =  'black',marker = "*",linestyle = '--') #折線圖
 ax1.set_title('這是用來確認colorbar的配置')
 
