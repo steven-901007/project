@@ -56,17 +56,24 @@ for lc in range(1,rain_data_max_col+1):
 ##後符
 post_agreement_hit_list = [0 for n in name_data_list]
 
+## 後符總量(lighting jump and rain + lighting jump and non_rain)
+total_post_agreement_list = [0 for n in name_data_list]
 
 #資料讀取
 for lighting_jump_data_row in tqdm(range(1,lighting_jump_data_max_row+1),desc='後符'):
 
     lighting_jump_station_name = ws_lighting_jump.cell(lighting_jump_data_row,1).value
     # print(lighting_jump_station_name)
+
     lighting_jump_data_col = 2
     while ws_lighting_jump.cell(lighting_jump_data_row,lighting_jump_data_col).value != None:
+
+
+        total_post_agreement_list[name_data_list.index(lighting_jump_station_name)] += 1
         lighting_jump_data = ws_lighting_jump.cell(lighting_jump_data_row,lighting_jump_data_col).value
         start_lighting_jump_time = lighting_jump_data[:len(lighting_jump_data)-1] + '0'
         start_lighting_jump_time = datetime.strptime(start_lighting_jump_time, "%Y-%m-%d %H:%M")
+
         if start_lighting_jump_time.minute % 10 != 0:
             end_lighting_jump_time = start_lighting_jump_time + timedelta(minutes=50)            
         else: 
@@ -85,17 +92,15 @@ for lighting_jump_data_row in tqdm(range(1,lighting_jump_data_max_row+1),desc='�
             rain_data_row = 2
             while ws_rain_data.cell(rain_data_row,lc).value != None:
                 rain_data =  ws_rain_data.cell(rain_data_row,lc).value
-                if lighting_jump_station_name == rain_data:
+                rain_style = ws_rain_data.cell(rain_data_row,lc).font.bold
+                if lighting_jump_station_name == rain_data and rain_style == False:
                     post_agreement_hit_list[name_data_list.index(lighting_jump_station_name)] += 1
                     # print(lc)
-                    break
-                rain_data_row += 1
 
-        
+                rain_data_row += 1
+        total_post_agreement_list[name_data_list.index(lighting_jump_station_name)] = lighting_jump_data_col-1
         lighting_jump_data_col += 1
 
-
-# print(post_agreement_hit_list)
 
 #清除資料為0的測站
 while post_agreement_hit_list.count(0) != 0:
@@ -103,7 +108,16 @@ while post_agreement_hit_list.count(0) != 0:
     post_agreement_hit_list.pop(lc)
     lon_data_list.pop(lc)
     lat_data_list.pop(lc)
-    
+    total_post_agreement_list.pop(lc)
+
+post_agreement_hit_persent_list = [] # 後符命中率
+for i in range(len(total_post_agreement_list)):
+    post_agreement_hit_persent_list.append(post_agreement_hit_list[i]/(total_post_agreement_list[i]+post_agreement_hit_list[i])*100)
+
+
+
+
+
 wb_lighting_jump.close()
 wb_rain_data.close()
 
@@ -179,6 +193,80 @@ ax.set_title(year+"年"+month+"月"+'\n後符 max = '+ str(max(post_agreement_hi
 fig,ax1 = plt.subplots()
 X = [i for i in range(len(post_agreement_hit_list))]
 Y = sorted(post_agreement_hit_list)
+ax1.plot(X,Y,color =  'black',marker = "*",linestyle = '--') #折線圖
+ax1.set_title('這是用來確認colorbar的配置')
+
+
+## 後符命中率
+# 設定經緯度範圍
+lon_min, lon_max = 120, 122.1
+lat_min, lat_max = 21.5, 25.5
+
+plt.figure(figsize=(10, 10))
+ax = plt.axes(projection=ccrs.PlateCarree())
+ax.set_xlim(lon_min, lon_max)
+ax.set_ylim(lat_min, lat_max)
+
+plt.rcParams['font.sans-serif'] = [u'MingLiu']  # 設定字體為'細明體'
+plt.rcParams['axes.unicode_minus'] = False  # 用來正常顯示正負號
+
+# 加載台灣的行政邊界
+taiwan_shapefile = data_top_path+"/研究所/Taiwan_map_data/COUNTY_MOI_1090820.shp"  # 你需要提供台灣邊界的shapefile文件
+shape_feature = ShapelyFeature(Reader(taiwan_shapefile).geometries(),
+                               ccrs.PlateCarree(), edgecolor='black', facecolor='white')
+ax.add_feature(shape_feature)
+
+
+# 加入經緯度格線
+gridlines = ax.gridlines(draw_labels=True, linestyle='--')
+gridlines.top_labels = False
+gridlines.right_labels = False
+
+## 計算某個地方達到10mm/10min的次數 + colorbar
+color_list = []
+
+level = [0,5,10,20,30,40,50,60,70]
+color_box = ['silver','purple','darkviolet','blue','g','y','orange','r']
+
+for nb in post_agreement_hit_persent_list:
+    more_then_maxma_or_not = 0
+    for j in range(len(level)-1):
+        if level[j]<nb<=level[j+1]:
+            color_list.append(color_box[j])
+            more_then_maxma_or_not = 1
+            break
+    if more_then_maxma_or_not == 0:
+        color_list.append('lime')
+        # print(nb)
+# print(len(color_list))
+
+
+# 標記經緯度點
+ax.scatter(lon_data_list, lat_data_list, color=color_list, s=3, zorder=5)
+
+# colorbar setting
+
+nlevel = len(level)
+cmap1 = mpl.colors.ListedColormap(color_box, N=nlevel)
+cmap1.set_over('fuchsia')
+cmap1.set_under('black')
+norm1 = mcolors.Normalize(vmin=min(level), vmax=max(level))
+norm1 = mcolors.BoundaryNorm(level, nlevel, extend='max')
+im = cm.ScalarMappable(norm=norm1, cmap=cmap1)
+cbar1 = plt.colorbar(im,ax=ax, extend='neither', ticks=level)
+
+
+# 加入標籤
+plt.xlabel('Longitude')
+plt.ylabel('Latitude')
+
+ax.set_title(year+"年"+month+"月"+'\n後符命中率 [%] max = '+ str(max(post_agreement_hit_persent_list)))
+
+
+## 這是用來確認colorbar的配置
+fig,ax1 = plt.subplots()
+X = [i for i in range(len(post_agreement_hit_persent_list))]
+Y = sorted(post_agreement_hit_persent_list)
 ax1.plot(X,Y,color =  'black',marker = "*",linestyle = '--') #折線圖
 ax1.set_title('這是用來確認colorbar的配置')
 
