@@ -4,6 +4,7 @@ import re
 from datetime import datetime, timedelta
 import statistics
 from tqdm import tqdm ##跑進度條的好玩東西
+import pandas as pd
 
 year = '2021' #年分
 month = '06' #月份
@@ -62,49 +63,11 @@ ws_lighting_jump = wb_lighting_jump.active
 ws_lighting_jump.title = month
 
 
-## 讀取資料的定值
-need_t_list = []
-raw_data_lon_list = []
-raw_data_lat_list = []
-data_path = data_top_path+'/研究所/閃電資料/raw_data/'+year+'/'+year+month+'.txt'
-delimiter_pattern = re.compile(r',|\n') #當資料分隔符號有"空行"or"空白"or"*"等多個符號時使用
-try:
-    with open(data_path, 'r',encoding='utf-8') as file:
-        next(file)
-
-        for line in file:
-            # 使用正則表達式來分割每一行
-            elements = re.split(delimiter_pattern, line.strip())
-            # print(elements) #以列表顯示
-            t = elements[0]
-            need_t = t[:len(t)-3]
-            # semple_t = t[0:4] + t[5:7] + t[8:10] + t[11:13] + t[14:16]  #yyyymmddHHMM
-            raw_data_lon = round(float(elements[2]),3)
-            raw_data_lat = round(float(elements[3]),3)
-            need_t_list.append(need_t)
-            raw_data_lon_list.append(raw_data_lon)
-            raw_data_lat_list.append(raw_data_lat)
-            # print(t,raw_data_lon,raw_data_lat)
-
-except:
-    with open(data_path, 'r') as file:
-        next(file)
-
-        for line in file:
-            # 使用正則表達式來分割每一行
-            elements = re.split(delimiter_pattern, line.strip())
-            # print(elements) #以列表顯示
-            t = elements[0]
-            need_t = t[:len(t)-3]
-            # semple_t = t[0:4] + t[5:7] + t[8:10] + t[11:13] + t[14:16]  #yyyymmddHHMM
-            raw_data_lon = round(float(elements[2]),3)
-            raw_data_lat = round(float(elements[3]),3)
-            need_t_list.append(need_t)
-            raw_data_lon_list.append(raw_data_lon)
-            raw_data_lat_list.append(raw_data_lat)
-            # print(t,raw_data_lon,raw_data_lat)
-file.close()
-
+## 讀取閃電資料
+flash_data_path = data_top_path+'/研究所/閃電資料/raw_data/'+year+'/'+year+month+'.txt'
+flash_rawdata = pd.read_csv(flash_data_path,header = 0)
+flash_rawdata['simple_time'] = flash_rawdata['日期時間'].str[:4] + flash_rawdata['日期時間'].str[5:7] + flash_rawdata['日期時間'].str[8:10] + flash_rawdata['日期時間'].str[11:13] + flash_rawdata['日期時間'].str[14:16]
+# print(flash_rawdata['simple_time'],flash_rawdata['經度'],flash_rawdata['緯度'])
 
 
 row = 1
