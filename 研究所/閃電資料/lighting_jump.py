@@ -5,11 +5,15 @@ from datetime import datetime, timedelta
 import statistics
 from tqdm import tqdm ##跑進度條的好玩東西
 import pandas as pd
+from geopy.distance import geodesic
+
+
 
 year = '2021' #年分
 month = '06' #月份
 data_top_path = "C:/Users/steve/python_data"
 alpha = 2 #統計檢定
+
 
 ## 讀取雨量站經緯度資料
 def rain_station_location_data():
@@ -71,64 +75,70 @@ flash_rawdata['simple_time'] = flash_rawdata['日期時間'].str[:4] + flash_raw
 
 
 row = 1
-for station_name in name_data_list:
+# for station_name in name_data_list:
+station_name = name_data_list[0]
 
-    ws_lighting_jump.cell(row,1).value = station_name
-    col = 2
+ws_lighting_jump.cell(row,1).value = station_name
+col = 2
 
+station_lon = lon_data_list[name_data_list.index(station_name)]
+station_lat = lat_data_list[name_data_list.index(station_name)]
+station_lat_lon = (station_lat,station_lon)
+# print(station_name,station_lon,station_lat)
 
-    station_lon = lon_data_list[name_data_list.index(station_name)]
-    station_lat = lat_data_list[name_data_list.index(station_name)]
-    print(station_name,station_lon,station_lat)
-    flash_data_time_list = []
+flash_data_time_list = []
 
-    for time in range(len(need_t_list)):
-        
-        if haversine(raw_data_lat_list[time],raw_data_lon_list[time],station_lat,station_lon) < dis:
-            flash_data_time_list.append(need_t_list[time])
+flash_rawdata['distance_km'] = flash_rawdata.apply(lambda row: geodesic((row['緯度'], row['經度']), station_lat_lon).km, axis=1)
+# print(flash_rawdata)
 
+target_data = flash_rawdata[flash_rawdata['distance_km'] < dis].reset_index(drop=True)# 篩選距離小於dis的數據並重置索引
 
-    # print(flash_data_time_list)
+# 計算simple_time的出現次數
+simple_time_counts = target_data['simple_time'].value_counts().reset_index()
+simple_time_counts.columns = ['simple_time', 'count']
 
-    flash_data_time_unique_list = list(dict.fromkeys(flash_data_time_list)) #移除重複項
-    flash_data_time_count_list = [flash_data_time_list.count(x) for x in flash_data_time_unique_list] #計算每個flash_data_time_unique_list項中原data有幾個
-    # print(flash_data_time_unique_list)
-    # print(flash_data_time_count_list)
+target_data = target_data.merge(simple_time_counts, on='simple_time', how='left')# 將計算的次數合併回target_data
 
-    for time in tqdm(flash_data_time_unique_list):
-        # print(time)
-        SR_list = []
-        time_dt = datetime.strptime(time, "%Y-%m-%d %H:%M")
+target_data_simple_time = target_data.drop_duplicates(subset=['simple_time'])# 移除simple_time重複的數據，保留首次出現的行
 
-        for start in range(6):
-            start_time_dt = time_dt + timedelta(minutes=start)
-            end_time_dt = start_time_dt + timedelta(minutes=5)
-            # print(start_time_dt,end_time_dt)
-
-            flash_sum_for_SR = 0
-            for chack_time in range(len(flash_data_time_unique_list)):
-                chack_time_dt = datetime.strptime(flash_data_time_unique_list[chack_time], "%Y-%m-%d %H:%M")
-
-                if start_time_dt <= chack_time_dt < end_time_dt:
-                    flash_sum_for_SR += flash_data_time_count_list[chack_time]
-            SR_list.append(flash_sum_for_SR)
-        # print(SR_list)
-        SR_1_5_list = SR_list[:5]
-        SR_6 = SR_list[5]
-
-        if SR_1_5_list.count(0) == 0:
-            SR_1_5_mean = statistics.mean(SR_1_5_list)
-            SR_1_5_std = statistics.pstdev(SR_1_5_list)
-
-            if SR_6 > SR_1_5_mean + alpha*SR_1_5_std:
-                # print(time)
-                ws_lighting_jump.cell(row,col).value = time
-                col += 1
-    row += 1
+print(target_data_simple_time)
 
 
 
+for time in tqdm(flash_data_time_unique_list):
+    # print(time)
+    SR_list = []
+    time_dt = datetime.strptime(time, "%Y-%m-%d %H:%M")
+
+    for start in range(6):
+        start_time_dt = time_dt + timedelta(minutes=start)
+        end_time_dt = start_time_dt + timedelta(minutes=5)
+        # print(start_time_dt,end_time_dt)
+
+        flash_sum_for_SR = 0
+        for chack_time in range(len(flash_data_time_unique_list)):
+            chack_time_dt = datetime.strptime(flash_data_time_unique_list[chack_time], "%Y-%m-%d %H:%M")
+
+            if start_time_dt <= chack_time_dt < end_time_dt:
+                flash_sum_for_SR += flash_data_time_count_list[chack_time]
+        SR_list.append(flash_sum_for_SR)
+    # print(SR_list)
+    SR_1_5_list = SR_list[:5]
+    SR_6 = SR_list[5]
+
+    if SR_1_5_list.count(0) == 0:
+        SR_1_5_mean = statistics.mean(SR_1_5_list)
+        SR_1_5_std = statistics.pstdev(SR_1_5_list)
+
+        if SR_6 > SR_1_5_mean + alpha*SR_1_5_std:
+            # print(time)
+            ws_lighting_jump.cell(row,col).value = time
+            col += 1
+row += 1
 
 
-    wb_lighting_jump.save(data_top_path+"/研究所/閃電資料/lighting_jump/"+year+'_'+month+'_lighting_jump.xlsx')    
-print('已建立' +data_top_path+"/研究所/閃電資料/lighting_jump/"+year+'_'+month+'_lighting_jump.xlsx')
+
+
+
+#     wb_lighting_jump.save(data_top_path+"/研究所/閃電資料/lighting_jump/"+year+'_'+month+'_lighting_jump.xlsx')    
+# print('已建立' +data_top_path+"/研究所/閃電資料/lighting_jump/"+year+'_'+month+'_lighting_jump.xlsx')
