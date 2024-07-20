@@ -1,39 +1,40 @@
-from openpyxl import Workbook
+import pandas as pd
 import glob
 import re
+import os
+from tqdm import tqdm
 
 year = '2021' #年分
 month = '06' #月份
 data_top_path = "C:/Users/steve/python_data"
 
-## 建立存檔file
-wb = Workbook()
-ws = wb.active
-ws.title = month
 
-
-
+##建立資料夾
+def file_set():
+    file_path = data_top_path + "/研究所/雨量資料/對流性降雨data/"+year+"/"+month
+    if not os.path.exists(file_path):
+            os.makedirs(file_path)
+            print(file_path + " 已建立")
+file_set()
 
 ## 讀取每月資料
 
 
-
 month_path = data_top_path+"/研究所/雨量資料/"+year+"_"+month+"/"+month
 result  =glob.glob(month_path+"/*")
-time_lc = 1
-for day_path in result:
+
+for day_path in tqdm(result,desc='資料建立'):
     day = day_path[53:] #日期   
-    print('日期:'+day)
+    # print('日期:'+day)
     
     ## 讀取每日資料
 
     result  =glob.glob(day_path+'/*')
     for rain_data_path in result:
-        time = day+rain_data_path[64:68]
-        # print('時間:'+ten_min)
-        ws.cell(1,time_lc).value = time
-        data_lc = 2 #資料紀錄起始位置
-
+        time = year+month+day+rain_data_path[64:68]
+        # print('時間:'+time)
+        rain_data_list = []
+        
         # 每10分鐘資料處理 rain data >10mm (10min)
         line = 0
         with open(rain_data_path, 'r') as files:
@@ -53,15 +54,13 @@ for day_path in result:
                             rain_data_of_24_hour = float(elements[11]) #HOUR_24
 
                             if 10<=rain_data_of_10min <= rain_data_of_3_hour <= rain_data_of_12_hour <= rain_data_of_24_hour: #QC
-                                ws.cell(data_lc,time_lc).value = station_name
-                                data_lc += 1
+                                rain_data_list.append(station_name)
         
                 line += 1
-        time_lc += 1
+        if rain_data_list != []:
+            rain_data_save = {
+                'station name':rain_data_list
+            }
+            pd.DataFrame(rain_data_save, dtype=str).to_csv(data_top_path + "/研究所/雨量資料/對流性降雨data/"+year+"/"+month+"/"+time+'.csv',index=False)
 
-
-
-
-wb.save(data_top_path+"/研究所/雨量資料/對流性降雨data/"+year+"/"+year+"_"+month+"_rain_data.xlsx")
-print("已建立\nC:/Users/steve/python_data/研究所/雨量資料/對流性降雨data/"+year+"/"+year+"_"+month+"_rain_data.xlsx")
 

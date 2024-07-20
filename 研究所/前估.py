@@ -84,7 +84,7 @@ for rain_data_col in tqdm(range(1,rain_data_max_col+1),desc='前估'):
             lighting_jump_col = 2
             while ws_lighting_jump.cell(lighting_jump_station_lc_list.index(rain_data_station)+1,lighting_jump_col).value != None:
                 lighting_jump_data = ws_lighting_jump.cell(lighting_jump_station_lc_list.index(rain_data_station)+1,lighting_jump_col).value
-                lighting_jump_data = datetime.strptime(lighting_jump_data,"%Y-%m-%d %H:%M").strftime("%d%H%M")
+                lighting_jump_data = lighting_jump_data.strftime("%d%H%M")
 
                 if start_rain_time <= lighting_jump_data <= end_rain_time:
                     # print(rain_data_station)
@@ -143,7 +143,7 @@ gridlines.right_labels = False
 ## 計算某個地方達到10mm/10min的次數 + colorbar
 color_list = []
 
-level = [0,5,10,20,30,40,50,60,70]
+level = [0,50,100,150,200,500,700,1000,1500]
 color_box = ['silver','purple','darkviolet','blue','g','y','orange','r']
 
 for nb in prefigurance_hit_list:
@@ -215,7 +215,7 @@ gridlines.right_labels = False
 ## 計算某個地方達到10mm/10min的次數 + colorbar
 color_list = []
 
-level = [0,1,2,4,6,8,10,15,20]
+level = [0,10,20,30,40,50,60,70,80]
 color_box = ['silver','purple','darkviolet','blue','g','y','orange','r']
 
 for nb in prefigurance_hit_persent_list:

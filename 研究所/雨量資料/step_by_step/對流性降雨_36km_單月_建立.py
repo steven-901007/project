@@ -1,85 +1,75 @@
-from openpyxl import Workbook,load_workbook
+## 對流性降雨_36km_單月_建立 的測試修改程式
+from openpyxl import load_workbook
 import glob
 import re
-from openpyxl.styles import Font
-
+import pandas as pd
+import os
+from tqdm import tqdm
 
 year = '2021' #年分
 month = '06' #月份
 data_top_path = "C:/Users/steve/python_data"
+dis = 36
 
+##建立資料夾
+def file_set():
+    file_path = data_top_path + "/研究所/雨量資料/對流性降雨"+str(dis)+"km統計/"+year +'/' + month
+    if not os.path.exists(file_path):
+            os.makedirs(file_path)
+            print(file_path + " 已建立")
+file_set()
 
 ## 測站數file 讀取
 station_number_path = data_top_path+"/研究所/雨量資料/"+year+"測站範圍內測站數.xlsx"
 wb_station_number = load_workbook(station_number_path)
 ws_station_number = wb_station_number[month]
 station_name_count = ws_station_number.max_column #站點數量
-
-
-## 建立存檔file
-wb_rain_more_10mm_36km_setting = Workbook()
-ws_rain_more_10mm_36km_setting = wb_rain_more_10mm_36km_setting.active
-ws_rain_more_10mm_36km_setting.title = month
+#建立測站在excel位置的list
+station_lc_in_excel_list = [] #list的位置跟excel上的位置差1 list+1 = excel
+for lc in range(station_name_count):
+    station_lc_in_excel_list.append(ws_station_number.cell(1,lc+1).value)
 
 
 
-## 強降雨測站file 讀取
-rain_more_10mm_data_path = data_top_path+"/研究所/雨量資料/對流性降雨data/"+year+"/"+year+"_"+month+"_rain_data.xlsx"
-wb_rain_more_10mm_data = load_workbook(rain_more_10mm_data_path)
-sheet_name_list = wb_rain_more_10mm_data.sheetnames #日期
-# print(sheet_name_list)
+#儲存list
+rain_data_36km_sta_list_list = [[] for i in range(station_name_count)] ##二階list
+# print(rain_data_36km_sta_list_list)
 
 
-# 讀取強降雨測站資料
+##處理雨量資料(未做36km統計)
+rain_data_paths = data_top_path + "/研究所/雨量資料/對流性降雨data/"+year+"/"+month+"/**.csv"
 
-ws_rain_more_10mm_data = wb_rain_more_10mm_data[month]
-max_col_for_rain_more_10mm_data = ws_rain_more_10mm_data.max_column # time
+result  =glob.glob(rain_data_paths)
 
+for rain_data_path in tqdm(result,desc='資料讀取+紀錄'):
+    time = rain_data_path[54:66]
+    # print(time)
+    rain_datas = pd.read_csv(rain_data_path, dtype=str)
+    # print(rain_datas)
 
-for col in range(1,max_col_for_rain_more_10mm_data+1): #分鐘
-    row = 2
-    time = year+month+ws_rain_more_10mm_data.cell(1,col).value #yyyymmddHHMM
-    print(time)
-    ws_rain_more_10mm_36km_setting.cell(1,col).value = str(ws_rain_more_10mm_data.cell(1,col).value)
-    # print(col)
-
-    
-    col_for_rain_more_10mm_36km_setting = 2
-    while ws_rain_more_10mm_data.cell(row,col).value != None:
-        rain_more_10mm_data = ws_rain_more_10mm_data.cell(row,col).value
-        # print(rain_more_10mm_data)
-        
-        for station_count in range(1,station_name_count+1):
-            if rain_more_10mm_data == ws_station_number.cell(1,station_count).value:
-                col_for_station_number = 4
-                while ws_station_number.cell(col_for_station_number,station_count).value != None:
-                    ws_rain_more_10mm_36km_setting.cell(col_for_rain_more_10mm_36km_setting,col).value = ws_station_number.cell(col_for_station_number,station_count).value
-                    col_for_station_number += 1
-                    col_for_rain_more_10mm_36km_setting += 1
-        
-        row += 1
-
-    ## 確認每個時間點的同一地點資料是否只有一筆(重複的部分設為粗體紅字)
-    chack_row = 2
-    chack_list = []
-    while ws_rain_more_10mm_36km_setting.cell(chack_row,col).value != None:
-        tg_data = ws_rain_more_10mm_36km_setting.cell(chack_row,col).value
-        if chack_list.count(tg_data) == 0:
-            chack_list.append(tg_data)
-
-        else:               
-            ws_rain_more_10mm_36km_setting.cell(chack_row,col).font = Font (bold = True , color= "FFFF0000")
-
-        chack_row += 1
-
-                
-
+    for index, row in rain_datas.iterrows():
+        rain_data_station_name = row['station name']
+        # print(row['station name'])
+        data_raw = station_lc_in_excel_list.index(rain_data_station_name) + 1
+        data_col = 4
+        while ws_station_number.cell(data_col,data_raw).value != None:
+            # print(ws_station_number.cell(data_col,data_raw).value)
+            data = ws_station_number.cell(data_col,data_raw).value
+            save_list_lc = rain_data_36km_sta_list_list[station_lc_in_excel_list.index(data)]
+            if save_list_lc.count(time) == 0:
+                save_list_lc.append(time)
             
-    
-    
 
 
+            data_col += 1
+# print(rain_data_36km_sta_list_list)
+wb_station_number.close()
 
-
-wb_rain_more_10mm_36km_setting.save(data_top_path+"/研究所/雨量資料/對流性降雨36km統計/"+year+"/"+year+"_"+month+"_36km_rain_data.xlsx")
-print("已建立\n"+data_top_path+"/研究所/雨量資料/對流性降雨36km統計/"+year+"/"+year+"_"+month+"_36km_rain_data.xlsx")
+##資料建立
+for station in tqdm(range(len(rain_data_36km_sta_list_list)),desc='資料建立'):
+    if rain_data_36km_sta_list_list[station] != []:
+        save_data = {
+            'time data':rain_data_36km_sta_list_list[station]
+        }
+        save_path = data_top_path + "/研究所/雨量資料/對流性降雨"+str(dis)+"km統計/"+year +'/' + month +'/' + station_lc_in_excel_list[station] + '.csv'
+        pd.DataFrame(save_data, dtype=str).to_csv(save_path,index=False)

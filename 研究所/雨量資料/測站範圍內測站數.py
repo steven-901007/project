@@ -2,6 +2,8 @@ import re
 import math
 from openpyxl import Workbook, load_workbook
 import glob
+from tqdm import tqdm
+import time
 
 year = '2021' #年分
 month = '06' #月份
@@ -35,10 +37,10 @@ lon_data_list, lat_data_list ,station_name_data_list = [],[],[]
 ## 讀取每月資料
 month_path = data_top_path+"/研究所/雨量資料/"+year+"_"+month+"/"+month
 result  =glob.glob(month_path+"/*")
-for day_path in result:
+for day_path in tqdm(result,desc='資料處理中....'):
     # print(day_path)
     day = day_path[53:] #日期
-    print('日期:'+day)
+    # print('日期:'+day)
 
     ## 讀取每日資料
     result  =glob.glob(day_path+'/*')
@@ -46,8 +48,9 @@ for day_path in result:
         # print(rain_data_path)
         lon_list, lat_list ,station_name_list = rain_station_location_data(rain_data_path)
         for i in range(len(station_name_list)):
-            if station_name_list[i] == 'A0W100':
-                print(station_name_data_list)
+            if station_name_list[i] == 'C1E890':##rawdata錯誤修改
+                lon_list[i] = 120.6718
+                lat_list[i] = 24.4652
             if station_name_data_list.count(station_name_list[i]) == 0:
                 station_name_data_list.append(station_name_list[i])
                 lon_data_list.append(lon_list[i])
@@ -94,7 +97,7 @@ ws = wb.active
 ws.title = month #創第一個sheet
 
 
-for i in range(len(station_name_data_list)):
+for i in tqdm(range(len(station_name_data_list)),desc='寫入檔案'):
     ws.cell(1,i+1).value = station_name_data_list[i]
     ws.cell(2,i+1).value = lat_data_list[i]
     ws.cell(3,i+1).value = lon_data_list[i]
@@ -104,7 +107,7 @@ for i in range(len(station_name_data_list)):
         if station_dis < 36:
             ws.cell(lc,i+1).value = station_name_data_list[j]
             lc +=1
-    print(i)
+    # print(i)
 
 
 

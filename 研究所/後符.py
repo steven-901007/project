@@ -70,7 +70,7 @@ for lighting_jump_data_row in tqdm(range(1,lighting_jump_data_max_row+1),desc='�
 
 
         total_post_agreement_list[name_data_list.index(lighting_jump_station_name)] += 1
-        lighting_jump_data = ws_lighting_jump.cell(lighting_jump_data_row,lighting_jump_data_col).value
+        lighting_jump_data = ws_lighting_jump.cell(lighting_jump_data_row,lighting_jump_data_col).value.strftime("%Y-%m-%d %H:%M")
         start_lighting_jump_time = lighting_jump_data[:len(lighting_jump_data)-1] + '0'
         start_lighting_jump_time = datetime.strptime(start_lighting_jump_time, "%Y-%m-%d %H:%M")
 
@@ -151,7 +151,7 @@ gridlines.right_labels = False
 ## 計算某個地方達到10mm/10min的次數 + colorbar
 color_list = []
 
-level = [0,5,10,20,30,40,50,60,70]
+level = [0,20,70,150,300,500,700,1000,1210]
 color_box = ['silver','purple','darkviolet','blue','g','y','orange','r']
 
 for nb in post_agreement_hit_list:

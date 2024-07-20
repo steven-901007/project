@@ -91,7 +91,7 @@ gridlines.right_labels = False
 ## 計算某個地方達到10mm/10min的次數 + colorbar
 color_list = []
 
-level = [0,10,30,60,90,120,170,200,250]
+level = [0,100,500,1000,1500,3000,5000,6500,8000]
 color_box = ['silver','purple','darkviolet','blue','g','y','orange','r']
 
 for nb in lighting_jump_count_list:
