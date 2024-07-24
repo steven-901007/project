@@ -33,10 +33,8 @@ lon_data_list, lat_data_list ,name_data_list = rain_station_location_data()
 ## 讀取閃電資料
 flash_data_path = data_top_path+'/研究所/閃電資料/raw_data/'+year+'/'+year+month+'.txt'
 flash_rawdata = pd.read_csv(flash_data_path,header = 0)
-flash_rawdata['simple_time'] = flash_rawdata['日期時間'].str[:4] + flash_rawdata['日期時間'].str[5:7] + flash_rawdata['日期時間'].str[8:10] + flash_rawdata['日期時間'].str[11:13] + flash_rawdata['日期時間'].str[14:16]
-# print(flash_rawdata['simple_time'],flash_rawdata['經度'],flash_rawdata['緯度'])
 
-
+# print(flash_rawdata['日期時間'],flash_rawdata['經度'],flash_rawdata['緯度'])
 
 
 
@@ -50,18 +48,21 @@ fileset(data_top_path + "/研究所/閃電資料/依測站分類/"+str(dis)+'km/
 
 
 for station_nb in tqdm(range(len(name_data_list)),desc='寫入資料'):
+
     station_lon = lon_data_list[station_nb]
     station_lat = lat_data_list[station_nb]
     station_lat_lon = (station_lat,station_lon)
     # print(station_lat_lon)
-    csv_file_path = data_top_path + "/研究所/閃電資料/依測站分類/"+str(dis)+'km/'+year+ '/' + month + '/' + year+month+'_'+str(dis)+'km_'+name_data_list[station_nb] + '.csv'
+
 
     flash_rawdata['distance_km'] = flash_rawdata.apply(lambda row: geodesic((row['緯度'], row['經度']), station_lat_lon).km, axis=1)
-    # print(flash_rawdata['distance_km'])
+    # print(flash_rawdata)
 
-    target_data = flash_rawdata[flash_rawdata['distance_km'] < dis]['simple_time']
+    target_data = pd.to_datetime(flash_rawdata[flash_rawdata['distance_km'] < dis]['日期時間'])
     # print(target_data)
+
     flash_data_to_save = {
-        'yyyymmddHHMM' : target_data,
+        'data time' : target_data,
     }
-    pd.DataFrame(flash_data_to_save).to_csv(csv_file_path,index=False)
+    flash_data_to_path = data_top_path + "/研究所/閃電資料/依測站分類/"+str(dis)+'km/'+year+ '/' + month + '/' + name_data_list[station_nb] + '.csv'
+    pd.DataFrame(flash_data_to_save).to_csv(flash_data_to_path,index=False)

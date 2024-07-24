@@ -10,19 +10,10 @@ import cartopy.feature as cfeature
 data_top_path = "C:/Users/steve/python_data"
 
 # 設定標記點的經緯度
-point_lon = [119.86,120.04,119.89,120.04,119.90,119.89,119.88,119.83,119.82,119.88,119.99,119.92]
-point_lat = [26.47,
-26.43,
-26.44,
-26.10,
-26.31,
-26.32,
-26.22,
-26.35,
-26.35,
-26.33,
-26.31,
-26.43]
+point_lon = [ 120.3877]
+
+point_lat = [ 22.6074]
+
 print(len(point_lon),len(point_lat))
 ## 繪圖
 

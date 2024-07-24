@@ -16,7 +16,7 @@ year = '2021' #年分
 month = '06' #月份
 data_top_path = "C:/Users/steve/python_data"
 dis = 36
-station_name = '467660'
+station_name = 'C0V730'
 
 
 
@@ -72,13 +72,6 @@ flash_rawdata['simple_time'] = flash_rawdata['日期時間'].str[:4] + flash_raw
 
 
 
-##作業區
-
-
-
-
-
-
 ##繪圖
 lon_min, lon_max = 119, 122.1
 lat_min, lat_max = 21.5, 27.5
@@ -103,7 +96,7 @@ gridlines = ax.gridlines(draw_labels=True, linestyle='--')
 gridlines.top_labels = False
 gridlines.right_labels = False
 
-ax.scatter(flash_rawdata['經度'],flash_rawdata['緯度'],color = 'g', s=3, zorder=5)
+# ax.scatter(flash_rawdata['經度'],flash_rawdata['緯度'],color = 'g', s=3, zorder=5)
 ax.scatter(lon_data_list[name_data_list.index(station_name)],lat_data_list[name_data_list.index(station_name)],color = 'r',s = 6,zorder = 7)
 # 加入標籤
 plt.xlabel('Longitude')
