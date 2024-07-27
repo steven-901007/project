@@ -29,6 +29,13 @@ def statistics(a,row):
         return 1
     else:
         return 0
+    
+##計算某個SR裡的數值
+def count_funtion(SR_time_late,row):
+    start_time = row['data time'] + pd.Timedelta(minutes=int(SR_time_late)-1)
+    end_time = start_time + pd.Timedelta(minutes=5)
+
+    return data[((data['data time'] >= start_time) & (data['data time'] < end_time))]['count'].sum()
 
 ## 讀取閃電資料
 month_path = data_top_path + "/研究所/閃電資料/依測站分類/"+str(dis)+"km/"+year+"/"+month+"/**.csv"
@@ -36,7 +43,7 @@ result  =glob.glob(month_path)
 
 for station_path in result:
     # print(station_path)
-# station_path = "C:/Users/steve/python_data/研究所/閃電資料/依測站分類/36km/2021/06/88S950.csv"
+# station_path = "C:/Users/steve/python_data/研究所/閃電資料/依測站分類/36km/2021/06/00H810.csv"
     station_name = station_path[55:61]
     print(station_name)
 
@@ -46,14 +53,6 @@ for station_path in result:
     data['data time'] = pd.to_datetime(data['data time']).dt.floor('min')
     data['if_lj_time'] = data['data time'] + pd.Timedelta(minutes=10)
     # print(data)
-
-
-    ##計算某個SR裡的數值
-    def count_funtion(SR_time_late,row):
-        start_time = row['data time'] + pd.Timedelta(minutes=int(SR_time_late)-1)
-        end_time = start_time + pd.Timedelta(minutes=5)
-
-        return ((data['data time'] >= start_time) & (data['data time'] < end_time)).sum()
 
     #建立SR1~6
     for SR in tqdm(range(1,7),desc='建立SR1~6'):

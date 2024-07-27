@@ -24,14 +24,15 @@ month_path = data_top_path+"/研究所/雨量資料/"+year+"_"+month+"/"+month
 result  =glob.glob(month_path+"/*")
 
 for day_path in tqdm(result,desc='資料建立'):
-    day = day_path[53:] #日期   
+    day = day_path.split('\\')[-1][-2:] #日期   
     # print('日期:'+day)
     
-    ## 讀取每日資料
+    # ## 讀取每日資料
 
     result  =glob.glob(day_path+'/*')
     for rain_data_path in result:
-        time = year+month+day+rain_data_path[64:68]
+        time = rain_data_path.split('\\')[-1].split('.')[0]
+        
         # print('時間:'+time)
         rain_data_list = []
         
@@ -46,15 +47,13 @@ for day_path in tqdm(result,desc='資料建立'):
                     if 120 <float(elements[4])< 122.1 and 21.5 <float(elements[3])< 25.5: #確認經緯度範圍
                         station_name = elements[0] #測站名稱
                         rain_data_of_10min = float(elements[7]) #MIN_10
+                        rain_data_of_3_hour = float(elements[8]) #HOUR_3
+                        rain_data_of_6_hour = float(elements[9]) #HOUR_6
+                        rain_data_of_12_hour = float(elements[10]) #HOUR_12
+                        rain_data_of_24_hour = float(elements[11]) #HOUR_24
 
-                        if rain_data_of_10min >= 0: #排除無資料(data = -998.00)
-                            rain_data_of_3_hour = float(elements[8]) #HOUR_3
-                            rain_data_of_6_hour = float(elements[9]) #HOUR_6
-                            rain_data_of_12_hour = float(elements[10]) #HOUR_12
-                            rain_data_of_24_hour = float(elements[11]) #HOUR_24
-
-                            if 10<=rain_data_of_10min <= rain_data_of_3_hour <= rain_data_of_12_hour <= rain_data_of_24_hour: #QC
-                                rain_data_list.append(station_name)
+                        if 10<=rain_data_of_10min <= rain_data_of_3_hour <= rain_data_of_12_hour <= rain_data_of_24_hour: #QC
+                            rain_data_list.append(station_name)
         
                 line += 1
         if rain_data_list != []:

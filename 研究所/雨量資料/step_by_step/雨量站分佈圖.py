@@ -12,8 +12,8 @@ month = '06'
 data_top_path = "C:/Users/steve/python_data"
 
 
-## 讀取雨量站經緯度資料
-def rain_station_location_data():
+
+def rain_station_location_data(): ## 讀取雨量站經緯度資料
     data_path = data_top_path+"/研究所/雨量資料/"+year+"測站範圍內測站數.xlsx"
     lon_data_list = []  # 經度
     lat_data_list = []  # 緯度

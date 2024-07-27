@@ -57,12 +57,6 @@ for day_path in tqdm(result,desc='資料處理中....'):
                 lat_data_list.append(lat_list[i])
 
 
-
-
-
-
-
-
 ## 兩經緯度距離
 def haversine(lat1, lon1, lat2, lon2):
     # 地球的半徑（公里）

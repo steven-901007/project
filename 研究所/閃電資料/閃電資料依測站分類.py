@@ -48,21 +48,30 @@ fileset(data_top_path + "/研究所/閃電資料/依測站分類/"+str(dis)+'km/
 
 
 for station_nb in tqdm(range(len(name_data_list)),desc='寫入資料'):
-
+# station_nb = 0
+    station_name = name_data_list[station_nb]
     station_lon = lon_data_list[station_nb]
     station_lat = lat_data_list[station_nb]
     station_lat_lon = (station_lat,station_lon)
-    # print(station_lat_lon)
+    # print(station_name)
 
 
     flash_rawdata['distance_km'] = flash_rawdata.apply(lambda row: geodesic((row['緯度'], row['經度']), station_lat_lon).km, axis=1)
     # print(flash_rawdata)
 
-    target_data = pd.to_datetime(flash_rawdata[flash_rawdata['distance_km'] < dis]['日期時間'])
+    target_data = pd.to_datetime(flash_rawdata[flash_rawdata['distance_km'] < dis]['日期時間'])#確認符合範圍的時間
+    target_data = target_data.dt.floor('min') #時間精度到分
+    target_data = target_data + pd.Timedelta(minutes=1) #時間分+1
+    target_data = pd.DataFrame(target_data)
+    # target_data_count = target_data.value_counts().reset_index()
+
+    target_data['count'] = target_data.groupby(['日期時間'])['日期時間'].transform('size')
+    target_data =target_data.drop_duplicates(subset=['日期時間']) #捨棄重複值
     # print(target_data)
 
     flash_data_to_save = {
-        'data time' : target_data,
+        'data time' : target_data['日期時間'],
+        'count' : target_data['count']
     }
-    flash_data_to_path = data_top_path + "/研究所/閃電資料/依測站分類/"+str(dis)+'km/'+year+ '/' + month + '/' + name_data_list[station_nb] + '.csv'
+    flash_data_to_path = data_top_path + "/研究所/閃電資料/依測站分類/"+str(dis)+'km/'+year+ '/' + month + '/' + station_name + '.csv'
     pd.DataFrame(flash_data_to_save).to_csv(flash_data_to_path,index=False)

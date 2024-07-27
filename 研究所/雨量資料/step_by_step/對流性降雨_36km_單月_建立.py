@@ -1,4 +1,3 @@
-## 對流性降雨_36km_單月_建立 的測試修改程式
 from openpyxl import load_workbook
 import glob
 import re
@@ -42,7 +41,8 @@ rain_data_paths = data_top_path + "/研究所/雨量資料/對流性降雨data/"
 result  =glob.glob(rain_data_paths)
 
 for rain_data_path in tqdm(result,desc='資料讀取+紀錄'):
-    time = rain_data_path[54:66]
+
+    time = rain_data_path.split('\\')[-1].split('.')[0]
     # print(time)
     rain_datas = pd.read_csv(rain_data_path, dtype=str)
     # print(rain_datas)
