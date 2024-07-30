@@ -1,0 +1,139 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import datetime
+from tqdm import tqdm
+from matplotlib.dates import DateFormatter, MinuteLocator
+
+
+
+##統計計算(mean+2std)
+def statistics(a,row):
+    if row['SR6'] > row['mean'] + a*row['std']:
+        return 1
+    else:
+        return 0
+
+##計算某個SR裡的數值
+def count_funtion(SR_time_late,row,data):
+    start_time = row['data time'] + pd.Timedelta(minutes=int(SR_time_late)-1)
+    end_time = start_time + pd.Timedelta(minutes=5)
+
+    return data[((data['data time'] >= start_time) & (data['data time'] < end_time))]['count'].sum()
+
+def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,alpha):
+
+    #將時間的type改成時間型態
+    time_start_df = datetime.datetime(int(year),int(month),int(day),time_start)
+    time_end_df = datetime.datetime(int(year),int(month),int(day),time_end)
+    #生成時間df
+    full_time_range = pd.date_range(start=time_start_df, end=time_end_df, freq='min')# 生成完整的每分鐘時間範圍
+    full_time_df = pd.DataFrame(full_time_range, columns=['data time'])# 建立一個 DataFrame 包含完整的時間範圍
+
+
+    ##資料讀取
+    case_root_path =  data_top_path + "/研究所/個案分析/" + station_name + '_' +str(dis)+'_'+ year + month + day +'_' + str(time_start).zfill(2) + '00to' + str(time_end) + '00'
+    rain_data_path = case_root_path + '/rain_raw_data.csv'
+    flash_data_path = case_root_path + '/flash_data.csv'
+    rain_data = pd.read_csv(rain_data_path)
+    flash_data = pd.read_csv(flash_data_path)
+
+    flash_data['data time'] = pd.to_datetime(flash_data['data time'])
+    # print(flash_data)
+
+
+    # print(flash_data)
+    # print(full_time_df)
+
+    ## 每分鐘閃電資料
+    flash_data_for_every_min_df = pd.merge(flash_data,full_time_df,on='data time', how='outer').fillna(0)# 與原始資料合併，缺少的時間點補上 count = 0
+
+
+    ## lighting jump and SR6
+    flash_data_for_lighting_jump_and_SR6_df = flash_data.copy()
+
+    #建立SR1~6
+    for SR in range(1,7):
+        flash_data_for_lighting_jump_and_SR6_df['SR' + str(SR)] = flash_data_for_lighting_jump_and_SR6_df.apply(lambda row: count_funtion(SR, row,flash_data_for_lighting_jump_and_SR6_df), axis=1)
+
+    flash_data_for_lighting_jump_and_SR6_df = flash_data_for_lighting_jump_and_SR6_df[(flash_data_for_lighting_jump_and_SR6_df[['SR1', 'SR2', 'SR3', 'SR4', 'SR5']] != 0).all(axis=1)]#刪除SR1 ～SR5 任意比 = 0的資料
+    # #計算mean and std
+    flash_data_for_lighting_jump_and_SR6_df['mean'] = flash_data_for_lighting_jump_and_SR6_df[['SR1', 'SR2', 'SR3', 'SR4', 'SR5']].mean(axis=1)
+    flash_data_for_lighting_jump_and_SR6_df['std'] = flash_data_for_lighting_jump_and_SR6_df[['SR1', 'SR2', 'SR3', 'SR4', 'SR5']].std(ddof=0,axis=1)
+
+    flash_data_for_lighting_jump_and_SR6_df['lighting_jump_or_not'] = flash_data_for_lighting_jump_and_SR6_df.apply(lambda row: statistics(alpha, row), axis=1)
+
+    flash_data_for_lighting_jump_df = flash_data_for_lighting_jump_and_SR6_df[flash_data_for_lighting_jump_and_SR6_df['lighting_jump_or_not'] == 1][['data time','SR6']]
+
+    flash_data_for_SR6_df = flash_data_for_lighting_jump_and_SR6_df[['data time','SR6']]
+    flash_data_for_SR6_df = pd.merge(flash_data_for_lighting_jump_and_SR6_df,full_time_df,on='data time', how='outer').fillna(0)
+
+    pd.set_option('display.max_rows', None)
+
+    ##總雨量 and 單站最大雨量 and >10mm/min的測站個數
+
+    total_rain_data = rain_data[['data time','10min rain']].groupby(['data time'])['10min rain'].sum().reset_index()
+    total_rain_data['data time'] = pd.to_datetime(total_rain_data['data time'])
+    total_rain_data = pd.merge(total_rain_data,full_time_df,on='data time', how='outer').fillna(0)
+
+    maxma_rain_data = rain_data[['data time','10min rain']].groupby(['data time'])['10min rain'].max().reset_index()
+    maxma_rain_data['data time'] = pd.to_datetime(maxma_rain_data['data time'])
+    maxma_rain_data = pd.merge(maxma_rain_data,full_time_df,on='data time', how='outer').fillna(0)
+
+    count_rain_data = rain_data[['data time','10min rain']].groupby(['data time'])['10min rain'].count().reindex()
+    count_rain_data.index = pd.to_datetime(count_rain_data.index)
+    count_rain_data = count_rain_data.reset_index()
+    count_rain_data.columns = ['data time', 'count']
+    count_rain_data = pd.merge(count_rain_data,full_time_df,on='data time', how='outer').fillna(0)
+    # print(rain_data)
+    # print(count_rain_data)
+
+
+
+
+
+    # 繪製圖表
+    fig, ax1 = plt.subplots(figsize = (19,9))
+
+    plt.rcParams['font.sans-serif'] = [u'MingLiu'] #細明體
+    plt.rcParams['axes.unicode_minus'] = False #設定中文
+    
+    # 繪製每分鐘閃電量，右側y軸
+    ax2 = ax1.twinx()
+    ax2.plot(flash_data_for_every_min_df['data time'], flash_data_for_every_min_df['count'], c='skyblue', zorder=3, label='1-min ICandCG') #每分鐘閃電量
+    ax2.bar(total_rain_data['data time'],total_rain_data['10min rain'],color = 'lime', width=0.001,zorder=1,label = '總雨量')
+    ax2.bar(maxma_rain_data['data time'],maxma_rain_data['10min rain'],color = 'g', width=0.001, zorder=3,label = '最大單站雨量(>=10mm)')
+    ax2.bar(count_rain_data['data time'],count_rain_data['count'],color = 'gray', width=0.001, zorder=2,label = '>10mm站數')
+    # ax2.set_ylim(top=700)
+    
+
+    # 繪製SR6和lighting jump的SR6，左側y軸
+    ax1.scatter(flash_data_for_lighting_jump_df['data time'], flash_data_for_lighting_jump_df['SR6'], c='red', s=2, zorder=5, label='jump threshold') #Lighting Jump的SR6
+    ax1.plot(flash_data_for_SR6_df['data time'], flash_data_for_SR6_df['SR6'], c='yellow', zorder=1, label='SR6') #SR6
+    ax1.set_ylim(-10)
+
+
+    # 設置x軸標籤和旋轉角度
+    ax1.xaxis.set_major_locator(MinuteLocator(byminute=range(0, 60, 10)))  # 每10分钟一个刻度
+    ax1.xaxis.set_major_formatter(DateFormatter("%H:%M"))  # 格式化为时:分
+    # ax1.grid(True, which='both', axis='x', linestyle='--', linewidth=0.5)  # 添加网格线
+    plt.setp(ax1.get_xticklabels(), rotation=90)
+
+    plt.title('測站：' + station_name + '\n日期：'+ year + '/'+month +'/'+ day +'\n時間' + str(time_start).zfill(2) + ':00~' + str(time_end).zfill(2) + ':00')
+    fig.legend()
+
+    # 顯示and儲存圖表
+    pic_save_path = case_root_path + '/picture.png'
+    plt.savefig(pic_save_path, bbox_inches='tight', dpi=300)
+    print('已生成照片：\n測站：'+station_name + '\n半徑：' +str(dis)+'\n日期：'+ year + '/'+month +'/'+ day +'\n時間' + str(time_start).zfill(2) + ':00~' + str(time_end).zfill(2) + ':00')
+    # plt.show()
+
+year = '2021' #年分
+month = '06' #月份
+day = '09'
+time_start = 15
+time_end = 18
+dis = 36
+alpha = 2 #統計檢定
+station_name = 'V2C250'
+data_top_path = "C:/Users/steve/python_data"
+case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,alpha)

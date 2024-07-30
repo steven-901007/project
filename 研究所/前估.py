@@ -65,7 +65,7 @@ for rain_station_path in tqdm(result,desc='資料處理中....'):
 
 
     if flash_station_path != None:
-        rain_data = pd.read_csv(rain_station_path,)
+        rain_data = pd.read_csv(rain_station_path)
         flash_data = pd.read_csv(flash_station_path)
         #end time< lighting jump <= time data
         rain_data['time data'] = pd.to_datetime(rain_data['time data'])
