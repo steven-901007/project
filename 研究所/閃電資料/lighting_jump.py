@@ -31,7 +31,7 @@ def statistics(a,row):
         return 0
     
 ##計算某個SR裡的數值
-def count_funtion(SR_time_late,row):
+def count_funtion(SR_time_late,row,data):
     start_time = row['data time'] + pd.Timedelta(minutes=int(SR_time_late)-1)
     end_time = start_time + pd.Timedelta(minutes=5)
 
@@ -56,7 +56,7 @@ for station_path in result:
 
     #建立SR1~6
     for SR in tqdm(range(1,7),desc='建立SR1~6'):
-        data['SR' + str(SR)] = data.apply(lambda row: count_funtion(SR, row), axis=1)
+        data['SR' + str(SR)] = data.apply(lambda row: count_funtion(SR, row,data), axis=1)
 
     #刪除SR1 ～SR5 任意比 = 0的資料
     # print(data[(data[['SR1', 'SR2', 'SR3', 'SR4', 'SR5']] == 0).any(axis=1)])

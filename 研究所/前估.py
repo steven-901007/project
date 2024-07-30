@@ -1,5 +1,7 @@
+##前估
 from openpyxl import load_workbook
-from openpyxl.styles import Font
+import glob
+import pandas as pd
 from datetime import datetime, timedelta
 from tqdm import tqdm
 import matplotlib.pyplot as plt
@@ -15,6 +17,7 @@ import matplotlib as mpl
 
 year = '2021' #年分
 month = '06' #月份
+dis = 36
 data_top_path = "C:/Users/steve/python_data"
 
 ##測站資料
@@ -33,86 +36,64 @@ def rain_station_location_data():
     return lon_data_list, lat_data_list ,name_data_list
 lon_data_list, lat_data_list ,name_data_list = rain_station_location_data()
 
+def check_in_time_range(row, lj_times):
+    return int(any((lj_times >= row['start time']) & (lj_times <= row['end time'])))
 
-##雨量資料
-rain_data_path = data_top_path+"/研究所/雨量資料/對流性降雨36km統計/"+year+"/"+year+"_"+month+"_36km_rain_data.xlsx"
-wb_rain_data = load_workbook(rain_data_path)
-ws_rain_data = wb_rain_data[month]
-rain_data_max_col = ws_rain_data.max_column
-
-##閃電資料
-lighting_jump_path = data_top_path+"/研究所/閃電資料/lighting_jump/"+year+"_"+month+"_lighting_jump.xlsx"
-wb_lighting_jump = load_workbook(lighting_jump_path)
-ws_lighting_jump = wb_lighting_jump[month]
-lighting_jump_data_max_row = ws_lighting_jump.max_row
-
-#建立閃電資料測站在excel的位置
-lighting_jump_station_lc_list = [] #位置在list的lc+1
-for lc in range(1,lighting_jump_data_max_row+1):
-    lighting_jump_station_lc_list.append(ws_lighting_jump.cell(lc,1).value)
-# print(lighting_jump_station_lc_list)
+##強降雨發生但沒有lighting jump
 
 
+prefigurance_station_name_list = []#前估測站名稱
+prefigurance_hit_list = []#個測站命中的list
+total_prefigurance_list = []#前估總量(lighting jump and rain + non_lighting jump and rain)
+prefigurance_lon_data_list = []
+prefigurance_lat_data_list = []
+
+month_path = data_top_path + "/研究所/雨量資料/對流性降雨"+str(dis)+"km統計/"+year+"/"+month+"/**.csv"
+result  =glob.glob(month_path)
+
+for rain_station_path in tqdm(result,desc='資料處理中....'):
+# rain_station_path = "C:/Users/steve/python_data/研究所/雨量資料/對流性降雨36km統計/2021/06/C0V730.csv"
+    rain_station_name = rain_station_path[56:62]
+    # print(rain_station_name)
+
+    #flash
+    try:
+        flash_station_path = data_top_path + "/研究所/閃電資料/lighting_jump/半徑"+str(dis)+"km/"+year+"/"+month+"/"+rain_station_name+".csv"
+    except:
+        flash_station_path = None
 
 
 
-##前估
-#個測站命中的list
-prefigurance_hit_list = [0 for n in name_data_list]
+    if flash_station_path != None:
+        rain_data = pd.read_csv(rain_station_path,)
+        flash_data = pd.read_csv(flash_station_path)
+        #end time< lighting jump <= time data
+        rain_data['time data'] = pd.to_datetime(rain_data['time data'])
+        rain_data['start time'] = rain_data["time data"] - pd.Timedelta(minutes= 50)
+        rain_data['end time'] = rain_data['time data'] + pd.Timedelta(minutes=10)
+        flash_data['LJ_time'] = pd.to_datetime(flash_data['LJ_time'])
+        # print(rain_data)
 
-#前估總量(lighting jump and rain + non_lighting jump and rain)
-total_prefigurance_list = [0 for n in name_data_list]
+        rain_data['LJ_in_time_range'] = rain_data.apply(lambda row: check_in_time_range(row, flash_data['LJ_time']), axis=1)
 
-#資料讀取
-for rain_data_col in tqdm(range(1,rain_data_max_col+1),desc='前估'):
+        # print(rain_data[rain_data['LJ_in_time_range'] == 1])
+        pd.set_option('display.max_rows', None)
 
-    rain_data_row = 2
-    end_rain_time = datetime.strptime(ws_rain_data.cell(1,rain_data_col).value, "%d%H%M")
-    start_rain_time = end_rain_time - timedelta(minutes=50)
-    end_rain_time = end_rain_time.strftime("%d%H%M")
-    start_rain_time = start_rain_time.strftime("%d%H%M")
-    # print(start_rain_time,end_rain_time)
-
-    while ws_rain_data.cell(rain_data_row,rain_data_col).value != None:
-        rain_data_style = ws_rain_data.cell(rain_data_row,rain_data_col).font.bold 
-
-        if rain_data_style == False:
-            rain_data_station = ws_rain_data.cell(rain_data_row,rain_data_col).value
-            # print(rain_data_station)
-            total_prefigurance_list[name_data_list.index(rain_data_station)] += 1
-
-            lighting_jump_col = 2
-            while ws_lighting_jump.cell(lighting_jump_station_lc_list.index(rain_data_station)+1,lighting_jump_col).value != None:
-                lighting_jump_data = ws_lighting_jump.cell(lighting_jump_station_lc_list.index(rain_data_station)+1,lighting_jump_col).value
-                lighting_jump_data = lighting_jump_data.strftime("%d%H%M")
-
-                if start_rain_time <= lighting_jump_data <= end_rain_time:
-                    # print(rain_data_station)
-                    prefigurance_hit_list[name_data_list.index(rain_data_station)] += 1
-                lighting_jump_col += 1
-            # print(rain_data_station)
-        rain_data_row += 1
-        
-
+        # print(rain_data)
+        # print(rain_data['LJ_in_time_range'].sum())
+        if rain_data['LJ_in_time_range'].sum() != 0:
+            prefigurance_station_name_list.append(rain_station_name)
+            prefigurance_hit_list.append(rain_data['LJ_in_time_range'].sum())
+            total_prefigurance_list.append(len(rain_data))
+            prefigurance_lon_data_list.append(lon_data_list[name_data_list.index(rain_station_name)])
+            prefigurance_lat_data_list.append(lat_data_list[name_data_list.index(rain_station_name)])
+# print(rain_station_name,rain_data['LJ_in_time_range'].sum(),len(rain_data))
 # print(prefigurance_hit_list)
-
-
-
-#清除資料為0的測站
-while prefigurance_hit_list.count(0) != 0:
-    lc = prefigurance_hit_list.index(0)
-    prefigurance_hit_list.pop(lc)
-    lon_data_list.pop(lc)
-    lat_data_list.pop(lc)
-    total_prefigurance_list.pop(lc)
+# print(total_prefigurance_list)
 
 prefigurance_hit_persent_list = [] # 前估命中率
 for i in range(len(total_prefigurance_list)):
     prefigurance_hit_persent_list.append(prefigurance_hit_list[i]/(total_prefigurance_list[i]+prefigurance_hit_list[i])*100)
-
-wb_lighting_jump.close()
-wb_rain_data.close()
-
 
 ##前估繪圖
 
@@ -143,7 +124,7 @@ gridlines.right_labels = False
 ## 計算某個地方達到10mm/10min的次數 + colorbar
 color_list = []
 
-level = [0,50,100,150,200,500,700,1000,1500]
+level = [0,3,5,7,10,15,20,25,30]
 color_box = ['silver','purple','darkviolet','blue','g','y','orange','r']
 
 for nb in prefigurance_hit_list:
@@ -160,7 +141,7 @@ for nb in prefigurance_hit_list:
 
 
 # 標記經緯度點
-ax.scatter(lon_data_list, lat_data_list, color=color_list, s=3, zorder=5)
+ax.scatter(prefigurance_lon_data_list, prefigurance_lat_data_list, color=color_list, s=3, zorder=5)
 
 # colorbar setting
 
@@ -215,7 +196,7 @@ gridlines.right_labels = False
 ## 計算某個地方達到10mm/10min的次數 + colorbar
 color_list = []
 
-level = [0,10,20,30,40,50,60,70,80]
+level = [0,0.5,1,2,3,4,5,6,7]
 color_box = ['silver','purple','darkviolet','blue','g','y','orange','r']
 
 for nb in prefigurance_hit_persent_list:
@@ -232,7 +213,7 @@ for nb in prefigurance_hit_persent_list:
 
 
 # 標記經緯度點
-ax.scatter(lon_data_list, lat_data_list, color=color_list, s=3, zorder=5)
+ax.scatter(prefigurance_lon_data_list, prefigurance_lat_data_list, color=color_list, s=3, zorder=5)
 
 # colorbar setting
 
