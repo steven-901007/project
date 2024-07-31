@@ -1,17 +1,9 @@
-import sys
 import os
-
 import re
-import math
 import glob
 from tqdm import tqdm
-import time
 import pandas as pd
 from geopy.distance import geodesic
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../import_use')))
-
-from import_use import importset
 
 
 year = '2021' #年分
@@ -22,7 +14,14 @@ max_lon = 122.1
 min_lon = 120
 max_lat = 25.5
 min_lat = 21.5
-  
+
+def fileset(path):    #建立資料夾
+    import os
+    
+    if not os.path.exists(path):
+        os.makedirs(path)
+        print(path + " 已建立") 
+
 
 def rain_station_location_data(path):
     data_path = path
@@ -47,7 +46,8 @@ def rain_station_location_data(path):
     
     return lon_data_list, lat_data_list ,name_data_list ,real_name_data_list
 
-importset.fileset(data_top_path+ "/研究所/雨量資料/"+year+"測站範圍內測站數/")
+fileset(data_top_path+ "/研究所/雨量資料/"+year+"測站範圍內測站數/")
+
 lon_data_list, lat_data_list ,station_name_data_list ,real_name_data_list = [],[],[],[]
 
 ##確認所有資料的測站都有被記錄
@@ -69,24 +69,35 @@ for day_path in tqdm(result,desc='資料處理中....'):
                 lon_list[i] = 120.6718
                 lat_list[i] = 24.4652
             if station_name_data_list.count(station_name_list[i]) == 0:
-                station_name_data_list.append(station_name_list[i])
-                lon_data_list.append(lon_list[i])
-                lat_data_list.append(lat_list[i])
-                real_name_data_list.append(real_name_list[i])
+                station_name_data_list.append(str(station_name_list[i]))
+                lon_data_list.append(round(float(lon_list[i]),2))
+                lat_data_list.append(round(float(lat_list[i]),2))
+                real_name_data_list.append(str(real_name_list[i]))
 
+del station_name_list,lon_list,lat_list,real_name_list #刪除變數避免誤用
 
 data = {
     'station name':station_name_data_list,
+    'station real name':real_name_data_list,
     'lon':lon_data_list,
     'lat':lat_data_list
 }
+data_df = pd.DataFrame(data)
+##測站資料
+data_df.to_csv(data_top_path + "/研究所/雨量資料/"+year+"測站資料.csv",encoding='utf-8',index=False)
 
-# for station_name_nb in range(len(station_name_list)):
-station_name_nb = 0
-station_name = station_name_list[station_name_nb]
-real_name = real_name_data_list[station_name_nb]
-station_lon = lon_data_list[station_name_nb]
-station_lat = lat_data_list[station_name_nb]
-station_lat_lon = (station_lat,station_lon)
-data['distance_km'] = data.apply(lambda row: geodesic((row['緯度'], row['經度']), station_lat_lon).km, axis=1)
-print(data['distance_km'])
+
+for station_name_nb in tqdm(range(len(station_name_data_list)),desc='資料建立中...'):
+# station_name_nb = 0
+    station_name = str(station_name_data_list[station_name_nb])
+    real_name = str(real_name_data_list[station_name_nb])
+    station_lon = round(lon_data_list[station_name_nb],2)
+    station_lat = round(lat_data_list[station_name_nb],2)
+    station_lat_lon = (station_lat,station_lon)
+    data_df['distance_km'] = data_df.apply(lambda row: geodesic((row['lat'], row['lon']), station_lat_lon).km, axis=1)
+    save_data = data_df[data_df['distance_km'] < dis]['station name'].astype(str)
+    # print(station_name)
+    # print(save_data)
+    save_path = data_top_path + "/研究所/雨量資料/"+year+"測站範圍內測站數/" + station_name +'.csv'
+    pd.DataFrame(save_data).to_csv(save_path,index= False)
+

@@ -9,6 +9,13 @@ month = '06' #月份
 data_top_path = "C:/Users/steve/python_data"
 
 
+def fileset(path):    #建立資料夾
+    if not os.path.exists(path):
+        os.makedirs(path)
+        print(path + " 已建立") 
+
+fileset(data_top_path + "/研究所/閃電資料/依時間分類/"+year+ '/' + month)
+
 
 ## 讀取閃電資料
 flash_data_path = data_top_path+'/研究所/閃電資料/raw_data/'+year+'/'+year+month+'.txt'
@@ -19,13 +26,6 @@ flash_rawdata['simple_time'] = flash_rawdata['日期時間'].str[:4] + flash_raw
 
 
 
-def fileset(path):    #建立資料夾
-    if not os.path.exists(path):
-        os.makedirs(path)
-        print(path + " 已建立") 
-
-
-fileset(data_top_path + "/研究所/閃電資料/依時間分類/"+year+ '/' + month)
 
 last_day = calendar.monthrange(int(year),int(month))[1]
 print(last_day)
