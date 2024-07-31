@@ -8,11 +8,12 @@ import matplotlib.colors as mcolors
 import matplotlib.cm as cm
 import matplotlib as mpl
 from openpyxl import load_workbook
-
-
+from tqdm import tqdm
+import pandas as pd
 
 year = '2021' #年分
 month = '06' #月份
+dis = 36
 data_top_path = "C:/Users/steve/python_data"
 
 
@@ -26,8 +27,8 @@ def rain_station_location_data():
     wb = load_workbook(data_path)
     ws = wb[month]
     for i in range(ws.max_column):
-        lon_data_list.append(ws.cell(3,i+1).value)
-        lat_data_list.append(ws.cell(2,i+1).value)
+        lon_data_list.append(ws.cell(4,i+1).value)
+        lat_data_list.append(ws.cell(3,i+1).value)
         name_data_list.append(ws.cell(1,i+1).value)
     wb.close()
     return lon_data_list, lat_data_list ,name_data_list
@@ -35,48 +36,32 @@ def rain_station_location_data():
 lon_data_list, lat_data_list ,name_data_list = rain_station_location_data()
 
 
-##36 km統計雨量資料
-rain_data_path = data_top_path+"/研究所/雨量資料/對流性降雨36km統計/"+year+"/"+year+"_"+month+"_36km_rain_data.xlsx"
-wb_rain_data = load_workbook(rain_data_path)
-ws_rain_data = wb_rain_data[month]
-max_col_rain_data = ws_rain_data.max_column
 
-
-
-rain_36km_list = [] #站點名稱
-rain_36km_count_list = [] #降雨次數
-rain_36km_lon_list = []
-rain_36km_lat_list = []
+# rain_36km_list = [] #站點名稱
+rain_36km_count_list = [0 for i in range(len(name_data_list))] #降雨次數
+rain_36km_lon_list = [i for i in lon_data_list]
+rain_36km_lat_list = [i for i in lat_data_list]
 
 ##降雨資料讀取
 
+rain_data_paths = data_top_path + "/研究所/雨量資料/對流性降雨data/"+year+"/"+month+"/**.csv"
+result  =glob.glob(rain_data_paths)
+for rain_data_path in tqdm(result,desc='資料讀取+紀錄'):
+# rain_data_path = result[1]
+    # print(rain_data_path)
+    rain_data = pd.read_csv(rain_data_path,dtype=str)
+    rain_data_count = rain_data['station name']
+    # print(rain_data_count)
+    for rain_data_station_name in rain_data_count:
 
-for col in range(1,max_col_rain_data+1):
-    row = 2
-    print(col)
-    while ws_rain_data.cell(row,col).value != None:
-        rain_data = ws_rain_data.cell(row,col).value
-        rain_data_style = ws_rain_data.cell(row,col).font.bold  #判斷資料是否為粗體
-        # print(rain_data_style)
-        if rain_data_style == False:
-            if rain_36km_list.count(rain_data) == 0:
-                rain_36km_list.append(rain_data)
-                rain_36km_count_list.append(1)
-                rain_36km_lon_list.append(lon_data_list[name_data_list.index(rain_data)])
-                rain_36km_lat_list.append(lat_data_list[name_data_list.index(rain_data)])
-            else:
-                rain_36km_count_list[rain_36km_list.index(rain_data)] += 1
-        
-        row += 1
+        # print(rain_data_station_name)
+        # rain_36km_lon_list.append(lon_data_list[name_data_list.index(rain_data_station_name)])
+        # rain_36km_lat_list.append(lat_data_list[name_data_list.index(rain_data_station_name)])
+        rain_36km_count_list[name_data_list.index(str(rain_data_station_name))] += 1
 
-print(rain_36km_count_list)
-# print(len(rain_36km_list))
-
-# ##debug區
-print(sum(rain_36km_count_list))
-# # 初步判定資料無誤(2024/06/15)
-
-
+# print(rain_36km_count_list.index(1))
+# print(rain_36km_lon_list[459])
+# print(rain_36km_lat_list[459])
 
 ## 繪圖
 
@@ -107,7 +92,7 @@ gridlines.right_labels = False
 ## 計算某個地方達到10mm/10min的次數 + colorbar
 color_list = []
 
-level = [0,50,100,150,200,300,350,400,500]
+level = [0,5,10,15,20,25,30,35,40]
 color_box = ['silver','purple','darkviolet','blue','g','y','orange','r']
 
 for nb in rain_36km_count_list:
@@ -118,8 +103,8 @@ for nb in rain_36km_count_list:
             more_then_maxma_or_not = 1
             break
     if more_then_maxma_or_not == 0:
-        color_list.append('lime')
-        print(nb)
+        color_list.append('w')
+        # print(nb)
 # print(len(color_list))
 
 

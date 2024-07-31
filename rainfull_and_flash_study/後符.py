@@ -26,8 +26,8 @@ def rain_station_location_data():
     wb = load_workbook(data_path)
     ws = wb[month]
     for i in range(ws.max_column):
-        lon_data_list.append(ws.cell(3,i+1).value)
-        lat_data_list.append(ws.cell(2,i+1).value)
+        lon_data_list.append(ws.cell(4,i+1).value)
+        lat_data_list.append(ws.cell(3,i+1).value)
         name_data_list.append(ws.cell(1,i+1).value)
     wb.close()
     return lon_data_list, lat_data_list ,name_data_list

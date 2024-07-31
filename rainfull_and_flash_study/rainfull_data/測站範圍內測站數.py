@@ -8,7 +8,7 @@ import time
 year = '2021' #年分
 month = '06' #月份
 data_top_path = "C:/Users/steve/python_data"
-
+dis = 36
 
 
 def rain_station_location_data(path):
@@ -16,6 +16,7 @@ def rain_station_location_data(path):
     lon_data_list = []  # 經度
     lat_data_list = []  # 緯度
     name_data_list = []  #測站名稱
+    real_name_data_list = [] #測站實際名稱
 
     line = 0
     with open(data_path, 'r') as files:
@@ -27,11 +28,12 @@ def rain_station_location_data(path):
                     lon_data_list.append(float(data[4]))
                     lat_data_list.append(float(data[3]))
                     name_data_list.append(data[0])
+                    real_name_data_list.append(data[1])
             line +=1
     
-    return lon_data_list, lat_data_list ,name_data_list
+    return lon_data_list, lat_data_list ,name_data_list ,real_name_data_list
 
-lon_data_list, lat_data_list ,station_name_data_list = [],[],[]
+lon_data_list, lat_data_list ,station_name_data_list ,real_name_data_list = [],[],[],[]
 
 ##確認所有資料的測站都有被記錄
 ## 讀取每月資料
@@ -46,7 +48,7 @@ for day_path in tqdm(result,desc='資料處理中....'):
     result  =glob.glob(day_path+'/*')
     for rain_data_path in result:
         # print(rain_data_path)
-        lon_list, lat_list ,station_name_list = rain_station_location_data(rain_data_path)
+        lon_list, lat_list ,station_name_list,real_name_list = rain_station_location_data(rain_data_path)
         for i in range(len(station_name_list)):
             if station_name_list[i] == 'C1E890':##rawdata錯誤修改
                 lon_list[i] = 120.6718
@@ -55,6 +57,7 @@ for day_path in tqdm(result,desc='資料處理中....'):
                 station_name_data_list.append(station_name_list[i])
                 lon_data_list.append(lon_list[i])
                 lat_data_list.append(lat_list[i])
+                real_name_data_list.append(real_name_list[i])
 
 
 ## 兩經緯度距離
@@ -82,9 +85,6 @@ def haversine(lat1, lon1, lat2, lon2):
     return distance
 
 
-## 與測站距離<36 km的有那些
-dis = 36
-
 #儲存位置建立
 wb = Workbook() 
 ws = wb.active
@@ -93,9 +93,10 @@ ws.title = month #創第一個sheet
 
 for i in tqdm(range(len(station_name_data_list)),desc='寫入檔案'):
     ws.cell(1,i+1).value = station_name_data_list[i]
-    ws.cell(2,i+1).value = lat_data_list[i]
-    ws.cell(3,i+1).value = lon_data_list[i]
-    lc = 4
+    ws.cell(2,i+1).value = real_name_data_list[i]
+    ws.cell(3,i+1).value = lat_data_list[i]
+    ws.cell(4,i+1).value = lon_data_list[i]
+    lc = 5
     for j in range(len(station_name_data_list)):
         station_dis = haversine(lat_data_list[i],lon_data_list[i],lat_data_list[j],lon_data_list[j])
         if station_dis < 36:

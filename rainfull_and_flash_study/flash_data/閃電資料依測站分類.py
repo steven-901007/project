@@ -1,4 +1,4 @@
-import os
+from importset import fileset
 import calendar
 from tqdm import tqdm
 from openpyxl import load_workbook
@@ -22,8 +22,8 @@ def rain_station_location_data():
     wb = load_workbook(data_path)
     ws = wb[month]
     for i in range(ws.max_column):
-        lon_data_list.append(ws.cell(3,i+1).value)
-        lat_data_list.append(ws.cell(2,i+1).value)
+        lon_data_list.append(ws.cell(4,i+1).value)
+        lat_data_list.append(ws.cell(3,i+1).value)
         name_data_list.append(ws.cell(1,i+1).value)
     wb.close()
     return lon_data_list, lat_data_list ,name_data_list
@@ -36,13 +36,6 @@ flash_rawdata = pd.read_csv(flash_data_path,header = 0)
 
 # print(flash_rawdata['日期時間'],flash_rawdata['經度'],flash_rawdata['緯度'])
 
-
-
-
-def fileset(path):    #建立資料夾
-    if not os.path.exists(path):
-        os.makedirs(path)
-        print(path + " 已建立") 
     
 fileset(data_top_path + "/研究所/閃電資料/依測站分類/"+str(dis)+'km/'+year+ '/' + month)
 

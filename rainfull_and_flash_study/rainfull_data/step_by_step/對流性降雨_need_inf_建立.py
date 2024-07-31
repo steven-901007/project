@@ -52,10 +52,11 @@ for day_path in tqdm(result,desc='資料建立'):
                         rain_data_of_12_hour = float(elements[10]) #HOUR_12
                         rain_data_of_24_hour = float(elements[11]) #HOUR_24
 
-                        if 10<=rain_data_of_10min <= rain_data_of_3_hour <= rain_data_of_12_hour <= rain_data_of_24_hour: #QC
+                        if 10<=rain_data_of_10min <= rain_data_of_3_hour <=rain_data_of_6_hour<= rain_data_of_12_hour <= rain_data_of_24_hour: #QC
                             rain_data_list.append(station_name)
         
                 line += 1
+
         if rain_data_list != []:
             rain_data_save = {
                 'station name':rain_data_list

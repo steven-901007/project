@@ -13,12 +13,9 @@ import matplotlib as mpl
 from openpyxl import load_workbook
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-
 year = '2021' #年分
 month = '06' #月份
 data_top_path = "C:/Users/steve/python_data"
-
-
 
 ## 讀取雨量站經緯度資料
 def rain_station_location_data():
@@ -29,8 +26,8 @@ def rain_station_location_data():
     wb = load_workbook(data_path)
     ws = wb[month]
     for i in range(ws.max_column):
-        lon_data_list.append(ws.cell(3,i+1).value)
-        lat_data_list.append(ws.cell(2,i+1).value)
+        lon_data_list.append(ws.cell(4,i+1).value)
+        lat_data_list.append(ws.cell(3,i+1).value)
         name_data_list.append(ws.cell(1,i+1).value)
     wb.close()
     return lon_data_list, lat_data_list ,name_data_list
@@ -38,68 +35,48 @@ def rain_station_location_data():
 lon_data_list, lat_data_list ,name_data_list = rain_station_location_data()
 
 
+
 ## 測站位置檔案讀取(6月)
 wb = load_workbook(data_top_path+"/研究所/雨量資料/2021測站範圍內測站數.xlsx")
 ws = wb[month]
 
-
 count_tg_number_list = [0 for i in range(len(name_data_list))] #計算符合範圍強降雨(36 km)的事件數 對應位置代表name data list
-##讀取每日資料
-data_name_of_station_list = [] 
-data_lon_list = []
-data_lat_list = []
-data_rain_list = [] #降雨量
+rain_data_path = data_top_path+"/研究所/雨量資料/2021_06/06/20210601/202106010350.QPESUMS_GAUGE.10M.mdf"
 
-## 讀取每月資料
-month_path = data_top_path+"/研究所/雨量資料/"+year+"_"+month+"/"+month
-result  =glob.glob(month_path+"/*")
-for day_path in result:
-    # print(day_path)
-    day = day_path[53:] #日期
-    print('日期:'+day)
+## 每10分鐘資料處理 rain data >10mm (10min)
+line = 0
 
-    
-    ## 讀取每日資料
-    result  =glob.glob(day_path+'/*')
-    for rain_data_path in result:
-        ## 每10分鐘資料處理 rain data >10mm (10min)
-        line = 0
+chack_station_not_record_list = []
+with open(rain_data_path, 'r') as files:
+    for file in files:
+        elements = re.split(re.compile(r'\s+|\n|\*'),file.strip())
+        # print(elements)
+        # print(len(elements))
+        if line >= 3 :
+            station_name = elements[0]
+            
+            rain_data_of_10min = float(elements[7]) #MIN_10
+            if 120 <float(elements[4])< 122.1 and 21.5 <float(elements[3])< 25.5:
+                if rain_data_of_10min >= 0: #排除無資料(data = -998.00)
+                    rain_data_of_3_hour = float(elements[8]) #HOUR_3
+                    rain_data_of_6_hour = float(elements[9]) #HOUR_6
+                    rain_data_of_12_hour = float(elements[10]) #HOUR_12
+                    rain_data_of_24_hour = float(elements[11]) #HOUR_24
+                    if 10<=rain_data_of_10min <= rain_data_of_3_hour <= rain_data_of_12_hour <= rain_data_of_24_hour: #QC
+                        # print(station_name)
+                        lc = name_data_list.index(station_name) + 1  #在excel的座標
+                        i = 4
+                        while ws.cell(i,lc).value != None:
+                            if chack_station_not_record_list.count(ws.cell(i,lc).value) == 0:
+                                chack_station_not_record_list.append(ws.cell(i,lc).value)
+                                count_tg_number_list[name_data_list.index(ws.cell(i,lc).value)] += 1
 
-        chack_station_not_record_list = []
-        with open(rain_data_path, 'r') as files:
-            for file in files:
-                elements = re.split(re.compile(r'\s+|\n|\*'),file.strip())
-                # print(elements)
-                # print(len(elements))
-                if line >= 3 :
-                    station_name = elements[0]
-                    
-                    rain_data_of_10min = float(elements[7]) #MIN_10
-                    if 120 <float(elements[4])< 122.1 and 21.5 <float(elements[3])< 25.5:
-                        if rain_data_of_10min >= 0: #排除無資料(data = -998.00)
-                            rain_data_of_3_hour = float(elements[8]) #HOUR_3
-                            rain_data_of_6_hour = float(elements[9]) #HOUR_6
-                            rain_data_of_12_hour = float(elements[10]) #HOUR_12
-                            rain_data_of_24_hour = float(elements[11]) #HOUR_24
-                            if 10<=rain_data_of_10min <= rain_data_of_3_hour <= rain_data_of_12_hour <= rain_data_of_24_hour: #QC
-                                # print(station_name)
-                                lc = name_data_list.index(station_name) + 1  #在excel的座標
-                                i = 4
-                                while ws.cell(i,lc).value != None:
-                                    if chack_station_not_record_list.count(ws.cell(i,lc).value) == 0:
-                                        chack_station_not_record_list.append(ws.cell(i,lc).value)
-                                        count_tg_number_list[name_data_list.index(ws.cell(i,lc).value)] += 1
-
-                                    i += 1
-                line += 1
-
-    # break
+                            i += 1
+        line += 1
 
 
-# print(count_tg_number_list)
 
-
-# ##dubug區
+# ##debug區
 # print(sum(count_tg_number_list))
 
 
@@ -132,8 +109,8 @@ gridlines.right_labels = False
 
 ## 計算某個地方達到10mm/10min的次數 + colorbar
 color_list = []
-level = [0,50,100,150,200,300,350,400,500]
-color_box = ['silver','purple','darkviolet','blue','g','y','orange','r']
+level = [0,1,2,3,4]
+color_box = ['whitesmoke','r','orange','y','g']
 
 for i in range(len(count_tg_number_list)):
     more_then_maxma_or_not = 0
@@ -164,9 +141,10 @@ cax = divider.append_axes("right", size="5%", pad=0.1, axes_class=plt.Axes)
 cbar1 = plt.colorbar(im,cax=cax, extend='neither', ticks=level)
 
 
-# 加入標籤
 
-ax.set_title('雨量>10mm/10min 事件數')
+
+# 加入標籤
+ax.set_title('全台雨量站座標')
 
 # 顯示地圖
 plt.show()
