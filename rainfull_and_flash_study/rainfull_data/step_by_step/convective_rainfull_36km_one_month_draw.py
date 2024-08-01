@@ -21,11 +21,13 @@ station_data = pd.read_csv(station_data_path)
 station_name = station_data['station name'].to_list()
 station_lon = station_data['lon']
 station_lat = station_data['lat']
+station_real_name = station_data['station real name'] #個案分析用
 
 rain_36km_name_list = [] #個案分析用
 rain_36km_count_list = [] #降雨次數
 rain_36km_lon_list = []
 rain_36km_lat_list = []
+rain_36km_real_name_list = []#個案分析用
 
 ##降雨資料讀取
 
@@ -43,12 +45,15 @@ for rain_data_path in tqdm(result,desc='資料讀取+紀錄'):
         rain_36km_lon_list.append(station_lon[station_name.index(rain_data_station_name)])
         rain_36km_lat_list.append(station_lat[station_name.index(rain_data_station_name)])
         rain_36km_count_list.append(rain_data_count)
+        rain_36km_real_name_list.append(station_real_name[station_name.index(rain_data_station_name)])
 
 ##個案分析區        
 
 case_data ={
     'station name':rain_36km_name_list,
+    'real name':rain_36km_real_name_list,
     'count':rain_36km_count_list
+
 }
 save_data_path = data_top_path + "/研究所/雨量資料/對流性降雨次數.csv"
 pd.DataFrame(case_data).to_csv(save_data_path,index= False)
