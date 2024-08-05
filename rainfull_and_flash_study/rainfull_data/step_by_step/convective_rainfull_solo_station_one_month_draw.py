@@ -7,59 +7,41 @@ from cartopy.feature import ShapelyFeature
 import matplotlib.colors as mcolors
 import matplotlib.cm as cm
 import matplotlib as mpl
+from openpyxl import load_workbook
 from tqdm import tqdm
 import pandas as pd
-
 
 year = '2021' #年分
 month = '06' #月份
 dis = 36
 data_top_path = "C:/Users/steve/python_data"
 
+
+
 station_data_path = data_top_path + "/研究所/雨量資料/"+year+"測站資料.csv"
 station_data = pd.read_csv(station_data_path)
 station_name_list = station_data['station name'].to_list()
 station_lon_df = station_data['lon']
 station_lat_df = station_data['lat']
-station_real_name = station_data['station real name'] #個案分析用
 
-rain_36km_name_list = [] #個案分析用
-rain_36km_count_list = [] #降雨次數
-rain_36km_lon_list = []
-rain_36km_lat_list = []
-rain_36km_real_name_list = []#個案分析用
+
+# rain_36km_list = [] #站點名稱
+rain_36km_count_list = [0 for i in range(len(station_name_list))] #降雨次數
+
 
 ##降雨資料讀取
 
-rain_data_paths = data_top_path + "/研究所/雨量資料/對流性降雨"+str(dis)+"km統計/"+year+"/"+month+"/**.csv"
+rain_data_paths = data_top_path + "/研究所/雨量資料/對流性降雨data/"+year+"/"+month+"/**.csv"
 result  =glob.glob(rain_data_paths)
 for rain_data_path in tqdm(result,desc='資料讀取+紀錄'):
+# rain_data_path = result[1]
     # print(rain_data_path)
-    rain_data_station_name = rain_data_path.split('/')[-1].split('\\')[-1].split('.')[0]
-    # print(rain_data_station_name)
-    rain_data_count = pd.read_csv(rain_data_path)['time data'].count()
+    rain_data = pd.read_csv(rain_data_path,dtype=str)
+    rain_data_count = rain_data['station name']
     # print(rain_data_count)
-
-    if rain_data_count != 0:
-        rain_36km_name_list.append(rain_data_station_name)
-        rain_36km_lon_list.append(station_lon_df[station_name_list.index(rain_data_station_name)])
-        rain_36km_lat_list.append(station_lat_df[station_name_list.index(rain_data_station_name)])
-        rain_36km_count_list.append(rain_data_count)
-        rain_36km_real_name_list.append(station_real_name[station_name_list.index(rain_data_station_name)])
-
-##個案分析區        
-
-case_data ={
-    'station name':rain_36km_name_list,
-    'real name':rain_36km_real_name_list,
-    'count':rain_36km_count_list
-
-}
-save_data_path = data_top_path + "/研究所/雨量資料/對流性降雨次數.csv"
-pd.DataFrame(case_data).to_csv(save_data_path,index= False)
-
-##個案分析區##
-
+    
+    for rain_data_station_name in rain_data_count:
+        rain_36km_count_list[station_name_list.index(str(rain_data_station_name))] += 1
 
 
 
@@ -92,7 +74,7 @@ gridlines.right_labels = False
 ## 計算某個地方達到10mm/10min的次數 + colorbar
 color_list = []
 
-level = [0,50,100,150,200,300,350,400,500]
+level = [0,5,10,15,20,25,30,35,40]
 color_box = ['silver','purple','darkviolet','blue','g','y','orange','r']
 
 for nb in rain_36km_count_list:
@@ -103,13 +85,13 @@ for nb in rain_36km_count_list:
             more_then_maxma_or_not = 1
             break
     if more_then_maxma_or_not == 0:
-        color_list.append('lime')
-        print(nb)
+        color_list.append('w')
+        # print(nb)
 # print(len(color_list))
 
 
 # 標記經緯度點
-ax.scatter(rain_36km_lon_list, rain_36km_lat_list, color=color_list, s=3, zorder=5)
+ax.scatter(station_lon_df, station_lat_df, color=color_list, s=3, zorder=5)
 
 # colorbar setting
 
