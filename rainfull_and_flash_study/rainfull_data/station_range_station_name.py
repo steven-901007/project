@@ -84,7 +84,7 @@ data = {
 }
 data_df = pd.DataFrame(data)
 ##測站資料
-data_df.to_csv(data_top_path + "/研究所/雨量資料/"+year+"測站資料.csv",encoding='utf-8',index=False)
+data_df.to_csv(data_top_path + "/研究所/雨量資料/"+year+"測站資料.csv",encoding='utf-8-sig',index=False)
 
 
 for station_name_nb in tqdm(range(len(station_name_data_list)),desc='資料建立中...'):

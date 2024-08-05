@@ -11,10 +11,10 @@ month = '06' #月份
 data_top_path = "C:/Users/steve/python_data"
 dis = 36
 
-station = 'C0S940'
+station = '467410'
 
 print(station)
-file_path = data_top_path + "/研究所/雨量資料/" + str(dis)+ "km個案分析/"+month+"/"+station
+file_path = f"{data_top_path}/研究所/雨量資料/{str(dis)}km個案分析/{month}/{station}"
 fileset(file_path)
 
 ##save data set up
@@ -23,13 +23,16 @@ save_data_ws = save_data_wb.active
 
 
 ##周圍測站名稱建立
-around_station_data_path = data_top_path + "/研究所/雨量資料/"+year+"測站範圍內測站數/"+station+".csv"
+around_station_data_path = f"{data_top_path}/研究所/雨量資料/{year}測站範圍內測站數/{station}.csv"
 around_station_datas = pd.read_csv(around_station_data_path)
 around_station_datas['station name'] = around_station_datas['station name'].astype(str)
 # print(around_station_datas)
+
 #測站經緯度
-around_station_lon_lat_path = data_top_path + "/研究所/雨量資料/"+year+"測站資料.csv"
+around_station_lon_lat_path = f"{data_top_path}/研究所/雨量資料/{year}測站資料.csv"
 around_station_lon_lat_datas = pd.read_csv(around_station_lon_lat_path)
+real_name = around_station_lon_lat_datas[around_station_lon_lat_datas['station name'] == station]['station real name'].iloc[0]
+print(real_name)
 
 save_data_ws.cell(1,1).value = 'station name'
 save_data_ws.cell(1,2).value = 'station lon'
@@ -39,23 +42,18 @@ for around_station in around_station_datas['station name']:
     save_data_ws.cell(row,1).value = around_station
     save_data_ws.cell(row,2).value = around_station_lon_lat_datas[around_station_lon_lat_datas['station name'] == around_station]['lon'].iloc[0]
     save_data_ws.cell(row,3).value = around_station_lon_lat_datas[around_station_lon_lat_datas['station name'] == around_station]['lat'].iloc[0]
+
     row += 1
 del row
 
 row_for_around_station_datas_lsit = around_station_datas['station name'].to_list() #跟excel的位置差2
 
 
-##測站真名
-real_name_path = data_top_path + "/研究所/雨量資料/對流性降雨次數.csv"
-datas = pd.read_csv(real_name_path)
-real_name = str(datas[datas['station name'] == station]['real name'].iloc[0])
-print(real_name)
-
 ##資料時間建立
 
 col = 4
 
-month_path = data_top_path+"/研究所/雨量資料/"+year+"_"+month+"/"+month
+month_path = f"{data_top_path}/研究所/雨量資料/{year}_{month}/{month}"
 result  =glob(month_path+"/*")
 
 for day_path in tqdm(result,desc='資料建立'):
@@ -107,5 +105,5 @@ for day_path in tqdm(result,desc='資料建立'):
 
 
 save_data_ws.title = real_name
-save_data_path = data_top_path + "/研究所/雨量資料/"+str(dis)+"km個案分析/" + month + '/' + station + '/'+station+'_rain_data.xlsx'
+save_data_path = f"{data_top_path}/研究所/雨量資料/{str(dis)}km個案分析/{month}/{station}/{station}_rain_data.xlsx"
 save_data_wb.save(save_data_path)
