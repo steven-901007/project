@@ -3,6 +3,7 @@ from glob import glob
 from tqdm import tqdm
 import re
 import numpy as np
+import matplotlib.pyplot as plt
 
 year = '2021' #年分
 month = '06' #月份
@@ -68,18 +69,45 @@ cwa_rain_datas_df = pd.DataFrame(cwa_rain_datas)
 cwa_rain_datas_df['total rain'] = cwa_rain_datas_df['total rain'].astype(float).round()
 # print(cwa_rain_datas_df)
     
-union = pd.merge(raw_rain_data_df,cwa_rain_datas_df,on='station real name',how = 'inner') #資料交集
-union = union.rename(columns={
+cwa_and_raw_union_data_df = pd.merge(raw_rain_data_df,cwa_rain_datas_df,on='station real name',how = 'inner') #資料交集
+cwa_and_raw_union_data_df = cwa_and_raw_union_data_df.rename(columns={
     'total rain_x':'raw data',
     'total rain_y':'cwa data'
 })
+cwa_and_raw_union_data_df['difference'] = cwa_and_raw_union_data_df['raw data'] - cwa_and_raw_union_data_df['cwa data']
 
-print(union)
-correlation = np.corrcoef(union['raw data'], union['cwa data'])[0, 1]
+
+##刪除特定資料
+print(cwa_and_raw_union_data_df[cwa_and_raw_union_data_df['station real name'] == '竹子湖'])
+cwa_and_raw_union_data_df = cwa_and_raw_union_data_df.drop(cwa_and_raw_union_data_df[cwa_and_raw_union_data_df['station name'] == '01A420'].index)
+print(cwa_and_raw_union_data_df[cwa_and_raw_union_data_df['station real name'] == '花蓮'])
+cwa_and_raw_union_data_df = cwa_and_raw_union_data_df.drop(cwa_and_raw_union_data_df[cwa_and_raw_union_data_df['station name'] == 'O1T840'].index)
+
+
+
+print(cwa_and_raw_union_data_df)
+correlation = round(np.corrcoef(cwa_and_raw_union_data_df['raw data'], cwa_and_raw_union_data_df['cwa data'])[0, 1],3)
+
 print(f"raw data 和 cwa data 之間的相關係數為: {correlation}")
-print(f"{year}年{month}月raw data 和cwa data交集的測站數為{union['station name'].count()}")
+print(f"{year}年{month}月raw data 和cwa data交集的測站數為{cwa_and_raw_union_data_df['station name'].count()}")
 
 
 ##raw測站所計算的結果存檔
 save_data_path = f"{data_top_path}/研究所/雨量資料/{year}{month}_total_rain_sum.csv"
-cwa_rain_datas.to_csv(save_data_path,index=False,encoding='utf-8-sig')
+raw_rain_data_df.to_csv(save_data_path,index=False,encoding='utf-8-sig')
+
+#繪圖
+plt.rcParams['font.sans-serif'] = [u'MingLiu'] #設定字體為'細明體'
+plt.rcParams['axes.unicode_minus'] = False #用來正常顯示正負號
+fig,ax1 = plt.subplots()
+ax1.plot(cwa_and_raw_union_data_df['station real name'],cwa_and_raw_union_data_df['cwa data'], color='g',label='cwa data',zorder=4)
+ax1.plot(cwa_and_raw_union_data_df['station real name'],cwa_and_raw_union_data_df['raw data'], color='b',label='raw data',zorder=4)
+ax1.bar(cwa_and_raw_union_data_df['station real name'],cwa_and_raw_union_data_df['difference'], color='r',label='cwa data',zorder=5)
+plt.axhline(cwa_and_raw_union_data_df['difference'].mean(),c = "r" , ls = "--" , lw = 0.3,label='difference average')
+plt.xticks(rotation=90)
+plt.ylabel('月總雨量')
+diff_max = str(round(cwa_and_raw_union_data_df['difference'].max(),2))
+diff_min = str(round(cwa_and_raw_union_data_df['difference'].min(),2))
+plt.title(f"{year}/{month} 月總雨量 \ncwa data compare with raw data \n 相關係數 = {correlation} \n difference (以cwa為標準)\n max = {diff_max} min = {diff_min}")
+plt.legend()
+plt.show()
