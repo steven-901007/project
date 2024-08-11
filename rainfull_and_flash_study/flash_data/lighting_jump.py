@@ -17,7 +17,7 @@ start_time = T.time()
 
 ##建立資料夾
 def file_set():
-    file_path = data_top_path + "/研究所/閃電資料/lighting_jump/半徑"+ str(dis) + 'km/' + year + '/'+ month
+    file_path = f"{data_top_path}/研究所/閃電資料/lighting_jump/"+ str(dis) + f'km/{year}/{month}'
     if not os.path.exists(file_path):
             os.makedirs(file_path)
             print(file_path + " 已建立")

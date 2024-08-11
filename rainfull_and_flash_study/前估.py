@@ -58,7 +58,7 @@ for rain_station_path in tqdm(result,desc='資料處理中....'):
 
     #flash
     try:
-        flash_station_path = data_top_path + "/研究所/閃電資料/lighting_jump/半徑"+str(dis)+"km/"+year+"/"+month+"/"+rain_station_name+".csv"
+        flash_station_path = data_top_path + "/研究所/閃電資料/lighting_jump/"+str(dis)+"km/"+year+"/"+month+"/"+rain_station_name+".csv"
     except:
         flash_station_path = None
 
