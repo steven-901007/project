@@ -10,39 +10,36 @@ from openpyxl import load_workbook
 station = []
 year = '2021' #年分
 month = '06' #月份
-data_top_path = "C:/Users/steve/python_data"
+# data_top_path = "C:/Users/steve/python_data"
+data_top_path = "C:/Users/steven.LAPTOP-8A1BDJC6/OneDrive/桌面"
 station_lat_max ,station_lat_min = 25.2 , 24.9
 station_lon_max ,station_lon_min = 121.6, 121.5
 
 
 
 
-## 讀取雨量站經緯度資料
-def rain_station_location_data():
-    data_path = data_top_path+"/研究所/雨量資料/"+year+"測站範圍內測站數.xlsx"
-    lon_data_list = []  # 經度
-    lat_data_list = []  # 緯度
-    name_data_list = []  #測站名稱
-    wb = load_workbook(data_path)
-    ws = wb[month]
-    for i in range(ws.max_column):
-        lon_data_list.append(ws.cell(4,i+1).value)
-        lat_data_list.append(ws.cell(3,i+1).value)
-        name_data_list.append(ws.cell(1,i+1).value)
-    wb.close()
-    return lon_data_list, lat_data_list ,name_data_list
-lon_data_list, lat_data_list ,name_data_list = rain_station_location_data()
+def rain_station_location_data_to_list(data_top_path,year):## 讀取雨量站經緯度資料
+    import pandas as pd
+    data_path = data_top_path + "/研究所/雨量資料/"+ year + "測站資料.csv"
+    data = pd.read_csv(data_path)
+    station_data_name = data['station name'].to_list()
+    station_real_data_name = data['station real name'].to_list()
+    lon_data = data['lon'].to_list()
+    lat_data = data['lat'].to_list()
+    # print(data)
+    return station_data_name,station_real_data_name,lon_data,lat_data
+station_data_name_lsit,station_real_data_name_list,lon_data_list,lat_data_list = rain_station_location_data_to_list(data_top_path,year)
 
-for station_nb in range(len(name_data_list)):
+for station_nb in range(len(station_data_name_lsit)):
     if station_lat_max >= lat_data_list[station_nb] > station_lat_min and station_lon_max >= lon_data_list[station_nb] > station_lon_min:
-        station.append(name_data_list[station_nb])
+        station.append(station_data_name_lsit[station_nb])
 
 point_lon = []
 point_lat = []
 
 for s in station:
-    point_lon.append(lon_data_list[name_data_list.index(s)])
-    point_lat.append(lat_data_list[name_data_list.index(s)])
+    point_lon.append(lon_data_list[station_data_name_lsit.index(s)])
+    point_lat.append(lat_data_list[station_data_name_lsit.index(s)])
 
 print(station)
 

@@ -3,10 +3,10 @@ import calendar
 from tqdm import tqdm
 import pandas as pd
 
-
 year = '2021' #年分
 month = '06' #月份
-data_top_path = "C:/Users/steve/python_data"
+# data_top_path = "C:/Users/steve/python_data"
+data_top_path = 'C:/Users/steven.LAPTOP-8A1BDJC6/OneDrive/桌面'
 
 
 def fileset(path):    #建立資料夾
