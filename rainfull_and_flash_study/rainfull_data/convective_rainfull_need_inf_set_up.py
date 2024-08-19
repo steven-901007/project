@@ -3,6 +3,7 @@ import glob
 import re
 from tqdm import tqdm
 import importset
+from datetime import datetime, timedelta
 year = '2021' #年分
 month = '06' #月份
 data_top_path = "C:/Users/steve/python_data"
@@ -26,7 +27,9 @@ for day_path in tqdm(result,desc='資料建立'):
     result  =glob.glob(day_path+'/*')
     for rain_data_path in result:
         time = rain_data_path.split('\\')[-1].split('.')[0]
-        
+        time_obj = datetime.strptime(time, '%Y%m%d%H%M')+ timedelta(hours=8) #將UTC轉成LT
+        time = time_obj.strftime('%Y%m%d%H%M')
+    
         # print('時間:'+time)
         rain_data_list = []
         rainfull_list = []

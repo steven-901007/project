@@ -48,10 +48,11 @@ for rain_data_path in tqdm(result,desc='資料讀取中'):
 
 ##資料建立
 for station in tqdm(range(len(rain_data_36km_station_list_list)),desc='資料建立'):
-    save_data = {
-        'time data':rain_data_36km_station_list_list[station]
-    }
-    save_data['time data'] = pd.to_datetime(save_data['time data']).strftime('%Y/%m/%d %H:%M')
+    if rain_data_36km_station_list_list[station] != []:
+        save_data = {
+            'time data':rain_data_36km_station_list_list[station]
+        }
+        save_data['time data'] = pd.to_datetime(save_data['time data']).strftime('%Y/%m/%d %H:%M')
 
-    save_path = data_top_path + "/研究所/雨量資料/對流性降雨"+str(dis)+"km統計/"+year +'/' + month +'/' + station_data_name[station] + '.csv'
-    pd.DataFrame(save_data, dtype=str).to_csv(save_path,index=False)
+        save_path = data_top_path + "/研究所/雨量資料/對流性降雨"+str(dis)+"km統計/"+year +'/' + month +'/' + station_data_name[station] + '.csv'
+        pd.DataFrame(save_data, dtype=str).to_csv(save_path,index=False)

@@ -11,7 +11,7 @@ year = '2021'
 month = '06'
 
 # 設定資料路徑
-data_top_path = "C:/Users/steven.LAPTOP-8A1BDJC6/OneDrive/桌面"
+data_top_path = "C:/Users/steve/python_data"
 dis = 36
 
 # 設定目標測站編號
