@@ -17,7 +17,7 @@ start_time = T.time()
 
 ##建立資料夾
 def file_set():
-    file_path = f"{data_top_path}/研究所/閃電資料/lighting_jump/"+ str(dis) + f'km/{year}/{month}'
+    file_path = f"{data_top_path}/研究所/閃電資料/lighting_jump/{dis}km/{year}/{month}"
     if not os.path.exists(file_path):
             os.makedirs(file_path)
             print(file_path + " 已建立")
@@ -38,7 +38,7 @@ def count_funtion(SR_time_late,row,data):
     return data[((data['data time'] >= start_time) & (data['data time'] < end_time))]['count'].sum()
 
 ## 讀取閃電資料
-month_path = data_top_path + "/研究所/閃電資料/依測站分類/"+str(dis)+"km/"+year+"/"+month+"/**.csv"
+month_path = f"{data_top_path}/研究所/閃電資料/依測站分類/{dis}km/{year}/{month}/**.csv"
 result  =glob.glob(month_path)
 
 for station_path in result:
@@ -77,7 +77,9 @@ for station_path in result:
     data_to_save = {
         'LJ_time' : data['if_lj_time'][data['lighting_jump_or_not'] == 1]
     }
-    pd.DataFrame(data_to_save).to_csv(data_top_path + "/研究所/閃電資料/lighting_jump/半徑"+ str(dis) + 'km/' + year + '/'+ month + '/' + station_name + '.csv',index=False)
+    # print(data['if_lj_time'][data['lighting_jump_or_not'] == 1])
+    if not data['if_lj_time'][data['lighting_jump_or_not'] == 1].empty:
+        pd.DataFrame(data_to_save).to_csv(f"{data_top_path}/研究所/閃電資料/lighting_jump/{dis}km/{year}/{month}/{station_name}.csv",index=False)
 
 end_time = T.time()
 # 計算執行時間

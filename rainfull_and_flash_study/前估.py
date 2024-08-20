@@ -36,17 +36,17 @@ total_prefigurance_list = []#前估總量(lighting jump and rain + non_lighting 
 prefigurance_lon_data_list = []
 prefigurance_lat_data_list = []
 
-month_path = data_top_path + "/研究所/雨量資料/對流性降雨"+str(dis)+"km統計/"+year+"/"+month+"/**.csv"
+month_path =f"{data_top_path}/研究所/雨量資料/對流性降雨{dis}km統計/{year}/{month}/*.csv"
 result  =glob.glob(month_path)
 
 for rain_station_path in tqdm(result,desc='資料處理中....'):
 # rain_station_path = "C:/Users/steve/python_data/研究所/雨量資料/對流性降雨36km統計/2021/06/C0V730.csv"
-    rain_station_name = rain_station_path[56:62]
+    rain_station_name = rain_station_path.split('/')[-1].split('\\')[-1].split('.')[0]
     # print(rain_station_name)
 
     #flash
     try:
-        flash_station_path = data_top_path + "/研究所/閃電資料/lighting_jump/"+str(dis)+"km/"+year+"/"+month+"/"+rain_station_name+".csv"
+        flash_station_path = f"{data_top_path}/研究所/閃電資料/lighting_jump/{dis}km/{year}/{month}/{rain_station_name}.csv"
         # print(rain_station_name)
     except:
         flash_station_path = None
@@ -156,7 +156,7 @@ cbar1 = plt.colorbar(im,ax=ax, extend='neither', ticks=level)
 plt.xlabel('Longitude')
 plt.ylabel('Latitude')
 
-ax.set_title(year+"年"+month+"月"+'\n前估 max = '+ str(max(prefigurance_hit_list)))
+ax.set_title(f"{year}年{month}月\n前估 max = "+ str(round(max(prefigurance_hit_list),3)))
 
 
 ## 這是用來確認colorbar的配置
@@ -179,7 +179,7 @@ plt.rcParams['font.sans-serif'] = [u'MingLiu']  # 設定字體為'細明體'
 plt.rcParams['axes.unicode_minus'] = False  # 用來正常顯示正負號
 
 # 加載台灣的行政邊界
-taiwan_shapefile = data_top_path+"/研究所/Taiwan_map_data/COUNTY_MOI_1090820.shp"  # 你需要提供台灣邊界的shapefile文件
+taiwan_shapefile = f"{data_top_path}/研究所/Taiwan_map_data/COUNTY_MOI_1090820.shp"  # 你需要提供台灣邊界的shapefile文件
 shape_feature = ShapelyFeature(Reader(taiwan_shapefile).geometries(),
                                ccrs.PlateCarree(), edgecolor='black', facecolor='white')
 ax.add_feature(shape_feature)
@@ -228,7 +228,7 @@ cbar1 = plt.colorbar(im,ax=ax, extend='neither', ticks=level)
 plt.xlabel('Longitude')
 plt.ylabel('Latitude')
 
-ax.set_title(year+"年"+month+"月"+'\n前估命中率 [%] max = '+ str(max(prefigurance_hit_persent_list)))
+ax.set_title(f"{year}年{month}月\n前估命中率 [%] max = "+ str(round(max(prefigurance_hit_persent_list),3)))
 
 
 ## 這是用來確認colorbar的配置
