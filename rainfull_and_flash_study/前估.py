@@ -47,6 +47,8 @@ for rain_station_path in tqdm(result,desc='資料處理中....'):
     #flash
     try:
         flash_station_path = f"{data_top_path}/研究所/閃電資料/lighting_jump/{dis}km/{year}/{month}/{rain_station_name}.csv"
+        rain_data = pd.read_csv(rain_station_path)
+        flash_data = pd.read_csv(flash_station_path)
         # print(rain_station_name)
     except:
         flash_station_path = None

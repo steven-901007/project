@@ -20,6 +20,14 @@ def count_funtion(SR_time_late,row,data):
 
     return data[((data['data time'] >= start_time) & (data['data time'] < end_time))]['count'].sum()
 
+##maxma_rain_data填色
+def assign_status(x):
+    if x > 10:
+        return 'r'
+    else:
+        return 'g'
+
+
 def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,alpha):
 
     #將時間的type改成時間型態
@@ -67,19 +75,22 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     flash_data_for_SR6_df = flash_data_for_lighting_jump_and_SR6_df[['data time','SR6']]
     flash_data_for_SR6_df = pd.merge(flash_data_for_lighting_jump_and_SR6_df,full_time_df,on='data time', how='outer').fillna(0)
 
-    pd.set_option('display.max_rows', None)
+    # pd.set_option('display.max_rows', None)
 
     ##總雨量 and 單站最大雨量 and >10mm/min的測站個數
 
-    total_rain_data = rain_data[['data time','10min rain']].groupby(['data time'])['10min rain'].sum().reset_index()
+    total_rain_data = rain_data[['data time','rain data']].groupby(['data time'])['rain data'].sum().reset_index()
     total_rain_data['data time'] = pd.to_datetime(total_rain_data['data time'])
     total_rain_data = pd.merge(total_rain_data,full_time_df,on='data time', how='outer').fillna(0)
 
-    maxma_rain_data = rain_data[['data time','10min rain']].groupby(['data time'])['10min rain'].max().reset_index()
+    maxma_rain_data = rain_data[['data time','rain data']].groupby(['data time'])['rain data'].max().reset_index()
     maxma_rain_data['data time'] = pd.to_datetime(maxma_rain_data['data time'])
     maxma_rain_data = pd.merge(maxma_rain_data,full_time_df,on='data time', how='outer').fillna(0)
+    maxma_rain_data['color'] = maxma_rain_data['rain data'].apply(assign_status)
+    # print(maxma_rain_data['color'])
 
-    count_rain_data = rain_data[['data time','10min rain']].groupby(['data time'])['10min rain'].count().reindex()
+    filtered_data = rain_data[rain_data['rain data'] > 10]
+    count_rain_data = filtered_data[['data time', 'rain data']].groupby(['data time'])['rain data'].count().reindex()
     count_rain_data.index = pd.to_datetime(count_rain_data.index)
     count_rain_data = count_rain_data.reset_index()
     count_rain_data.columns = ['data time', 'count']
@@ -100,16 +111,25 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     # 繪製每分鐘閃電量，右側y軸
     ax2 = ax1.twinx()
     ax2.plot(flash_data_for_every_min_df['data time'], flash_data_for_every_min_df['count'], c='skyblue', zorder=3, label='1-min ICandCG') #每分鐘閃電量
-    ax2.bar(total_rain_data['data time'],total_rain_data['10min rain'],color = 'lime', width=0.001,zorder=1,label = '總雨量')
-    ax2.bar(maxma_rain_data['data time'],maxma_rain_data['10min rain'],color = 'g', width=0.001, zorder=3,label = '最大單站雨量(>=10mm)')
-    ax2.bar(count_rain_data['data time'],count_rain_data['count'],color = 'gray', width=0.001, zorder=2,label = '>10mm站數')
+    ax2.bar(total_rain_data['data time'],total_rain_data['rain data'],color = 'lime', width=0.001,zorder=1,label = '總雨量')
+    ax2.bar(maxma_rain_data[maxma_rain_data['color'] == 'g']['data time'], 
+        maxma_rain_data[maxma_rain_data['color'] == 'g']['rain data'],
+        color ='g', width=0.001, zorder=2,label = '最大單站雨量')
+    ax2.bar(maxma_rain_data[maxma_rain_data['color'] == 'r']['data time'], 
+        maxma_rain_data[maxma_rain_data['color'] == 'r']['rain data'], 
+        color='red', width=0.001, zorder=2, label='最大單站雨量>10mm/10min')
+    ax2.bar(count_rain_data['data time'],count_rain_data['count']*10,color = 'black', width=0.0005, zorder=3,label = '>10mm站數(*10)')
+    # ax2.axhline(10,c = "r" , ls = "--" , lw = 2)
+    ax2.set_ylabel('雨量')
     # ax2.set_ylim(top=700)
+    
     
 
     # 繪製SR6和lighting jump的SR6，左側y軸
     ax1.scatter(flash_data_for_lighting_jump_df['data time'], flash_data_for_lighting_jump_df['SR6'], c='red', s=2, zorder=5, label='jump threshold') #Lighting Jump的SR6
     ax1.plot(flash_data_for_SR6_df['data time'], flash_data_for_SR6_df['SR6'], c='yellow', zorder=1, label='SR6') #SR6
     ax1.set_ylim(-10)
+    ax1.set_ylabel('lighting')
 
 
     # 設置x軸標籤和旋轉角度
@@ -126,13 +146,17 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     plt.savefig(pic_save_path, bbox_inches='tight', dpi=300)
     print(f"已生成照片：\n測站：{station_name}\n半徑：{dis}\n日期：{year}/{month}/{day}\n時間{str(time_start).zfill(2)}:00~{str(time_end).zfill(2)}:00")    # plt.show()
 
-year = '2021' #年分
-month = '06' #月份
-day = '09'
-time_start = 15
-time_end = 18
-dis = 36
-alpha = 2 #統計檢定
-station_name = 'V2C250'
-data_top_path = "C:/Users/steve/python_data"
-case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,alpha)
+# ## 變數設定
+# data_top_path = "C:/Users/steve/python_data"
+# year = '2021' #年分
+# month = '06' #月份
+# day = '01'
+# time_start = 12
+# time_end = 17
+# dis = 36
+# alpha = 2 #統計檢定
+# station_name = 'C0G880'
+
+
+
+# case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,alpha)

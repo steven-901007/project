@@ -20,23 +20,25 @@ month = '06' #月份
 dis = 36
 data_top_path = "C:/Users/steve/python_data"
 
+def fileset(path):    #建立資料夾
+    import os
+    
+    if not os.path.exists(path):
+        os.makedirs(path)
+        print(f"{path}已建立") 
+fileset(f"{data_top_path}/研究所/個案分析/前估命中個案")
 
-
-##測站資料
-def rain_station_location_data():
-    data_path = data_top_path+"/研究所/雨量資料/"+year+"測站範圍內測站數.xlsx"
-    lon_data_list = []  # 經度
-    lat_data_list = []  # 緯度
-    name_data_list = []  #測站名稱
-    wb = load_workbook(data_path)
-    ws = wb[month]
-    for i in range(ws.max_column):
-        lon_data_list.append(ws.cell(4,i+1).value)
-        lat_data_list.append(ws.cell(3,i+1).value)
-        name_data_list.append(ws.cell(1,i+1).value)
-    wb.close()
-    return lon_data_list, lat_data_list ,name_data_list
-lon_data_list, lat_data_list ,name_data_list = rain_station_location_data()
+def rain_station_location_data_to_list(data_top_path,year):## 讀取雨量站經緯度資料
+    import pandas as pd
+    data_path = f"{data_top_path}/研究所/雨量資料/{year}測站資料.csv"
+    data = pd.read_csv(data_path)
+    station_data_name = data['station name'].to_list()
+    station_real_data_name = data['station real name'].to_list()
+    lon_data = data['lon'].to_list()
+    lat_data = data['lat'].to_list()
+    # print(data)
+    return station_data_name,station_real_data_name,lon_data,lat_data
+station_data_name,station_real_data_name,lon_data,lat_data = rain_station_location_data_to_list(data_top_path,year)
 
 def check_in_time_range(row, lj_times):
     return int(any((lj_times >= row['start time']) & (lj_times <= row['end time'])))
@@ -54,13 +56,15 @@ for rain_station_path in tqdm(result,desc='資料處理中....'):
 
     #flash
     try:
-        flash_station_path = f"{data_top_path}/研究所/閃電資料/lighting_jump/"+str(dis)+f"km/{year}/{month}/{rain_station_name}.csv"
+        flash_station_path = f"{data_top_path}/研究所/閃電資料/lighting_jump/{dis}km/{year}/{month}/{rain_station_name}.csv"
+        rain_data = pd.read_csv(rain_station_path)
+        flash_data = pd.read_csv(flash_station_path)
+        # if rain_station_name == 'C0G880':
+        #     print(rain_data)
     except:
         flash_station_path = None
 
     if flash_station_path != None:
-        rain_data = pd.read_csv(rain_station_path)
-        flash_data = pd.read_csv(flash_station_path)
         #end time< lighting jump <= time data
         rain_data['time data'] = pd.to_datetime(rain_data['time data'])
         rain_data['start time'] = rain_data["time data"] - pd.Timedelta(minutes= 50)

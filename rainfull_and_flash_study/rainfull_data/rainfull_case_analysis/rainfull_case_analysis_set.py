@@ -105,5 +105,5 @@ for day_path in tqdm(result,desc='資料建立'):
 
 
 save_data_ws.title = real_name
-save_data_path = f"{data_top_path}/研究所/雨量資料/{str(dis)}km個案分析/{month}/{station}/{station}_rain_data.xlsx"
+save_data_path = f"{data_top_path}/研究所/雨量資料/{dis}km個案分析/{month}/{station}/{station}_rain_data.xlsx"
 save_data_wb.save(save_data_path)
