@@ -31,7 +31,7 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
 
 
     ##資料讀取
-    case_root_path =  data_top_path + "/研究所/個案分析/" + station_name + '_' +str(dis)+'_'+ year + month + day +'_' + str(time_start).zfill(2) + '00to' + str(time_end) + '00'
+    case_root_path =  f"{data_top_path}/研究所/個案分析/{station_name}_{dis}_{year}{month}{day}_{str(time_start).zfill(2)}00to{str(time_end)}00"
     rain_data_path = case_root_path + '/rain_raw_data.csv'
     flash_data_path = case_root_path + '/flash_data.csv'
     rain_data = pd.read_csv(rain_data_path)
@@ -118,14 +118,13 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     # ax1.grid(True, which='both', axis='x', linestyle='--', linewidth=0.5)  # 添加网格线
     plt.setp(ax1.get_xticklabels(), rotation=90)
 
-    plt.title('測站：' + station_name + '\n日期：'+ year + '/'+month +'/'+ day +'\n時間' + str(time_start).zfill(2) + ':00~' + str(time_end).zfill(2) + ':00')
+    plt.title(f"測站：{station_name}\n日期：{year}/{month}/{day}\n時間{str(time_start).zfill(2)}:00~{str(time_end).zfill(2)}:00")
     fig.legend()
 
     # 顯示and儲存圖表
     pic_save_path = case_root_path + '/picture.png'
     plt.savefig(pic_save_path, bbox_inches='tight', dpi=300)
-    print('已生成照片：\n測站：'+station_name + '\n半徑：' +str(dis)+'\n日期：'+ year + '/'+month +'/'+ day +'\n時間' + str(time_start).zfill(2) + ':00~' + str(time_end).zfill(2) + ':00')
-    # plt.show()
+    print(f"已生成照片：\n測站：{station_name}\n半徑：{dis}\n日期：{year}/{month}/{day}\n時間{str(time_start).zfill(2)}:00~{str(time_end).zfill(2)}:00")    # plt.show()
 
 year = '2021' #年分
 month = '06' #月份
