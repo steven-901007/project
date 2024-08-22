@@ -146,6 +146,9 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     plt.savefig(pic_save_path, bbox_inches='tight', dpi=300)
     print(f"已生成照片：\n測站：{station_name}\n半徑：{dis}\n日期：{year}/{month}/{day}\n時間{str(time_start).zfill(2)}:00~{str(time_end).zfill(2)}:00")    # plt.show()
 
+    
+
+
 # ## 變數設定
 # data_top_path = "C:/Users/steve/python_data"
 # year = '2021' #年分

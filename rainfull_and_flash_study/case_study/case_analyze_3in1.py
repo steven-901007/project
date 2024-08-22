@@ -1,6 +1,6 @@
 from case_analysis_set import case_data_set
 from case_draw import case_draw
-
+from case_map_draw import case_map_draw
 ##變數設定
 data_top_path = "C:/Users/steve/python_data"
 year = '2021' #年分
@@ -15,3 +15,4 @@ station_name = 'C0G880'
 
 case_data_set(year,month,day,time_start,time_end,dis,station_name,data_top_path)
 case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,alpha)
+case_map_draw(station_name,data_top_path,year,month,day,time_start,time_end,dis)

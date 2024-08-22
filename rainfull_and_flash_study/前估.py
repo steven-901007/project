@@ -23,9 +23,17 @@ data_top_path = "C:/Users/steve/python_data"
 def check_in_time_range(row, lj_times):
     return int(any((lj_times >= row['start time']) & (lj_times <= row['end time'])))
 
+def fileset(path):    #建立資料夾
+    import os
+    
+    if not os.path.exists(path):
+        os.makedirs(path)
+        print(path + " 已建立") 
+
+#建立前估後符資料夾
+fileset(f"{data_top_path}/研究所/前估後符")
+
 ##強降雨發生但沒有lighting jump
-
-
 data_path = f"{data_top_path}/研究所/雨量資料/{year}測站資料.csv"
 data = pd.read_csv(data_path)
 # print(data)
@@ -87,12 +95,28 @@ for rain_station_path in tqdm(result,desc='資料處理中....'):
             prefigurance_lon_data_list.append(data[data['station name'] == rain_station_name]['lon'].iloc[0])
             prefigurance_lat_data_list.append(data[data['station name'] == rain_station_name]['lat'].iloc[0])
 # print(rain_station_name,rain_data['LJ_in_time_range'].sum(),len(rain_data))
-# print(prefigurance_hit_list)
-# print(total_prefigurance_list)
+
 
 prefigurance_hit_persent_list = [] # 前估命中率
 for i in range(len(total_prefigurance_list)):
     prefigurance_hit_persent_list.append(prefigurance_hit_list[i]/(total_prefigurance_list[i]+prefigurance_hit_list[i])*100)
+
+# print(prefigurance_station_name_list)
+# print(prefigurance_hit_list)
+# print(total_prefigurance_list)
+# print(prefigurance_lon_data_list)
+# print(prefigurance_lat_data_list)
+# print(prefigurance_hit_persent_list)
+prefigurance_save_data = {
+    'station name':prefigurance_station_name_list,
+    'lon':prefigurance_lon_data_list,
+    'lat':prefigurance_lat_data_list,
+    'hit':prefigurance_hit_list,
+    'total':total_prefigurance_list,
+    'hit persent':prefigurance_hit_persent_list,
+}
+prefigurance_save_path = f"{data_top_path}/研究所/前估後符/前估.csv"
+pd.DataFrame(prefigurance_save_data).to_csv(prefigurance_save_path,index=False)
 
 ##前估繪圖
 

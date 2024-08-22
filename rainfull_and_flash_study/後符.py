@@ -23,9 +23,17 @@ data_top_path = "C:/Users/steve/python_data"
 def check_in_time_range(row, rain_times):
     return int(any((rain_times >= row['start time']) & (rain_times <= row['end time'])))
 
+def fileset(path):    #建立資料夾
+    import os
+    
+    if not os.path.exists(path):
+        os.makedirs(path)
+        print(path + " 已建立") 
+
+#建立前估後符資料夾
+fileset(f"{data_top_path}/研究所/前估後符")
+
 ##有lighting jump但沒強降雨發生
-
-
 data_path = f"{data_top_path}/研究所/雨量資料/{year}測站資料.csv"
 data = pd.read_csv(data_path)
 # print(data)
@@ -89,13 +97,25 @@ for flash_station_path in tqdm(result,desc='資料處理中....'):
             post_agreement_lon_data_list.append(data[data['station name'] == flash_station_name]['lon'].iloc[0])
             post_agreement_lat_data_list.append(data[data['station name'] == flash_station_name]['lat'].iloc[0])
     # print(flash_station_name,flash_data['convective_rainfull_in_time_range'].sum(),len(flash_data))
-print(post_agreement_station_name_list)
-print(post_agreement_hit_list)
-print(total_post_agreement_list)
+# print(post_agreement_station_name_list)
+# print(post_agreement_hit_list)
+# print(total_post_agreement_list)
 
 post_agreement_hit_persent_list = [] # 前估命中率
 for i in range(len(total_post_agreement_list)):
     post_agreement_hit_persent_list.append(post_agreement_hit_list[i]/(total_post_agreement_list[i]+post_agreement_hit_list[i])*100)
+
+post_agreement_save_data = {
+    'station name':post_agreement_station_name_list,
+    'lon':post_agreement_lon_data_list,
+    'lat':post_agreement_lat_data_list,
+    'hit':post_agreement_hit_list,
+    'total':total_post_agreement_list,
+    'hit persent':post_agreement_hit_persent_list,
+}
+post_agreement_save_path = f"{data_top_path}/研究所/前估後符/後符.csv"
+pd.DataFrame(post_agreement_save_data).to_csv(post_agreement_save_path,index=False)
+
 
 ##前估繪圖
 
