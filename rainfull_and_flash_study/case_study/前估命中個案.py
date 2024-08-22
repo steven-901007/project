@@ -46,7 +46,7 @@ def check_in_time_range(row, lj_times):
 ##強降雨發生但沒有lighting jump
 
 
-month_path = data_top_path + "/研究所/雨量資料/對流性降雨"+str(dis)+"km統計/"+year+"/"+month+"/**.csv"
+month_path = f"{data_top_path}/研究所/雨量資料/對流性降雨{dis}km統計/{year}/{month}/**.csv"
 result  =glob.glob(month_path)
 
 for rain_station_path in tqdm(result,desc='資料處理中....'):
@@ -81,14 +81,10 @@ for rain_station_path in tqdm(result,desc='資料處理中....'):
         # print(rain_data['LJ_in_time_range'].sum())
         if rain_data['LJ_in_time_range'].sum() != 0:
             time_data = pd.to_datetime(rain_data[rain_data['LJ_in_time_range'] == 1]['time data'])
-            LJ_data_save_path = data_top_path + "/研究所/個案分析/前估命中個案/" + rain_station_name + '_' + str(rain_data['LJ_in_time_range'].sum()) + '.csv'
+            LJ_data_save_path = f"{data_top_path}/研究所/個案分析/前估命中個案/{rain_station_name}_{rain_data['LJ_in_time_range'].sum()}.csv"
             LJ_data_save = {
                 'time data' : time_data
             }
             pd.DataFrame(LJ_data_save).to_csv(LJ_data_save_path,index=False)
 
-
-# prefigurance_hit_persent_list = [] # 前估命中率
-# for i in range(len(total_prefigurance_list)):
-#     prefigurance_hit_persent_list.append(prefigurance_hit_list[i]/(total_prefigurance_list[i]+prefigurance_hit_list[i])*100)
 
