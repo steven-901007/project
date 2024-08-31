@@ -7,60 +7,46 @@ from cartopy.feature import ShapelyFeature
 import matplotlib.colors as mcolors
 import matplotlib.cm as cm
 import matplotlib as mpl
-from openpyxl import load_workbook
 from tqdm import tqdm
+import pandas as pd
 
 
 year = '2021' #年分
 month = '06' #月份
+dis = 36
 data_top_path = "C:/Users/steve/python_data"
 
 
 
 ## 讀取雨量站經緯度資料
-def rain_station_location_data():
-    data_path = data_top_path+"/研究所/雨量資料/"+year+"測站範圍內測站數.xlsx"
-    lon_data_list = []  # 經度
-    lat_data_list = []  # 緯度
-    name_data_list = []  #測站名稱
-    wb = load_workbook(data_path)
-    ws = wb[month]
-    for i in range(ws.max_column):
-        lon_data_list.append(ws.cell(4,i+1).value)
-        lat_data_list.append(ws.cell(3,i+1).value)
-        name_data_list.append(ws.cell(1,i+1).value)
-    wb.close()
-    return lon_data_list, lat_data_list ,name_data_list
+def rain_station_location_data_to_list(data_top_path,year):## 讀取雨量站經緯度資料
+    import pandas as pd
+    data_path = f"{data_top_path}/研究所/雨量資料/{year}測站資料.csv"
+    data = pd.read_csv(data_path)
+    station_data_name = data['station name'].to_list()
+    # station_real_data_name = data['station real name'].to_list()
+    lon_data = data['lon'].to_list()
+    lat_data = data['lat'].to_list()
+    # print(data)
+    return station_data_name,lon_data,lat_data
 
-lon_data_list, lat_data_list ,name_data_list = rain_station_location_data()
+name_data_list,lon_data_list, lat_data_list = rain_station_location_data_to_list(data_top_path,year)
 
-
-
+lj_count_lon_lat_list = [[],[],[]]
 
 ##lighting jump count
-lighting_jump_path = data_top_path+"/研究所/閃電資料/lighting_jump/"+year+"_"+month+"_lighting_jump.xlsx"
-wb_lighting_jump = load_workbook(lighting_jump_path)
-ws_lighting_jump = wb_lighting_jump[month]
-lighting_jump_data_max_row = ws_lighting_jump.max_row
-
-
-lighting_jump_count_list = [0 for x in range(len(name_data_list))]
-for row in tqdm(range(1,lighting_jump_data_max_row+1)):
-    col = 2
-    list_lc = name_data_list.index(ws_lighting_jump.cell(row,1).value)
-    while ws_lighting_jump.cell(row,col).value != None:
-        lighting_jump_count_list[list_lc] += 1
-        col += 1
-print(lighting_jump_count_list)
-
-#清除資料為0的測站
-while lighting_jump_count_list.count(0) != 0:
-    lc = lighting_jump_count_list.index(0)
-    lighting_jump_count_list.pop(lc)
-    lon_data_list.pop(lc)
-    lat_data_list.pop(lc)
+lighting_jump_paths = f"{data_top_path}/研究所/閃電資料/lighting_jump/{dis}km/{year}/{month}/**.csv"
+result = glob.glob(lighting_jump_paths)
+for lighting_jump_path in tqdm(result):
+    # print(lighting_jump_path)
+    station_name = lighting_jump_path.split('/')[-1].split('\\')[-1].split('.')[0]
+    # print(station_name)
+    data = pd.read_csv(lighting_jump_path)
+    # print(data['LJ_time'].count())
+    lj_count_lon_lat_list[0].append(data['LJ_time'].count())
+    lj_count_lon_lat_list[1].append(lon_data_list[name_data_list.index(station_name)])
+    lj_count_lon_lat_list[2].append(lat_data_list[name_data_list.index(station_name)])
     
-wb_lighting_jump.close()
 
 ## 繪圖
 
@@ -91,10 +77,10 @@ gridlines.right_labels = False
 ## 計算某個地方達到10mm/10min的次數 + colorbar
 color_list = []
 
-level = [0,100,500,1000,1500,3000,5000,6500,8000]
+level = [0,10,20,50,100,150,200,250,310]
 color_box = ['silver','purple','darkviolet','blue','g','y','orange','r']
 
-for nb in lighting_jump_count_list:
+for nb in lj_count_lon_lat_list[0]:
     more_then_maxma_or_not = 0
     for j in range(len(level)-1):
         if level[j]<nb<=level[j+1]:
@@ -108,7 +94,7 @@ for nb in lighting_jump_count_list:
 
 
 # 標記經緯度點
-ax.scatter(lon_data_list, lat_data_list, color=color_list, s=3, zorder=5)
+ax.scatter(lj_count_lon_lat_list[1], lj_count_lon_lat_list[2], color=color_list, s=3, zorder=5)
 
 # colorbar setting
 
@@ -126,13 +112,13 @@ cbar1 = plt.colorbar(im, extend='neither', ticks=level)
 plt.xlabel('Longitude')
 plt.ylabel('Latitude')
 
-ax.set_title(year+"年"+month+"月"+'\nlighting jump count\nmax = '+ str(max(lighting_jump_count_list)))
+ax.set_title(year+"年"+month+"月"+'\nlighting jump count\nmax = '+ str(max(lj_count_lon_lat_list[0])))
 
 
 ## 這是用來確認colorbar的配置
 fig,ax1 = plt.subplots()
-X = [i for i in range(len(lighting_jump_count_list))]
-Y = sorted(lighting_jump_count_list)
+X = [i for i in range(len(lj_count_lon_lat_list[0]))]
+Y = sorted(lj_count_lon_lat_list[0])
 ax1.plot(X,Y,color =  'black',marker = "*",linestyle = '--') #折線圖
 ax1.set_title('這是用來確認colorbar的配置')
 

@@ -1,10 +1,12 @@
 import math
 from datetime import datetime, timedelta
-from tqdm import tqdm ##跑進度條的好玩東西
+from tqdm import tqdm 
 import pandas as pd
 import time as T
 import glob
 import os
+import calendar
+
 
 year = '2021' #年分
 month = '06' #月份
@@ -37,18 +39,32 @@ def count_funtion(SR_time_late,row,data):
 
     return data[((data['data time'] >= start_time) & (data['data time'] < end_time))]['count'].sum()
 
+last_day = calendar.monthrange(int(year),int(month))[1]
+
+time_start_df = datetime(int(year),int(month),1,0)
+time_end_df = datetime(int(year),int(month),last_day,23,59)
+#生成時間df
+full_time_range = pd.date_range(start=time_start_df, end=time_end_df, freq='min')# 生成完整的每分鐘時間範圍
+full_time_df = pd.DataFrame(full_time_range, columns=['data time'])# 建立一個 DataFrame 包含完整的時間範圍
+
+# print(full_time_df)
+
 ## 讀取閃電資料
 month_path = f"{data_top_path}/研究所/閃電資料/依測站分類/{dis}km/{year}/{month}/**.csv"
 result  =glob.glob(month_path)
 
+# pd.set_option('display.max_rows', None)
+
 for station_path in result:
-    # print(station_path)
-# station_path = "C:/Users/steve/python_data/研究所/閃電資料/依測站分類/36km/2021/06/00H810.csv"
+    print(station_path)
+# station_path = "C:/Users/steve/python_data/研究所/閃電資料/依測站分類/36km/2021/06/00H710.csv"
     station_name = station_path[55:61]
     print(station_name)
 
     data = pd.read_csv(station_path)
     # print(data['data time'])
+    data['data time'] = pd.to_datetime(data['data time'])
+    data = pd.merge(data,full_time_df,on='data time', how='outer').fillna(0)
 
     data['data time'] = pd.to_datetime(data['data time']).dt.floor('min')
     data['if_lj_time'] = data['data time'] + pd.Timedelta(minutes=10)
@@ -71,7 +87,7 @@ for station_path in result:
     data['lighting_jump_or_not'] = data.apply(lambda row: statistics(alpha, row), axis=1)
     # print(data[data['if_lj_time']=='2021-06-01 12:26:00'])
     # print(data[data['lighting_jump_or_not'] == 1])
-
+    # print(data)
     ##挑選存檔部分(if_lj_time)
 
     data_to_save = {
@@ -81,13 +97,13 @@ for station_path in result:
     if not data['if_lj_time'][data['lighting_jump_or_not'] == 1].empty:
         pd.DataFrame(data_to_save).to_csv(f"{data_top_path}/研究所/閃電資料/lighting_jump/{dis}km/{year}/{month}/{station_name}.csv",index=False)
 
-end_time = T.time()
-# 計算執行時間
-elapsed_time = end_time - start_time
+    end_time = T.time()
+    # 計算執行時間
+    elapsed_time = end_time - start_time
 
-# 將執行時間轉換為小時、分鐘和秒
-hours, rem = divmod(elapsed_time, 3600)
-minutes, seconds = divmod(rem, 60)
+    # 將執行時間轉換為小時、分鐘和秒
+    hours, rem = divmod(elapsed_time, 3600)
+    minutes, seconds = divmod(rem, 60)
 
-# 打印執行時間
-print('程式執行了{}小時{}分{}秒'.format(int(hours), int(minutes), int(seconds)))
+    # 打印執行時間
+    print('程式執行了{}小時{}分{}秒'.format(int(hours), int(minutes), int(seconds)))

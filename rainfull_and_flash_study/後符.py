@@ -146,7 +146,7 @@ gridlines.right_labels = False
 ## 計算某個地方達到10mm/10min的次數 + colorbar
 color_list = []
 
-level = [0,20,50,70,100,150,170,200,230]
+level = [0,30,60,100,150,170,200,250,300]
 color_box = ['silver','purple','darkviolet','blue','g','y','orange','r']
 
 for nb in post_agreement_hit_list:

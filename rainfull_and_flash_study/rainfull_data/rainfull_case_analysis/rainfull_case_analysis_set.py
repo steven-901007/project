@@ -5,13 +5,14 @@ from tqdm import tqdm
 from importset import fileset
 import re
 from openpyxl.styles import Font
+from datetime import datetime, timedelta
 
 year = '2021' #年分
 month = '06' #月份
 data_top_path = "C:/Users/steve/python_data"
 dis = 36
 
-station = '466920'
+station = 'V2C250'
 
 print(station)
 file_path = f"{data_top_path}/研究所/雨量資料/{str(dis)}km個案分析/{month}/{station}"
@@ -65,6 +66,8 @@ for day_path in tqdm(result,desc='資料建立'):
     result  =glob(day_path+'/*')
     for rain_data_path in result:
         time = rain_data_path.split('\\')[-1].split('.')[0]
+        time_obj = datetime.strptime(time, '%Y%m%d%H%M')+ timedelta(hours=8) #將UTC轉成LT
+        time = time_obj.strftime('%Y%m%d%H%M')
         save_data_ws.cell(1,col).value = time[6:]
         # print('時間:'+time)
         rain_data_list = []

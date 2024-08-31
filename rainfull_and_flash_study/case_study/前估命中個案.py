@@ -77,7 +77,7 @@ for rain_station_path in tqdm(result,desc='資料處理中....'):
         # print(rain_data[rain_data['LJ_in_time_range'] == 1])
         # pd.set_option('display.max_rows', None)
 
-        # print(flash_data)
+        print(flash_data)
         # print(rain_data['LJ_in_time_range'].sum())
         if rain_data['LJ_in_time_range'].sum() != 0:
             time_data = pd.to_datetime(rain_data[rain_data['LJ_in_time_range'] == 1]['time data'])
