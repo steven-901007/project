@@ -24,7 +24,7 @@ save_data_ws = save_data_wb.active
 
 
 ##周圍測站名稱建立
-around_station_data_path = f"{data_top_path}/研究所/雨量資料/{year}測站範圍內測站數/{station}.csv"
+around_station_data_path = f"{data_top_path}/研究所/雨量資料/測站範圍內測站數/{year}_{month}/{station}.csv"
 around_station_datas = pd.read_csv(around_station_data_path)
 around_station_datas['station name'] = around_station_datas['station name'].astype(str)
 # print(around_station_datas)
@@ -71,7 +71,7 @@ for day_path in tqdm(result,desc='資料建立'):
         save_data_ws.cell(1,col).value = time[6:]
         # print('時間:'+time)
         rain_data_list = []
-        rainfull_list = []
+        rainfall_list = []
         # 每10分鐘資料處理 rain data >10mm (10min)
         line = 0
         with open(rain_data_path, 'r') as files:

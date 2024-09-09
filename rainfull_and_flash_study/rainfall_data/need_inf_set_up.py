@@ -5,17 +5,17 @@ from tqdm import tqdm
 import importset
 from datetime import datetime, timedelta
 year = '2021' #年分
-month = '06' #月份
+month = '07' #月份
 data_top_path = "C:/Users/steve/python_data"
 
 
 ##建立資料夾
-file_path = data_top_path + "/研究所/雨量資料/降雨data/"+year+"/"+month+"/"
+file_path = f"{data_top_path}/研究所/雨量資料/降雨data/{year}/{month}/"
 importset.fileset(file_path)
 ## 讀取每月資料
 
 
-month_path = data_top_path+"/研究所/雨量資料/"+year+"_"+month+"/"+month
+month_path = f"{data_top_path}/研究所/雨量資料/{year}_{month}/{month}"
 result  =glob.glob(month_path+"/*")
 
 for day_path in tqdm(result,desc='資料建立'):
@@ -32,7 +32,7 @@ for day_path in tqdm(result,desc='資料建立'):
     
         # print('時間:'+time)
         rain_data_list = []
-        rainfull_list = []
+        rainfall_list = []
         # 每10分鐘資料處理 rain data >10mm (10min)
         line = 0
         with open(rain_data_path, 'r') as files:
@@ -51,14 +51,14 @@ for day_path in tqdm(result,desc='資料建立'):
 
                         if 0<rain_data_of_10min <= rain_data_of_3_hour <=rain_data_of_6_hour<= rain_data_of_12_hour <= rain_data_of_24_hour: #QC
                             rain_data_list.append(station_name)
-                            rainfull_list.append(rain_data_of_10min)
+                            rainfall_list.append(rain_data_of_10min)
         
                 line += 1
 
         if rain_data_list != []:
             rain_data_save = {
                 'station name':rain_data_list,
-                'rain data':rainfull_list
+                'rain data':rainfall_list
             }
             pd.DataFrame(rain_data_save, dtype=str).to_csv(f"{data_top_path}/研究所/雨量資料/降雨data/{year}/{month}/{time}.csv",index=False)
 

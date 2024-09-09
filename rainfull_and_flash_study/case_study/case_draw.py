@@ -3,7 +3,14 @@ import matplotlib.pyplot as plt
 import datetime
 from tqdm import tqdm
 from matplotlib.dates import DateFormatter, MinuteLocator
+import os
+from glob import glob
 
+
+def fileset(path):    #建立資料夾
+    if not os.path.exists(path):
+        os.makedirs(path)
+        print(path + " 已建立") 
 
 
 ##統計計算(mean+2std)
@@ -34,10 +41,10 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     pd.set_option('display.max_rows', None)
 
     #將時間的type改成時間型態
-    time_start_df = datetime.datetime(int(year),int(month),int(day),time_start)
-    time_end_df = datetime.datetime(int(year),int(month),int(day),time_end)
+    time_start_time_type = datetime.datetime(int(year),int(month),int(day),time_start)
+    time_end_time_type = datetime.datetime(int(year),int(month),int(day),time_end)
     #生成時間df
-    full_time_range = pd.date_range(start=time_start_df, end=time_end_df, freq='min')# 生成完整的每分鐘時間範圍
+    full_time_range = pd.date_range(start=time_start_time_type, end=time_end_time_type, freq='min')# 生成完整的每分鐘時間範圍
     full_time_df = pd.DataFrame(full_time_range, columns=['data time'])# 建立一個 DataFrame 包含完整的時間範圍
 
     ##測站資料
@@ -84,7 +91,7 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
 
     
     # flash_data_for_SR6_df = pd.merge(flash_data_for_lighting_jump_and_SR6_df,full_time_df,on='data time', how='outer').fillna(0)
-    # print(flash_data_for_SR6_df)
+    # print(flash_data_for_lighting_jump_and_SR6_df)
 
 
 
@@ -109,9 +116,15 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     # print(rain_data)
     # print(count_rain_data)
 
+    
+    this_case_prefigurance_hit_persent_paths = f"{data_top_path}/研究所/個案分析/前估命中個案/{station_name}_**.csv"
+    # print(glob(this_case_prefigurance_hit_persent_paths))    
+    this_case_prefigurance_hit_persent_path = glob(this_case_prefigurance_hit_persent_paths)[0]
+    this_case_prefigurance_hit_persent_datas = pd.read_csv(this_case_prefigurance_hit_persent_path,parse_dates=['time data'])['time data']
+    this_case_prefigurance_hit_persent_data = this_case_prefigurance_hit_persent_datas[(this_case_prefigurance_hit_persent_datas >= time_start_time_type) & (this_case_prefigurance_hit_persent_datas <= time_end_time_type)]
+    this_case_prefigurance_hit_count = this_case_prefigurance_hit_persent_data.count()
 
-
-
+    # print(time_start_time_type,time_end_time_type)
 
     # 繪製圖表
     fig, ax1 = plt.subplots(figsize = (19,9))
@@ -149,11 +162,16 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     # ax1.grid(True, which='both', axis='x', linestyle='--', linewidth=0.5)  # 添加网格线
     plt.setp(ax1.get_xticklabels(), rotation=90)
 
-    plt.title(f"測站：{point_real_name}({station_name})\n日期：{year}/{month}/{day}\n時間{str(time_start).zfill(2)}:00~{str(time_end).zfill(2)}:00")
+    plt.title(f"測站：{point_real_name}({station_name})\n日期：{year}/{month}/{day}\n時間{str(time_start).zfill(2)}:00~{str(time_end).zfill(2)}:00\n前估命中數：{this_case_prefigurance_hit_count}")
     fig.legend()
 
     # 顯示and儲存圖表
     pic_save_path = case_root_path + '/picture.png'
+
+    # case_root_path = f"{data_top_path}/研究所/個案分析/{station_name}_{dis}_{year}{month}_{str(time_start).zfill(2)}00to{str(time_end).zfill(2)}00"
+    # fileset(case_root_path)
+    # pic_save_path = f"{case_root_path}/{year}{month}{day}.png"
+    
     plt.savefig(pic_save_path, bbox_inches='tight', dpi=300)
     print(f"已生成照片：\n測站：{point_real_name}({station_name})\n半徑：{dis}\n日期：{year}/{month}/{day}\n時間{str(time_start).zfill(2)}:00~{str(time_end).zfill(2)}:00")    # plt.show()
     # plt.show()
@@ -164,13 +182,12 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
 # data_top_path = "C:/Users/steve/python_data"
 # year = '2021' #年分
 # month = '06' #月份
-# day = '01'
-# time_start = 12
-# time_end = 17
+# day = '04'
+# time_start = 0
+# time_end = 23
 # dis = 36
 # alpha = 2 #統計檢定
-# station_name = 'C0G880'
-
+# station_name = 'C0F9N0'
 
 
 # case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,alpha)

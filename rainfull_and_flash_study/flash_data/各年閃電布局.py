@@ -1,0 +1,34 @@
+from glob import glob
+import pandas as pd
+import matplotlib.pyplot as plt
+from tqdm import tqdm
+
+flash_data_list = [[],[]]
+flash_raw_data_paths = f"C:/Users/steve/python_data/研究所/閃電資料/raw_data/2019/201901.txt"
+flash_raw_data_year_paths = glob("C:/Users/steve/python_data/研究所/閃電資料/raw_data/**")
+for flash_raw_data_year_path in tqdm(flash_raw_data_year_paths,desc='資料讀取中...'):
+    # print(flash_raw_data_year_path)
+    flash_raw_data_month_paths = glob(flash_raw_data_year_path + "/**")
+    for flash_raw_data_month_path in flash_raw_data_month_paths:
+        # print(flash_raw_data_month_path)
+        flash_time = flash_raw_data_month_path.split('/')[-1].split('\\')[-1].split('.')[0]
+        # print(flash_time)
+        flash_data_list[0].append(flash_time)
+        try:
+            flash_datas = pd.read_csv(flash_raw_data_month_path)
+        except:
+            flash_datas = pd.read_csv(flash_raw_data_month_path,encoding='big5')
+        # print(flash_datas)
+        flash_data_count = flash_datas['日期時間'].count()
+        # print(flash_data_count)
+        flash_data_list[1].append(flash_data_count)
+
+plt.rcParams['font.sans-serif'] = [u'MingLiu']  # 設定字體為'細明體'
+plt.rcParams['axes.unicode_minus'] = False  # 用來正常顯示正負號
+fig = plt.figure() #底圖(一張空白map可以在上面自行加上各種ax)
+ax = fig.add_subplot()
+ax.bar(flash_data_list[0],flash_data_list[1])
+plt.xticks(rotation=90)  # 旋轉 x 軸標籤，讓它們更易讀
+plt.tight_layout()  # 自動調整佈局
+plt.title('各年閃電布局')
+plt.show()

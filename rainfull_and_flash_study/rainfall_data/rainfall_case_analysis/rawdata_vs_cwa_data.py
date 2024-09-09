@@ -10,7 +10,7 @@ month = '06' #月份
 data_top_path = "C:/Users/steve/python_data"
 
 
-station_name_path = f"{data_top_path}/研究所/雨量資料/{year}測站資料.csv"
+station_name_path = f"{data_top_path}/研究所/雨量資料/測站資料/{year}_{month}.csv"
 station_name_datas = pd.read_csv(station_name_path)
 station_name_data_list = station_name_datas['station name'].to_list()
 station_real_name_data_df = station_name_datas['station real name']
@@ -38,15 +38,16 @@ for day_path in tqdm(result,desc='資料建立'):
 
                 if line >= 3 :  #移除檔頭
                     station_name = elements[0] #測站名稱
+                    rain_data_of_rain = float(elements[6]) #rain
                     rain_data_of_10min = float(elements[7]) #MIN_10
                     rain_data_of_3_hour = float(elements[8]) #HOUR_3
                     rain_data_of_6_hour = float(elements[9]) #HOUR_6
                     rain_data_of_12_hour = float(elements[10]) #HOUR_12
                     rain_data_of_24_hour = float(elements[11]) #HOUR_24
 
-                    if 0<rain_data_of_10min <= rain_data_of_3_hour <=rain_data_of_6_hour<= rain_data_of_12_hour <= rain_data_of_24_hour: #QC and data !=0 or -999
+                    if 0<rain_data_of_rain<rain_data_of_10min <= rain_data_of_3_hour <=rain_data_of_6_hour<= rain_data_of_12_hour <= rain_data_of_24_hour: #QC and data !=0 or -999
                         try: #資料可能在研究經緯度外
-                            station_rain_sum_list[station_name_data_list.index(station_name)] += rain_data_of_10min
+                            station_rain_sum_list[station_name_data_list.index(station_name)] += rain_data_of_rain
                         except:pass
                 line += 1
 
@@ -59,7 +60,7 @@ raw_rain_data_df = pd.DataFrame(raw_rain_data)
 # print(raw_rain_data_df)
 
 ## cwa資料
-cwa_rain_data_path = f"{data_top_path}/研究所/雨量資料/cwa{year}{month}各測站每日降雨資料.csv"
+cwa_rain_data_path = f"{data_top_path}/研究所/雨量資料/cwa各測站每日降雨資料/{year}_{month}.csv"
 cwa_rain_datas = pd.read_csv(cwa_rain_data_path)
 cwa_rain_datas = cwa_rain_datas.rename(columns={
     '測站':'station real name',

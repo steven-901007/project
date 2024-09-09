@@ -78,25 +78,25 @@ for flash_station_path in tqdm(result,desc='資料處理中....'):
 
 
         try:
-            flash_data['convective_rainfull_in_time_range'] = flash_data.apply(lambda row: check_in_time_range(row, rain_data['time data']), axis=1)
+            flash_data['convective_rainfall_in_time_range'] = flash_data.apply(lambda row: check_in_time_range(row, rain_data['time data']), axis=1)
         except:
             print(flash_station_name)
             print(flash_data)
             ValueError
-        # print(flash_data[flash_data['convective_rainfull_in_time_range'] == 1])
+        # print(flash_data[flash_data['convective_rainfall_in_time_range'] == 1])
         # pd.set_option('display.max_rows', None)
 
         # print(rain_data)
-        # print(flash_data['convective_rainfull_in_time_range'].sum())
+        # print(flash_data['convective_rainfall_in_time_range'].sum())
         # print(flash_data)
-        if flash_data['convective_rainfull_in_time_range'].sum() != 0:
+        if flash_data['convective_rainfall_in_time_range'].sum() != 0:
             post_agreement_station_name_list.append(flash_station_name)
             # print(data[data['station name'] == rain_station_name]['lon'].iloc[0])
-            post_agreement_hit_list.append(flash_data['convective_rainfull_in_time_range'].sum())
+            post_agreement_hit_list.append(flash_data['convective_rainfall_in_time_range'].sum())
             total_post_agreement_list.append(len(flash_data))
             post_agreement_lon_data_list.append(data[data['station name'] == flash_station_name]['lon'].iloc[0])
             post_agreement_lat_data_list.append(data[data['station name'] == flash_station_name]['lat'].iloc[0])
-    # print(flash_station_name,flash_data['convective_rainfull_in_time_range'].sum(),len(flash_data))
+    # print(flash_station_name,flash_data['convective_rainfall_in_time_range'].sum(),len(flash_data))
 # print(post_agreement_station_name_list)
 # print(post_agreement_hit_list)
 # print(total_post_agreement_list)

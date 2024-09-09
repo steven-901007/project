@@ -7,7 +7,7 @@ from geopy.distance import geodesic
 
 
 year = '2021' #年分
-month = '06' #月份
+month = '07' #月份
 data_top_path = "C:/Users/steve/python_data"
 dis = 36
 max_lon = 122.1
@@ -46,15 +46,15 @@ def rain_station_location_data(path):
     
     return lon_data_list, lat_data_list ,name_data_list ,real_name_data_list
 
-fileset(data_top_path+ "/研究所/雨量資料/"+year+"測站範圍內測站數/")
+fileset(f"{data_top_path}/研究所/雨量資料/測站範圍內測站數/{year}_{month}")
 
 lon_data_list, lat_data_list ,station_name_data_list ,real_name_data_list = [],[],[],[]
 
 ##確認所有資料的測站都有被記錄
 ## 讀取每月資料
-month_path = data_top_path+"/研究所/雨量資料/"+year+"_"+month+"/"+month
+month_path = f"{data_top_path}/研究所/雨量資料/{year}_{month}/{month}"
 result  =glob.glob(month_path+"/*")
-for day_path in tqdm(result,desc='資料處理中....'):
+for day_path in tqdm(result,desc='測站資料'):
     # print(day_path)
     day = day_path[53:] #日期
     # print('日期:'+day)
@@ -84,10 +84,10 @@ data = {
 }
 data_df = pd.DataFrame(data)
 ##測站資料
-data_df.to_csv(data_top_path + "/研究所/雨量資料/"+year+"測站資料.csv",encoding='utf-8-sig',index=False)
+data_df.to_csv(f"{data_top_path}/研究所/雨量資料/測站資料/{year}_{month}.csv",encoding='utf-8-sig',index=False)
 
 
-for station_name_nb in tqdm(range(len(station_name_data_list)),desc='資料建立中...'):
+for station_name_nb in tqdm(range(len(station_name_data_list)),desc='測站範圍內測站數'):
 # station_name_nb = 0
     station_name = str(station_name_data_list[station_name_nb])
     real_name = str(real_name_data_list[station_name_nb])
@@ -98,6 +98,6 @@ for station_name_nb in tqdm(range(len(station_name_data_list)),desc='資料建�
     save_data = data_df[data_df['distance_km'] < dis]['station name'].astype(str)
     # print(station_name)
     # print(save_data)
-    save_path = data_top_path + "/研究所/雨量資料/"+year+"測站範圍內測站數/" + station_name +'.csv'
+    save_path = f"{data_top_path}/研究所/雨量資料/測站範圍內測站數/{year}_{month}/{station_name}.csv"
     pd.DataFrame(save_data).to_csv(save_path,index= False)
 

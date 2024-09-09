@@ -43,7 +43,7 @@ def fileset(path):    #建立資料夾
 def case_data_set(year,month,day,time_start,time_end,dis,station_name,data_top_path):
 
     #測站經緯度and36km的測站有哪些
-    stations_name_for_36km_path = f"{data_top_path}/研究所/雨量資料/{year}測站範圍內測站數/{station_name}.csv"
+    stations_name_for_36km_path = f"{data_top_path}/研究所/雨量資料/測站範圍內測站數/{year}_{month}/{station_name}.csv"
     stations_name_for_36km_pd = pd.read_csv(stations_name_for_36km_path)
     # print(stations_name_for_36km_pd)
 
@@ -73,7 +73,14 @@ def case_data_set(year,month,day,time_start,time_end,dis,station_name,data_top_p
         if time_start <= file_time < time_end:
             # print(rain_path)
             rain_datas = pd.read_csv(rain_path)
+            stations_name_for_36km_pd['station name'] = stations_name_for_36km_pd['station name'].astype(str)
+            rain_datas['station name'] = rain_datas['station name'].astype(str)
+
             union_datas = pd.merge(stations_name_for_36km_pd,rain_datas, on='station name', how='inner')
+            # print(stations_name_for_36km_pd)
+            # print(rain_datas)
+            # print(stations_name_for_36km_pd.info())
+            # print(rain_datas.info())
             union_datas['data time'] = file_time
             union_datas = union_datas[['data time', 'station name', 'rain data']]
             # print(union_datas)
