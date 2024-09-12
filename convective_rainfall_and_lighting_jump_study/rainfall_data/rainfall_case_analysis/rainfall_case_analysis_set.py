@@ -30,7 +30,7 @@ around_station_datas['station name'] = around_station_datas['station name'].asty
 # print(around_station_datas)
 
 #測站經緯度
-around_station_lon_lat_path = f"{data_top_path}/研究所/雨量資料/{year}測站資料.csv"
+around_station_lon_lat_path = f"{data_top_path}/研究所/雨量資料/測站資料/{year}_{month}.csv"
 around_station_lon_lat_datas = pd.read_csv(around_station_lon_lat_path)
 real_name = around_station_lon_lat_datas[around_station_lon_lat_datas['station name'] == station]['station real name'].iloc[0]
 print(real_name)

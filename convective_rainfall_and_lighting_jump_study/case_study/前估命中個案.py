@@ -26,11 +26,11 @@ def fileset(path):    #建立資料夾
     if not os.path.exists(path):
         os.makedirs(path)
         print(f"{path}已建立") 
-fileset(f"{data_top_path}/研究所/個案分析/前估命中個案")
+fileset(f"{data_top_path}/研究所/個案分析/前估命中個案/{year}_{month}")
 
 def rain_station_location_data_to_list(data_top_path,year):## 讀取雨量站經緯度資料
     import pandas as pd
-    data_path = f"{data_top_path}/研究所/雨量資料/{year}測站資料.csv"
+    data_path = f"{data_top_path}/研究所/雨量資料/測站資料/{year}_{month}.csv"
     data = pd.read_csv(data_path)
     station_data_name = data['station name'].to_list()
     station_real_data_name = data['station real name'].to_list()
@@ -46,7 +46,7 @@ def check_in_time_range(row, lj_times):
 ##強降雨發生但沒有lighting jump
 
 
-month_path = f"{data_top_path}/研究所/雨量資料/對流性降雨{dis}km統計/{year}/{month}/**.csv"
+month_path = f"{data_top_path}/研究所/雨量資料/對流性降雨{dis}km/{year}/{month}/**.csv"
 result  =glob.glob(month_path)
 
 for rain_station_path in tqdm(result,desc='資料處理中....'):
@@ -56,7 +56,7 @@ for rain_station_path in tqdm(result,desc='資料處理中....'):
 
     #flash
     try:
-        flash_station_path = f"{data_top_path}/研究所/閃電資料/lighting_jump/{dis}km/{year}/{month}/{rain_station_name}.csv"
+        flash_station_path = f"{data_top_path}/研究所/閃電資料/lighting_jump/{year}_{month}_{dis}km/{rain_station_name}.csv"
         rain_data = pd.read_csv(rain_station_path)
         flash_data = pd.read_csv(flash_station_path)
         # if rain_station_name == 'C0G880':
@@ -77,11 +77,11 @@ for rain_station_path in tqdm(result,desc='資料處理中....'):
         # print(rain_data[rain_data['LJ_in_time_range'] == 1])
         # pd.set_option('display.max_rows', None)
 
-        print(flash_data)
+        # print(flash_data)
         # print(rain_data['LJ_in_time_range'].sum())
         if rain_data['LJ_in_time_range'].sum() != 0:
             time_data = pd.to_datetime(rain_data[rain_data['LJ_in_time_range'] == 1]['time data'])
-            LJ_data_save_path = f"{data_top_path}/研究所/個案分析/前估命中個案/{rain_station_name}_{rain_data['LJ_in_time_range'].sum()}.csv"
+            LJ_data_save_path = f"{data_top_path}/研究所/個案分析/前估命中個案/{year}_{month}/{rain_station_name}_{rain_data['LJ_in_time_range'].sum()}.csv"
             LJ_data_save = {
                 'time data' : time_data
             }

@@ -93,7 +93,7 @@ def case_data_set(year,month,day,time_start,time_end,dis,station_name,data_top_p
 
 
     ##閃電資料建立(讀取依測站分類)
-    flash_path = f"{data_top_path}/研究所/閃電資料/依測站分類/{dis}km/{year}/{month}/{station_name}.csv"
+    flash_path = f"{data_top_path}/研究所/閃電資料/依測站分類/{year}_{month}_{dis}km/{station_name}.csv"
     flash_data = pd.read_csv(flash_path)
     flash_data['data time'] = pd.to_datetime(flash_data['data time'])
     # print(flash_data['data time'])
@@ -105,16 +105,18 @@ def case_data_set(year,month,day,time_start,time_end,dis,station_name,data_top_p
     print('閃電資料已建立')
 
 
-# # ## 變數設定
+# # # ## 變數設定
 # data_top_path = "C:/Users/steve/python_data"
 # year = '2021' #年分
 # month = '06' #月份
-# day = '01'
+# day = '04'
 # time_start = 12
-# time_end = 17
+# time_end = 18
 # dis = 36
 # alpha = 2 #統計檢定
-# station_name = 'C0G880'
+# # station_name = 'C0F9N0'
+# # station_name = 'C0V800' #六龜
+# station_name = '466920' #台北
 
 
 # case_data_set(year,month,day,time_start,time_end,dis,station_name,data_top_path)

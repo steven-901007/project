@@ -27,7 +27,7 @@ def count_funtion(SR_time_late,row,data):
     # if SR_time_late == 1:
     # print(row['if_lj_time'],start_time,end_time)
 
-    return data[((data['data time'] >= start_time) & (data['data time'] < end_time))]['count'].sum()
+    return data[((data['data time'] >= start_time) & (data['data time'] < end_time))]['flash_count'].sum()
 
 ##maxma_rain_data填色
 def assign_status(x):
@@ -48,7 +48,7 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     full_time_df = pd.DataFrame(full_time_range, columns=['data time'])# 建立一個 DataFrame 包含完整的時間範圍
 
     ##測站資料
-    data_path = f"{data_top_path}/研究所/雨量資料/{year}測站資料.csv"
+    data_path = f"{data_top_path}/研究所/雨量資料/測站資料/{year}_{month}.csv"
     position_data = pd.read_csv(data_path)
     point_real_name = position_data[position_data['station name'] == station_name]['station real name'].iloc[0]
     ##資料讀取
@@ -117,7 +117,7 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     # print(count_rain_data)
 
     
-    this_case_prefigurance_hit_persent_paths = f"{data_top_path}/研究所/個案分析/前估命中個案/{station_name}_**.csv"
+    this_case_prefigurance_hit_persent_paths = f"{data_top_path}/研究所/個案分析/前估命中個案/{year}_{month}/{station_name}_**.csv"
     # print(glob(this_case_prefigurance_hit_persent_paths))    
     this_case_prefigurance_hit_persent_path = glob(this_case_prefigurance_hit_persent_paths)[0]
     this_case_prefigurance_hit_persent_datas = pd.read_csv(this_case_prefigurance_hit_persent_path,parse_dates=['time data'])['time data']
@@ -134,7 +134,7 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     
     # 繪製每分鐘閃電量，右側y軸
     ax2 = ax1.twinx()
-    ax2.plot(flash_data_for_every_min_df['data time'], flash_data_for_every_min_df['count'], c='skyblue', zorder=3, label='1-min ICandCG') #每分鐘閃電量
+    ax2.plot(flash_data_for_every_min_df['data time'], flash_data_for_every_min_df['flash_count'], c='skyblue', zorder=3, label='1-min ICandCG') #每分鐘閃電量
     ax2.bar(total_rain_data['data time'],total_rain_data['rain data'],color = 'lime', width=0.001,zorder=1,label = '總雨量')
     ax2.bar(maxma_rain_data[maxma_rain_data['color'] == 'g']['data time'], 
         maxma_rain_data[maxma_rain_data['color'] == 'g']['rain data'],
@@ -168,9 +168,9 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     # 顯示and儲存圖表
     pic_save_path = case_root_path + '/picture.png'
 
-    # case_root_path = f"{data_top_path}/研究所/個案分析/{station_name}_{dis}_{year}{month}_{str(time_start).zfill(2)}00to{str(time_end).zfill(2)}00"
-    # fileset(case_root_path)
-    # pic_save_path = f"{case_root_path}/{year}{month}{day}.png"
+    case_root_path = f"{data_top_path}/研究所/個案分析/{station_name}_{dis}_{year}{month}_{str(time_start).zfill(2)}00to{str(time_end).zfill(2)}00"
+    fileset(case_root_path)
+    pic_save_path = f"{case_root_path}/{year}{month}{day}.png"
     
     plt.savefig(pic_save_path, bbox_inches='tight', dpi=300)
     print(f"已生成照片：\n測站：{point_real_name}({station_name})\n半徑：{dis}\n日期：{year}/{month}/{day}\n時間{str(time_start).zfill(2)}:00~{str(time_end).zfill(2)}:00")    # plt.show()
@@ -182,12 +182,14 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
 # data_top_path = "C:/Users/steve/python_data"
 # year = '2021' #年分
 # month = '06' #月份
-# day = '04'
-# time_start = 0
+# day = '01'
+# time_start = 00
 # time_end = 23
 # dis = 36
 # alpha = 2 #統計檢定
-# station_name = 'C0F9N0'
+# # station_name = 'C0F9N0'
+# # station_name = 'C0V800' #六龜
+# station_name = '466920' #台北
 
 
 # case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,alpha)

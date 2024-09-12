@@ -14,9 +14,9 @@ import matplotlib as mpl
 def case_map_draw(station_name,data_top_path,year,month,day,time_start,time_end,dis):
     prefigurance_path = f"{data_top_path}/研究所/前估後符/前估.csv"
     post_agreement_path = f"{data_top_path}/研究所/前估後符/後符.csv"
-    position_path = f"{data_top_path}/研究所/雨量資料/{year}測站資料.csv"
+    position_path = f"{data_top_path}/研究所/雨量資料/測站資料/{year}_{month}.csv"
     range_station_name_path = f"{data_top_path}/研究所/雨量資料/測站範圍內測站數/{year}_{month}/{station_name}.csv"
-    range_station_inf_path = f"{data_top_path}/研究所/雨量資料/{year}測站資料.csv"
+
     rain_data_path = f"{data_top_path}/研究所/個案分析/{station_name}_{dis}_{year}{month}{day}_{str(time_start).zfill(2)}00to{str(time_end).zfill(2)}00/rain_raw_data.csv"
 
 
@@ -24,7 +24,7 @@ def case_map_draw(station_name,data_top_path,year,month,day,time_start,time_end,
     post_agreement_datas = pd.read_csv(post_agreement_path)
     position_datas = pd.read_csv(position_path)
     range_station_name_datas = pd.read_csv(range_station_name_path)
-    range_station_inf_datas = pd.read_csv(range_station_inf_path)
+    range_station_inf_datas = pd.read_csv(position_path)
     rain_datas = pd.read_csv(rain_data_path)
     # print(range_station_name_datas)
     # print(range_station_inf_datas)
@@ -69,7 +69,14 @@ def case_map_draw(station_name,data_top_path,year,month,day,time_start,time_end,
     point_real_name = position_datas[position_datas['station name'] == station_name]['station real name'].iloc[0]
     prefigurance_data = prefigurance_datas[prefigurance_datas['station name'] == station_name]
     post_agreement_data = post_agreement_datas[post_agreement_datas['station name'] == station_name]
-    
+
+    if not prefigurance_data.empty and not post_agreement_data.empty:
+        pre_hit_persent = round(prefigurance_data['hit persent'].iloc[0], 2)
+        post_hit_persent = round(post_agreement_data['hit persent'].iloc[0], 2)
+    else:
+        pre_hit_persent = 'N/A'
+        post_hit_persent = 'N/A'
+
     # 設定經緯度範圍
     lon_min, lon_max = 120, 122.1
     lat_min, lat_max = 21.5, 25.5
@@ -115,7 +122,7 @@ def case_map_draw(station_name,data_top_path,year,month,day,time_start,time_end,
     plt.xlabel('Longitude')
     plt.ylabel('Latitude')
     plt.legend()
-    ax.set_title(f"{point_real_name} ({point_lon},{point_lat})\ninside {dis}km station number = {range_station_count}\nprefigurance hit persent = {round(prefigurance_data['hit persent'].iloc[0],2)}\npost agreement hit persent = {round(post_agreement_data['hit persent'].iloc[0],2)}")
+    ax.set_title(f"{point_real_name} ({point_lon},{point_lat})\ninside {dis}km station number = {range_station_count}\nprefigurance hit persent = {pre_hit_persent}\npost agreement hit persent = {post_hit_persent}")
 
     # 顯示地圖
 
