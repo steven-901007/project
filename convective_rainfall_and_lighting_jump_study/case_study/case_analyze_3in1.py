@@ -3,7 +3,7 @@ from case_draw import case_draw
 from case_map_draw import case_map_draw
 ##變數設定
 
-data_top_path = "C:/Users/steve/python_data"
+data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 year = '2021' #年分
 month = '07' #月份
 # day = '04'

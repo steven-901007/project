@@ -43,13 +43,13 @@ def fileset(path):    #建立資料夾
 def case_data_set(year,month,day,time_start,time_end,dis,station_name,data_top_path):
 
     #測站經緯度and36km的測站有哪些
-    stations_name_for_36km_path = f"{data_top_path}/研究所/雨量資料/測站範圍內測站數/{year}_{month}/{station_name}.csv"
+    stations_name_for_36km_path = f"{data_top_path}/雨量資料/測站範圍內測站數/{year}_{month}/{station_name}.csv"
     stations_name_for_36km_pd = pd.read_csv(stations_name_for_36km_path)
     # print(stations_name_for_36km_pd)
 
 
     ## 建立資料夾
-    case_root_path = f"{data_top_path}/研究所/個案分析/{station_name}_{dis}_{year}{month}{day}_{str(time_start).zfill(2)}00to{str(time_end).zfill(2)}00"
+    case_root_path = f"{data_top_path}/個案分析/{station_name}_{dis}_{year}{month}{day}_{str(time_start).zfill(2)}00to{str(time_end).zfill(2)}00"
     fileset(case_root_path)
 
     # time_start = datetime.datetime(time_start,0)
@@ -61,7 +61,7 @@ def case_data_set(year,month,day,time_start,time_end,dis,station_name,data_top_p
 
 
     ##雨量raw data建立
-    rain_paths = f"{data_top_path}/研究所/雨量資料/降雨data/{year}/{month}/**"
+    rain_paths = f"{data_top_path}/雨量資料/降雨data/{year}/{month}/**"
     rain_file_paths  =glob.glob(rain_paths)
     # print(rain_file_paths)
     rain_data_save_datas = pd.DataFrame()
@@ -93,7 +93,7 @@ def case_data_set(year,month,day,time_start,time_end,dis,station_name,data_top_p
 
 
     ##閃電資料建立(讀取依測站分類)
-    flash_path = f"{data_top_path}/研究所/閃電資料/依測站分類/{year}_{month}_{dis}km/{station_name}.csv"
+    flash_path = f"{data_top_path}/閃電資料/依測站分類/{year}_{month}_{dis}km/{station_name}.csv"
     flash_data = pd.read_csv(flash_path)
     flash_data['data time'] = pd.to_datetime(flash_data['data time'])
     # print(flash_data['data time'])
@@ -106,7 +106,7 @@ def case_data_set(year,month,day,time_start,time_end,dis,station_name,data_top_p
 
 
 # # # ## 變數設定
-# data_top_path = "C:/Users/steve/python_data"
+# data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 # year = '2021' #年分
 # month = '06' #月份
 # day = '04'

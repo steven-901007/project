@@ -14,14 +14,14 @@ import pandas as pd
 year = '2021' #年分
 month = '06' #月份
 dis = 36
-data_top_path = "C:/Users/steve/python_data"
+data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 
 
 
 ## 讀取雨量站經緯度資料
 def rain_station_location_data_to_list(data_top_path,year):## 讀取雨量站經緯度資料
     import pandas as pd
-    data_path = f"{data_top_path}/研究所/雨量資料/{year}測站資料.csv"
+    data_path = f"{data_top_path}/雨量資料/{year}測站資料.csv"
     data = pd.read_csv(data_path)
     station_data_name = data['station name'].to_list()
     # station_real_data_name = data['station real name'].to_list()
@@ -35,7 +35,7 @@ name_data_list,lon_data_list, lat_data_list = rain_station_location_data_to_list
 lj_count_lon_lat_list = [[],[],[]]
 
 ##lighting jump count
-lighting_jump_paths = f"{data_top_path}/研究所/閃電資料/lighting_jump/{dis}km/{year}/{month}/**.csv"
+lighting_jump_paths = f"{data_top_path}/閃電資料/lighting_jump/{dis}km/{year}/{month}/**.csv"
 result = glob.glob(lighting_jump_paths)
 for lighting_jump_path in tqdm(result):
     # print(lighting_jump_path)

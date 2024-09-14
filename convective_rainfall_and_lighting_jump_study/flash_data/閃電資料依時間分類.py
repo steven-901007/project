@@ -5,7 +5,7 @@ import pandas as pd
 
 year = '2021'  # 年分
 month = '07'   # 月份
-data_top_path = "C:/Users/steve/python_data"
+data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 
 def fileset(path):  # 建立資料夾
     if not os.path.exists(path):
@@ -44,5 +44,5 @@ for dd in tqdm(range(1, last_day + 1), desc='寫入資料'):
             save_day = day + pd.Timedelta(minutes=1)
             save_day_str = save_day.strftime('%Y%m%d%H%M')
             # print(save_day_str)
-            csv_file_path = f"{data_top_path}/研究所/閃電資料/依時間分類/{year}/{month}/{save_day_str}.csv"            
+            csv_file_path = f"{data_top_path}/閃電資料/依時間分類/{year}/{month}/{save_day_str}.csv"            
             pd.DataFrame(flash_data_to_save).to_csv(csv_file_path,index=False)

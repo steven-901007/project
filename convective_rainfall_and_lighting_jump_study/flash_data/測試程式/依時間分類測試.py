@@ -14,7 +14,7 @@ from glob import glob
 
 year = '2021' #年分
 month = '06' #月份
-data_top_path = "C:/Users/steve/python_data"
+data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 dis = 36
 time = '051950'
 # station_name = 'C0G880'
@@ -24,7 +24,7 @@ time = '051950'
 ## 讀取雨量站經緯度資料
 def rain_station_location_data():
     import pandas as pd
-    data_path = f"{data_top_path}/研究所/雨量資料/{year}測站資料.csv"
+    data_path = f"{data_top_path}/雨量資料/{year}測站資料.csv"
     data = pd.read_csv(data_path)
     station_data_name = data['station name'].to_list()
     station_real_data_name = data['station real name'].to_list()
@@ -47,7 +47,7 @@ def flash_color_set(x):
 reference_time = pd.to_datetime(f'{year}-{month}-{time[:2]} {time[2:4]}:{time[4:]}:00')
 flash_data_lon_lat_color_list = [[],[],[]] 
 ## 讀取閃電資料
-flash_data_paths = f"{data_top_path}/研究所/閃電資料/依時間分類/{year}/{month}/**.csv"
+flash_data_paths = f"{data_top_path}/閃電資料/依時間分類/{year}/{month}/**.csv"
 result = glob(flash_data_paths)
 for flash_data_path in result:
     # print(flash_data_path)

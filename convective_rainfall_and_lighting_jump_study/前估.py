@@ -17,9 +17,9 @@ import os
 
 
 year = '2021' #年分
-month = '06' #月份
+month = '07' #月份
 dis = 36
-data_top_path = "C:/Users/steve/python_data"
+data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 
 def check_folder(folder_path):
     if not os.path.exists(folder_path):
@@ -37,23 +37,23 @@ def fileset(path):    #建立資料夾
         print(path + " 已建立") 
 
 #建立前估後符資料夾
-fileset(f"{data_top_path}/研究所/前估後符")
+fileset(f"{data_top_path}/前估後符")
 
 ##強降雨發生但沒有lighting jump
-data_path = f"{data_top_path}/研究所/雨量資料/測站資料/{year}_{month}.csv"
+data_path = f"{data_top_path}/雨量資料/測站資料/{year}_{month}.csv"
 check_folder(data_path)
 data = pd.read_csv(data_path)
 
 # print(data)
-check_folder(f"{data_top_path}/研究所/雨量資料/對流性降雨{dis}km/{year}/{month}")
-check_folder(f"{data_top_path}/研究所/閃電資料/lighting_jump/{year}_{month}_{dis}km")
+check_folder(f"{data_top_path}/雨量資料/對流性降雨{dis}km/{year}/{month}")
+check_folder(f"{data_top_path}/閃電資料/lighting_jump/{year}_{month}_{dis}km")
 prefigurance_station_name_list = []#前估測站名稱
 prefigurance_hit_list = []#個測站命中的list
 total_prefigurance_list = []#前估總量(lighting jump and rain + non_lighting jump and rain)
 prefigurance_lon_data_list = []
 prefigurance_lat_data_list = []
 
-month_path =f"{data_top_path}/研究所/雨量資料/對流性降雨{dis}km/{year}/{month}/*.csv"
+month_path =f"{data_top_path}/雨量資料/對流性降雨{dis}km/{year}/{month}/*.csv"
 
 result  =glob.glob(month_path)
 
@@ -64,7 +64,7 @@ for rain_station_path in tqdm(result,desc='資料處理中....'):
 
     #flash
     try:
-        flash_station_path = f"{data_top_path}/研究所/閃電資料/lighting_jump/{year}_{month}_{dis}km/{rain_station_name}.csv"
+        flash_station_path = f"{data_top_path}/閃電資料/lighting_jump/{year}_{month}_{dis}km/{rain_station_name}.csv"
         rain_data = pd.read_csv(rain_station_path)
         flash_data = pd.read_csv(flash_station_path)
         # print(rain_station_name)
@@ -125,7 +125,7 @@ prefigurance_save_data = {
     'total':total_prefigurance_list,
     'hit persent':prefigurance_hit_persent_list,
 }
-prefigurance_save_path = f"{data_top_path}/研究所/前估後符/前估.csv"
+prefigurance_save_path = f"{data_top_path}/前估後符/前估.csv"
 pd.DataFrame(prefigurance_save_data).to_csv(prefigurance_save_path,index=False)
 
 ##前估繪圖
@@ -143,7 +143,7 @@ plt.rcParams['font.sans-serif'] = [u'MingLiu']  # 設定字體為'細明體'
 plt.rcParams['axes.unicode_minus'] = False  # 用來正常顯示正負號
 
 # 加載台灣的行政邊界
-taiwan_shapefile = data_top_path+"/研究所/Taiwan_map_data/COUNTY_MOI_1090820.shp"  # 你需要提供台灣邊界的shapefile文件
+taiwan_shapefile = f"{data_top_path}/Taiwan_map_data/COUNTY_MOI_1090820.shp"  # 你需要提供台灣邊界的shapefile文件
 shape_feature = ShapelyFeature(Reader(taiwan_shapefile).geometries(),
                                ccrs.PlateCarree(), edgecolor='black', facecolor='white')
 ax.add_feature(shape_feature)
@@ -192,7 +192,7 @@ cbar1 = plt.colorbar(im,ax=ax, extend='neither', ticks=level)
 plt.xlabel('Longitude')
 plt.ylabel('Latitude')
 
-ax.set_title(f"{year}年{month}月\n前估 max = "+ str(round(max(prefigurance_hit_list),3)))
+ax.set_title(f"{year}年{month}月\n前估 max = {round(max(prefigurance_hit_list),3)}")
 
 
 ## 這是用來確認colorbar的配置
@@ -215,7 +215,7 @@ plt.rcParams['font.sans-serif'] = [u'MingLiu']  # 設定字體為'細明體'
 plt.rcParams['axes.unicode_minus'] = False  # 用來正常顯示正負號
 
 # 加載台灣的行政邊界
-taiwan_shapefile = f"{data_top_path}/研究所/Taiwan_map_data/COUNTY_MOI_1090820.shp"  # 你需要提供台灣邊界的shapefile文件
+taiwan_shapefile = f"{data_top_path}/Taiwan_map_data/COUNTY_MOI_1090820.shp"  # 你需要提供台灣邊界的shapefile文件
 shape_feature = ShapelyFeature(Reader(taiwan_shapefile).geometries(),
                                ccrs.PlateCarree(), edgecolor='black', facecolor='white')
 ax.add_feature(shape_feature)
@@ -264,7 +264,7 @@ cbar1 = plt.colorbar(im,ax=ax, extend='neither', ticks=level)
 plt.xlabel('Longitude')
 plt.ylabel('Latitude')
 
-ax.set_title(f"{year}年{month}月\n前估命中率 [%] max = "+ str(round(max(prefigurance_hit_persent_list),3)))
+ax.set_title(f"{year}年{month}月\n前估命中率 [%] max = {round(max(prefigurance_hit_persent_list),3)}")
 
 
 ## 這是用來確認colorbar的配置

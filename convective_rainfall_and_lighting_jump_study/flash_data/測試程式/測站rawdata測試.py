@@ -14,7 +14,7 @@ import pandas as pd
 
 year = '2021' #年分
 month = '06' #月份
-data_top_path = "C:/Users/steve/python_data"
+data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 dis = 36
 time = '051950'
 station_name = 'C0G880'
@@ -46,7 +46,7 @@ def flash_color_set(x):
 
 
 ## 讀取閃電資料
-flash_data_path = f"{data_top_path}/研究所/閃電資料/依測站分類/{dis}km/{year}/{month}/{station_name}.csv"
+flash_data_path = f"{data_top_path}/閃電資料/依測站分類/{dis}km/{year}/{month}/{station_name}.csv"
 flash_rawdata = pd.read_csv(flash_data_path)
 # print(flash_rawdata['data time'])
 flash_rawdata['data time'] = pd.to_datetime(flash_rawdata['data time'])

@@ -5,7 +5,7 @@ import os
 
 year = '2021'  # 年分
 month = '07'   # 月份
-data_top_path = "C:/Users/steve/python_data"
+data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 alpha = 2      # 統計檢定
 dis = 36
 
@@ -16,7 +16,7 @@ def file_set(file_path):
     if not os.path.exists(file_path):
         os.makedirs(file_path)
         print(file_path + " 已建立")
-file_set(f"{data_top_path}/研究所/閃電資料/lighting_jump/{year}_{month}_{dis}km")
+file_set(f"{data_top_path}/閃電資料/lighting_jump/{year}_{month}_{dis}km")
 
 # 計算 SR (閃電數累積值)
 def calculate_sr(flash_datas, window=5):
@@ -82,7 +82,7 @@ def calculate_lj(flash_datas, window=5):
     return lj_list
 
 # 將數據放入 DataFrame
-result = glob(f"{data_top_path}/研究所/閃電資料/依測站分類/{year}_{month}_{dis}km/**.csv")
+result = glob(f"{data_top_path}/閃電資料/依測站分類/{year}_{month}_{dis}km/**.csv")
 for flash_data_path in tqdm(result,desc='data setting...'):
     # print(flash_data_path)
     station_name = flash_data_path.split('/')[-1].split('\\')[-1].split('.')[0]
@@ -90,7 +90,7 @@ for flash_data_path in tqdm(result,desc='data setting...'):
 
 # 讀取數據
 # station_name = '00H710'
-# flash_data_path = f"{data_top_path}/研究所/閃電資料/依測站分類/{year}_{month}_{dis}km/{station_name}.csv"
+# flash_data_path = f"{data_top_path}/閃電資料/依測站分類/{year}_{month}_{dis}km/{station_name}.csv"
     flash_datas = pd.read_csv(flash_data_path)
 
     # 將 'data time' 轉換為 datetime 格式並設置為索引
@@ -113,7 +113,7 @@ for flash_data_path in tqdm(result,desc='data setting...'):
     save_data = pd.DataFrame(save_data)
     save_data.columns = ['LJ_time']
     # 保存結果
-    output_path = f"{data_top_path}/研究所/閃電資料/lighting_jump/{year}_{month}_{dis}km/{station_name}.csv"
+    output_path = f"{data_top_path}/閃電資料/lighting_jump/{year}_{month}_{dis}km/{station_name}.csv"
     save_data.to_csv(output_path,index=False)
 
 # print(f"已補全時間並計算 LJ，結果保存至: {output_path}")

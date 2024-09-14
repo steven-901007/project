@@ -5,7 +5,7 @@ from tqdm import tqdm
 
 year = '2021' #年分
 month = '06' #月份
-data_top_path = "C:/Users/steve/python_data"
+data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 alpha = 2 #統計檢定
 dis = 36 #半徑
 
@@ -14,7 +14,7 @@ def file_set(file_path):
     if not os.path.exists(file_path):
         os.makedirs(file_path)
         print(file_path + " 已建立")
-file_set(f"{data_top_path}/研究所/閃電資料/依測站分類/{year}_{month}_{dis}km")
+file_set(f"{data_top_path}/閃電資料/依測站分類/{year}_{month}_{dis}km")
 
 # Haversine公式，用於計算兩點之間的球面距離（經緯度）
 def haversine(lon1, lat1, lon2, lat2):
@@ -32,13 +32,13 @@ def haversine(lon1, lat1, lon2, lat2):
     return c * r
 
 # 讀取閃電資料並轉換日期時間格式
-flash_rawdata_df = pd.read_csv(f"{data_top_path}/研究所/閃電資料/raw_data/{year}/{year}{month}.txt")
+flash_rawdata_df = pd.read_csv(f"{data_top_path}/閃電資料/raw_data/{year}/{year}{month}.txt")
 flash_datas_df = flash_rawdata_df[['日期時間', '經度', '緯度']].copy()
 
 flash_datas_df['日期時間'] = pd.to_datetime(flash_datas_df['日期時間']).dt.floor('min')
 
 # 讀取測站資料
-station_datas_path = f"{data_top_path}/研究所/雨量資料/測站資料/{year}_{month}.csv"
+station_datas_path = f"{data_top_path}/雨量資料/測站資料/{year}_{month}.csv"
 station_datas = pd.read_csv(station_datas_path)
 
 # 遍歷測站，計算距離並保存結果
@@ -59,6 +59,6 @@ for index, row in tqdm(station_datas.iterrows()):
     need_inf_flash_data_df.columns = ['data time','flash_count']
     # 保存結果到對應測站的CSV
     # print(need_inf_flash_data_df)
-    save_path = f"{data_top_path}/研究所/閃電資料/依測站分類/{year}_{month}_{dis}km/{station_name}.csv"
+    save_path = f"{data_top_path}/閃電資料/依測站分類/{year}_{month}_{dis}km/{station_name}.csv"
     need_inf_flash_data_df.to_csv(save_path,index=False)    
     # break

@@ -14,11 +14,11 @@ import pandas as pd
 year = '2021' #年分
 month = '07' #月份
 dis = 36
-data_top_path = "C:/Users/steve/python_data"
+data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 
 
 
-station_data_path = f"{data_top_path}/研究所/雨量資料/測站資料/{year}_{month}.csv"
+station_data_path = f"{data_top_path}/雨量資料/測站資料/{year}_{month}.csv"
 station_data = pd.read_csv(station_data_path)
 station_name_list = station_data['station name'].to_list()
 station_lon_df = station_data['lon']
@@ -31,7 +31,7 @@ rain_36km_count_list = [0 for i in range(len(station_name_list))] #降雨次數
 
 ##降雨資料讀取
 
-rain_data_paths = f"{data_top_path}/研究所/雨量資料/降雨data/{year}/{month}/**.csv"
+rain_data_paths = f"{data_top_path}/雨量資料/降雨data/{year}/{month}/**.csv"
 result  =glob.glob(rain_data_paths)
 for rain_data_path in tqdm(result,desc='資料讀取+紀錄'):
 # rain_data_path = result[1]

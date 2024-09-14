@@ -10,8 +10,8 @@ from openpyxl import load_workbook
 station = []
 year = '2021' #年分
 month = '06' #月份
-# data_top_path = "C:/Users/steve/python_data"
-data_top_path = "C:/Users/steve/python_data"
+# data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
+data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 station_lat_max ,station_lat_min = 25.2 , 24.9
 station_lon_max ,station_lon_min = 121.6, 121.5
 

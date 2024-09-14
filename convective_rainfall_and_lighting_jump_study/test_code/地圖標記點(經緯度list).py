@@ -7,7 +7,7 @@ import cartopy.feature as cfeature
 
 ## 無縣市邊界
 
-data_top_path = "C:/Users/steve/python_data"
+data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 
 # 設定標記點的經緯度
 point_lon = [ 120.3877]

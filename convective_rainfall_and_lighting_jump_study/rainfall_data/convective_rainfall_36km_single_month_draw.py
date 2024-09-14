@@ -14,9 +14,9 @@ import pandas as pd
 year = '2021' #年分
 month = '06' #月份
 dis = 36
-data_top_path = "C:/Users/steve/python_data"
+data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 
-station_data_path = f"{data_top_path}/研究所/雨量資料/測站資料/{year}_{month}.csv"
+station_data_path = f"{data_top_path}/雨量資料/測站資料/{year}_{month}.csv"
 station_data = pd.read_csv(station_data_path)
 station_name_list = station_data['station name'].to_list()
 station_lon_df = station_data['lon']
@@ -31,7 +31,7 @@ rain_36km_real_name_list = []#個案分析用
 
 ##降雨資料讀取
 
-rain_data_paths = f"{data_top_path}/研究所/雨量資料/對流性降雨{dis}km/"+year+"/"+month+"/**.csv"
+rain_data_paths = f"{data_top_path}/雨量資料/對流性降雨{dis}km/"+year+"/"+month+"/**.csv"
 result  =glob.glob(rain_data_paths)
 for rain_data_path in tqdm(result,desc='資料讀取+紀錄'):
     # print(rain_data_path)
@@ -55,7 +55,7 @@ case_data ={
     'count':rain_36km_count_list
 
 }
-save_data_path = f"{data_top_path}/研究所/雨量資料/對流性降雨次數/{year}_{month}.csv"
+save_data_path = f"{data_top_path}/雨量資料/對流性降雨次數/{year}_{month}.csv"
 pd.DataFrame(case_data).to_csv(save_data_path,index= False,encoding='utf-8-sig')
 
 ##個案分析區##
@@ -78,7 +78,7 @@ plt.rcParams['font.sans-serif'] = [u'MingLiu']  # 設定字體為'細明體'
 plt.rcParams['axes.unicode_minus'] = False  # 用來正常顯示正負號
 
 # 加載台灣的行政邊界
-taiwan_shapefile = f"{data_top_path}/研究所/Taiwan_map_data/COUNTY_MOI_1090820.shp"  # 你需要提供台灣邊界的shapefile文件
+taiwan_shapefile = f"{data_top_path}/Taiwan_map_data/COUNTY_MOI_1090820.shp"  # 你需要提供台灣邊界的shapefile文件
 shape_feature = ShapelyFeature(Reader(taiwan_shapefile).geometries(),
                                ccrs.PlateCarree(), edgecolor='black', facecolor='white')
 ax.add_feature(shape_feature)

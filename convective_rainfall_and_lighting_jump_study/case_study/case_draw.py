@@ -48,11 +48,11 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     full_time_df = pd.DataFrame(full_time_range, columns=['data time'])# 建立一個 DataFrame 包含完整的時間範圍
 
     ##測站資料
-    data_path = f"{data_top_path}/研究所/雨量資料/測站資料/{year}_{month}.csv"
+    data_path = f"{data_top_path}/雨量資料/測站資料/{year}_{month}.csv"
     position_data = pd.read_csv(data_path)
     point_real_name = position_data[position_data['station name'] == station_name]['station real name'].iloc[0]
     ##資料讀取
-    case_root_path =  f"{data_top_path}/研究所/個案分析/{station_name}_{dis}_{year}{month}{day}_{str(time_start).zfill(2)}00to{str(time_end)}00"
+    case_root_path =  f"{data_top_path}/個案分析/{station_name}_{dis}_{year}{month}{day}_{str(time_start).zfill(2)}00to{str(time_end)}00"
     rain_data_path = case_root_path + '/rain_raw_data.csv'
     flash_data_path = case_root_path + '/flash_data.csv'
     rain_data = pd.read_csv(rain_data_path)
@@ -117,7 +117,7 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     # print(count_rain_data)
 
     
-    this_case_prefigurance_hit_persent_paths = f"{data_top_path}/研究所/個案分析/前估命中個案/{year}_{month}/{station_name}_**.csv"
+    this_case_prefigurance_hit_persent_paths = f"{data_top_path}/個案分析/前估命中個案/{year}_{month}/{station_name}_**.csv"
     # print(glob(this_case_prefigurance_hit_persent_paths))    
     this_case_prefigurance_hit_persent_path = glob(this_case_prefigurance_hit_persent_paths)[0]
     this_case_prefigurance_hit_persent_datas = pd.read_csv(this_case_prefigurance_hit_persent_path,parse_dates=['time data'])['time data']
@@ -168,7 +168,7 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     # 顯示and儲存圖表
     pic_save_path = case_root_path + '/picture.png'
 
-    case_root_path = f"{data_top_path}/研究所/個案分析/{station_name}_{dis}_{year}{month}_{str(time_start).zfill(2)}00to{str(time_end).zfill(2)}00"
+    case_root_path = f"{data_top_path}/個案分析/{station_name}_{dis}_{year}{month}_{str(time_start).zfill(2)}00to{str(time_end).zfill(2)}00"
     fileset(case_root_path)
     pic_save_path = f"{case_root_path}/{year}{month}{day}.png"
     
@@ -179,7 +179,7 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
 
 
 # ## 變數設定
-# data_top_path = "C:/Users/steve/python_data"
+# data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 # year = '2021' #年分
 # month = '06' #月份
 # day = '01'

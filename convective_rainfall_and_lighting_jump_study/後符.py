@@ -18,7 +18,7 @@ import matplotlib as mpl
 year = '2021' #年分
 month = '07' #月份
 dis = 36
-data_top_path = "C:/Users/steve/python_data"
+data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 
 def check_in_time_range(row, rain_times):
     return int(any((rain_times >= row['start time']) & (rain_times <= row['end time'])))
@@ -31,10 +31,10 @@ def fileset(path):    #建立資料夾
         print(path + " 已建立") 
 
 #建立前估後符資料夾
-fileset(f"{data_top_path}/研究所/前估後符")
+fileset(f"{data_top_path}/前估後符")
 
 ##有lighting jump但沒強降雨發生
-data_path = f"{data_top_path}/研究所/雨量資料/測站資料/{year}_{month}.csv"
+data_path = f"{data_top_path}/雨量資料/測站資料/{year}_{month}.csv"
 data = pd.read_csv(data_path)
 # print(data)
 
@@ -44,7 +44,7 @@ total_post_agreement_list = []#後符總量(lighting jump and rain + lighting ju
 post_agreement_lon_data_list = []
 post_agreement_lat_data_list = []
 
-month_path = f"{data_top_path}/研究所/閃電資料/lighting_jump/{year}_{month}_{dis}km/*.csv"
+month_path = f"{data_top_path}/閃電資料/lighting_jump/{year}_{month}_{dis}km/*.csv"
 result  =glob.glob(month_path)
 
 for flash_station_path in tqdm(result,desc='資料處理中....'):
@@ -55,7 +55,7 @@ for flash_station_path in tqdm(result,desc='資料處理中....'):
 
     #rain
     try:
-        rain_station_path = f"{data_top_path}/研究所/雨量資料/對流性降雨{dis}km/{year}/{month}/{flash_station_name}.csv"
+        rain_station_path = f"{data_top_path}/雨量資料/對流性降雨{dis}km/{year}/{month}/{flash_station_name}.csv"
         # print(rain_station_path)
     except:
         rain_station_path = None
@@ -113,7 +113,7 @@ post_agreement_save_data = {
     'total':total_post_agreement_list,
     'hit persent':post_agreement_hit_persent_list,
 }
-post_agreement_save_path = f"{data_top_path}/研究所/前估後符/後符.csv"
+post_agreement_save_path = f"{data_top_path}/前估後符/後符.csv"
 pd.DataFrame(post_agreement_save_data).to_csv(post_agreement_save_path,index=False)
 
 
@@ -132,7 +132,7 @@ plt.rcParams['font.sans-serif'] = [u'MingLiu']  # 設定字體為'細明體'
 plt.rcParams['axes.unicode_minus'] = False  # 用來正常顯示正負號
 
 # 加載台灣的行政邊界
-taiwan_shapefile = f"{data_top_path}/研究所/Taiwan_map_data/COUNTY_MOI_1090820.shp"  # 你需要提供台灣邊界的shapefile文件
+taiwan_shapefile = f"{data_top_path}/Taiwan_map_data/COUNTY_MOI_1090820.shp"  # 你需要提供台灣邊界的shapefile文件
 shape_feature = ShapelyFeature(Reader(taiwan_shapefile).geometries(),
                                ccrs.PlateCarree(), edgecolor='black', facecolor='white')
 ax.add_feature(shape_feature)
@@ -204,7 +204,7 @@ plt.rcParams['font.sans-serif'] = [u'MingLiu']  # 設定字體為'細明體'
 plt.rcParams['axes.unicode_minus'] = False  # 用來正常顯示正負號
 
 # 加載台灣的行政邊界
-taiwan_shapefile = f"{data_top_path}/研究所/Taiwan_map_data/COUNTY_MOI_1090820.shp"  # 你需要提供台灣邊界的shapefile文件
+taiwan_shapefile = f"{data_top_path}/Taiwan_map_data/COUNTY_MOI_1090820.shp"  # 你需要提供台灣邊界的shapefile文件
 shape_feature = ShapelyFeature(Reader(taiwan_shapefile).geometries(),
                                ccrs.PlateCarree(), edgecolor='black', facecolor='white')
 ax.add_feature(shape_feature)
