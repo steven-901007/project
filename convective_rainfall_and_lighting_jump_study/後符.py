@@ -16,7 +16,7 @@ import matplotlib as mpl
 
 
 year = '2021' #年分
-month = '07' #月份
+month = '06' #月份
 dis = 36
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 
@@ -103,7 +103,7 @@ for flash_station_path in tqdm(result,desc='資料處理中....'):
 
 post_agreement_hit_persent_list = [] # 前估命中率
 for i in range(len(total_post_agreement_list)):
-    post_agreement_hit_persent_list.append(post_agreement_hit_list[i]/(total_post_agreement_list[i]+post_agreement_hit_list[i])*100)
+    post_agreement_hit_persent_list.append(post_agreement_hit_list[i]/(total_post_agreement_list[i])*100)
 
 post_agreement_save_data = {
     'station name':post_agreement_station_name_list,
@@ -146,7 +146,7 @@ gridlines.right_labels = False
 ## 計算某個地方達到10mm/10min的次數 + colorbar
 color_list = []
 
-level = [0,30,60,100,150,170,200,250,300]
+level = [0,25,50,75,100,150,200,250,300]
 color_box = ['silver','purple','darkviolet','blue','g','y','orange','r']
 
 for nb in post_agreement_hit_list:
@@ -218,7 +218,7 @@ gridlines.right_labels = False
 ## 計算某個地方達到10mm/10min的次數 + colorbar
 color_list = []
 
-level = [0,5,10,20,30,45,46,48,50]
+level = [0,20,40,50,60,70,80,90,100]
 color_box = ['silver','purple','darkviolet','blue','g','y','orange','r']
 
 for nb in post_agreement_hit_persent_list:

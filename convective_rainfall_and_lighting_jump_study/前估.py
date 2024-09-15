@@ -17,7 +17,7 @@ import os
 
 
 year = '2021' #年分
-month = '07' #月份
+month = '06' #月份
 dis = 36
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 
@@ -58,7 +58,7 @@ month_path =f"{data_top_path}/雨量資料/對流性降雨{dis}km/{year}/{month}
 result  =glob.glob(month_path)
 
 for rain_station_path in tqdm(result,desc='資料處理中....'):
-# rain_station_path = "C:/Users/steve/python_data/研究所/雨量資料/對流性降雨36km統計/2021/06/C0V730.csv"
+# rain_station_path = f"{data_top_path}/雨量資料/對流性降雨{dis}km/{year}/{month}/C0V730.csv"
     rain_station_name = rain_station_path.split('/')[-1].split('\\')[-1].split('.')[0]
     # print(rain_station_name)
 
@@ -72,11 +72,7 @@ for rain_station_path in tqdm(result,desc='資料處理中....'):
         flash_station_path = None
         # print(rain_station_name)
 
-
-
     if flash_station_path != None:
-        rain_data = pd.read_csv(rain_station_path)
-        flash_data = pd.read_csv(flash_station_path)
         # print(rain_data)
         # print(flash_data)
         #end time< lighting jump <= time data
@@ -109,7 +105,7 @@ print(rain_station_name,rain_data['LJ_in_time_range'].sum(),len(rain_data))
 
 prefigurance_hit_persent_list = [] # 前估命中率
 for i in range(len(total_prefigurance_list)):
-    prefigurance_hit_persent_list.append(prefigurance_hit_list[i]/(total_prefigurance_list[i]+prefigurance_hit_list[i])*100)
+    prefigurance_hit_persent_list.append(prefigurance_hit_list[i]/total_prefigurance_list[i]*100)
 
 # print(prefigurance_station_name_list)
 # print(prefigurance_hit_list)
@@ -157,7 +153,7 @@ gridlines.right_labels = False
 ## 計算某個地方達到10mm/10min的次數 + colorbar
 color_list = []
 
-level = [0,25,50,75,100,120,150,170,210]
+level = [0,10,25,50,75,120,150,170,210]
 color_box = ['silver','purple','darkviolet','blue','g','y','orange','r']
 
 for nb in prefigurance_hit_list:
@@ -229,7 +225,7 @@ gridlines.right_labels = False
 ## 計算某個地方達到10mm/10min的次數 + colorbar
 color_list = []
 
-level = [0,5,10,15,20,30,35,40,50]
+level = [0,10,20,30,40,50,60,70,80]
 color_box = ['silver','purple','darkviolet','blue','g','y','orange','r']
 
 for nb in prefigurance_hit_persent_list:

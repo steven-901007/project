@@ -44,8 +44,8 @@ for day_path in tqdm(result,desc='資料建立'):
                     
                     if 120 <float(elements[4])< 122.1 and 21.5 <float(elements[3])< 25.5: #確認經緯度範圍
                         station_name = elements[0] #測站名稱
-                        rain_data_of_10min = float(elements[6]) #MIN_10
-                        # rain_data_of_10min = float(elements[6]) #RAIN
+                        # rain_data_of_10min = float(elements[6]) #MIN_10
+                        rain_data_of_10min = float(elements[6]) #RAIN 目前看來不是我要的資料(2024/09/15)
                         rain_data_of_3_hour = float(elements[8]) #HOUR_3
                         rain_data_of_6_hour = float(elements[9]) #HOUR_6
                         rain_data_of_12_hour = float(elements[10]) #HOUR_12

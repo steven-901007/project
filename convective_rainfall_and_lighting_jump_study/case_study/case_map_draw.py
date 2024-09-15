@@ -90,7 +90,7 @@ def case_map_draw(station_name,data_top_path,year,month,day,time_start,time_end,
     plt.rcParams['axes.unicode_minus'] = False  # 用來正常顯示正負號
 
     # 加載台灣的行政邊界
-    taiwan_shapefile = data_top_path+"/研究所/Taiwan_map_data/COUNTY_MOI_1090820.shp"  # 你需要提供台灣邊界的shapefile文件
+    taiwan_shapefile = f"{data_top_path}/Taiwan_map_data/COUNTY_MOI_1090820.shp"  # 你需要提供台灣邊界的shapefile文件
     shape_feature = ShapelyFeature(Reader(taiwan_shapefile).geometries(),
                                 ccrs.PlateCarree(), edgecolor='black', facecolor='white')
     ax.add_feature(shape_feature)

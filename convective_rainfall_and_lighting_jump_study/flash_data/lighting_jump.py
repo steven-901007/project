@@ -4,7 +4,7 @@ from tqdm import tqdm
 import os
 
 year = '2021'  # 年分
-month = '07'   # 月份
+month = '06'   # 月份
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 alpha = 2      # 統計檢定
 dis = 36
@@ -110,10 +110,11 @@ for flash_data_path in tqdm(result,desc='data setting...'):
     # 顯示結果
     # print(flash_datas)
     save_data = flash_datas[flash_datas['LJ'] == 1].index
-    save_data = pd.DataFrame(save_data)
-    save_data.columns = ['LJ_time']
-    # 保存結果
-    output_path = f"{data_top_path}/閃電資料/lighting_jump/{year}_{month}_{dis}km/{station_name}.csv"
-    save_data.to_csv(output_path,index=False)
+    if save_data.empty is False:
+        save_data = pd.DataFrame(save_data)
+        save_data.columns = ['LJ_time']
+        # 保存結果
+        output_path = f"{data_top_path}/閃電資料/lighting_jump/{year}_{month}_{dis}km/{station_name}.csv"
+        save_data.to_csv(output_path,index=False)
 
 # print(f"已補全時間並計算 LJ，結果保存至: {output_path}")

@@ -4,7 +4,7 @@ import pandas as pd
 from tqdm import tqdm
 
 year = '2021'  # 年分
-month = '06'   # 月份
+month = '07'   # 月份
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 dis = 36
 
@@ -37,8 +37,7 @@ for station_name_path in result:
         for ten_min_rain_path in tqdm(ten_min_rain_result, desc=f"{station_name}資料建立中"):
             ten_min_rain_time = os.path.basename(ten_min_rain_path).split('.')[0]
             
-            ten_min_datas = pd.read_csv(ten_min_rain_path)
-            
+            ten_min_datas = pd.read_csv(ten_min_rain_path, on_bad_lines='skip')
             # 使用 eq().any() 來進行比較，避免 FutureWarning
             if ten_min_datas['station name'].eq(station_name).any():
                 ten_min_rain_time_data_save.append(ten_min_rain_time)
