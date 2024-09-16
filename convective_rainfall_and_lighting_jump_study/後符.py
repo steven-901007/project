@@ -16,7 +16,7 @@ import os
 
 
 year = '2021' #年分
-month = '06' #月份
+month = '07' #月份
 dis = 36
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 
@@ -70,7 +70,7 @@ for flash_station_path in tqdm(result,desc='資料處理中....'):
         # print(flash_data)
         #end time< lighting jump <= time data
         flash_data['LJ_time'] = pd.to_datetime(flash_data['LJ_time'])
-        flash_data['start time'] = flash_data["LJ_time"] - pd.Timedelta(minutes= 50)
+        flash_data['start time'] = flash_data["LJ_time"] - pd.Timedelta(minutes= 40)
         flash_data['end time'] = flash_data['LJ_time'] + pd.Timedelta(minutes=10)
         rain_data['time data'] = pd.to_datetime(rain_data['time data'])
         # print(rain_data)
@@ -146,7 +146,7 @@ gridlines.right_labels = False
 ## 計算某個地方達到10mm/10min的次數 + colorbar
 color_list = []
 
-level = [0,25,50,75,100,150,200,250,300]
+level = [0,100,200,300,400,500,600,700,800]
 color_box = ['silver','purple','darkviolet','blue','g','y','orange','r']
 
 for nb in post_agreement_hit_list:
