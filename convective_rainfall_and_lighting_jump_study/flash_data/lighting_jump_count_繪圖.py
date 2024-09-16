@@ -9,7 +9,7 @@ import matplotlib.cm as cm
 import matplotlib as mpl
 from tqdm import tqdm
 import pandas as pd
-
+import os
 
 year = '2021' #年分
 month = '06' #月份
@@ -39,7 +39,7 @@ lighting_jump_paths = f"{data_top_path}/閃電資料/lighting_jump/{dis}km/{year
 result = glob.glob(lighting_jump_paths)
 for lighting_jump_path in tqdm(result):
     # print(lighting_jump_path)
-    station_name = lighting_jump_path.split('/')[-1].split('\\')[-1].split('.')[0]
+    station_name = os.path.basename(lighting_jump_path).split('.')[0]
     # print(station_name)
     data = pd.read_csv(lighting_jump_path)
     # print(data['LJ_time'].count())

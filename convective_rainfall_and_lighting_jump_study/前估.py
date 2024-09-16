@@ -59,7 +59,7 @@ result  =glob.glob(month_path)
 
 for rain_station_path in tqdm(result,desc='資料處理中....'):
 # rain_station_path = f"{data_top_path}/雨量資料/對流性降雨{dis}km/{year}/{month}/C0V730.csv"
-    rain_station_name = rain_station_path.split('/')[-1].split('\\')[-1].split('.')[0]
+    rain_station_name = os.path.basename(rain_station_path).split('.')[0]
     # print(rain_station_name)
 
     #flash

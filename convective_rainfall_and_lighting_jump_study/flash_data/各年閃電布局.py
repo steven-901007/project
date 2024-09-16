@@ -2,6 +2,7 @@ from glob import glob
 import pandas as pd
 import matplotlib.pyplot as plt
 from tqdm import tqdm
+import os
 
 flash_data_list = [[],[]]
 flash_raw_data_paths = f"C:/Users/steve/python_data/研究所/閃電資料/raw_data/2019/201901.txt"
@@ -11,7 +12,7 @@ for flash_raw_data_year_path in tqdm(flash_raw_data_year_paths,desc='資料讀�
     flash_raw_data_month_paths = glob(flash_raw_data_year_path + "/**")
     for flash_raw_data_month_path in flash_raw_data_month_paths:
         # print(flash_raw_data_month_path)
-        flash_time = flash_raw_data_month_path.split('/')[-1].split('\\')[-1].split('.')[0]
+        flash_time = os.path.basename(flash_raw_data_month_path).split('.')[0]
         # print(flash_time)
         flash_data_list[0].append(flash_time)
         try:

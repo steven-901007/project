@@ -85,7 +85,7 @@ def calculate_lj(flash_datas, window=5):
 result = glob(f"{data_top_path}/閃電資料/依測站分類/{year}_{month}_{dis}km/**.csv")
 for flash_data_path in tqdm(result,desc='data setting...'):
     # print(flash_data_path)
-    station_name = flash_data_path.split('/')[-1].split('\\')[-1].split('.')[0]
+    station_name = os.path.basename(flash_data_path).split('.')[0]
     # print(station_name)
 
 # 讀取數據

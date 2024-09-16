@@ -12,7 +12,7 @@ from cartopy.feature import ShapelyFeature
 import matplotlib.colors as mcolors
 import matplotlib.cm as cm
 import matplotlib as mpl
-
+import os
 
 
 year = '2021' #年分
@@ -51,7 +51,7 @@ result  =glob.glob(month_path)
 
 for rain_station_path in tqdm(result,desc='資料處理中....'):
 # rain_station_path = "C:/Users/steve/python_data/研究所/雨量資料/對流性降雨36km統計/2021/06/C0R490.csv"
-    rain_station_name = rain_station_path.split('/')[-1].split('\\')[-1].split('.')[0]
+    rain_station_name = os.path.basename(rain_station_path).split('.')[0]
 
 
     #flash

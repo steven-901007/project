@@ -6,7 +6,7 @@ import os
 
 
 year = '2021'  # 年分
-month = '06'  # 月份
+month = '07'  # 月份
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 
 def fileset(path):  # 建立資料夾

@@ -51,7 +51,7 @@ flash_data_paths = f"{data_top_path}/閃電資料/依時間分類/{year}/{month}
 result = glob(flash_data_paths)
 for flash_data_path in result:
     # print(flash_data_path)
-    flash_data_time = pd.to_datetime(flash_data_path.split('\\')[-1].split('/')[-1].split('.')[0])
+    flash_data_time = pd.to_datetime(os.path.basename(flash_data_path).split('.')[0])
     
     # print(flash_data_time)
     time_diff = flash_data_time - reference_time

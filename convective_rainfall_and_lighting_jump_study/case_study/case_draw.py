@@ -166,7 +166,7 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     fig.legend()
 
     # 顯示and儲存圖表
-    pic_save_path = case_root_path + '/picture.png'
+    # pic_save_path = case_root_path + '/picture.png'
 
     case_root_path = f"{data_top_path}/個案分析/{station_name}_{dis}_{year}{month}_{str(time_start).zfill(2)}00to{str(time_end).zfill(2)}00"
     fileset(case_root_path)
@@ -178,18 +178,18 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     
 
 
-# ## 變數設定
-# data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
-# year = '2021' #年分
-# month = '06' #月份
-# day = '01'
-# time_start = 00
-# time_end = 23
-# dis = 36
-# alpha = 2 #統計檢定
-# # station_name = 'C0F9N0'
-# # station_name = 'C0V800' #六龜
-# station_name = '466920' #台北
+## 變數設定
+data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
+year = '2021' #年分
+month = '06' #月份
+day = '01'
+time_start = 00
+time_end = 23
+dis = 36
+alpha = 2 #統計檢定
+# station_name = 'C0F9N0'
+# station_name = 'C0V800' #六龜
+station_name = '466920' #台北
 
 
-# case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,alpha)
+case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,alpha)

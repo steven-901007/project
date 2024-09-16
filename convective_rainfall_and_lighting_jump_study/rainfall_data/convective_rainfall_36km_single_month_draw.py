@@ -9,7 +9,7 @@ import matplotlib.cm as cm
 import matplotlib as mpl
 from tqdm import tqdm
 import pandas as pd
-
+import os
 
 year = '2021' #年分
 month = '06' #月份
@@ -35,7 +35,7 @@ rain_data_paths = f"{data_top_path}/雨量資料/對流性降雨{dis}km/"+year+"
 result  =glob.glob(rain_data_paths)
 for rain_data_path in tqdm(result,desc='資料讀取+紀錄'):
     # print(rain_data_path)
-    rain_data_station_name = rain_data_path.split('/')[-1].split('\\')[-1].split('.')[0]
+    rain_data_station_name = os.path.basename(rain_data_path).split('.')[0]
     # print(rain_data_station_name)
     rain_data_count = pd.read_csv(rain_data_path)['time data'].count()
     # print(rain_data_count)

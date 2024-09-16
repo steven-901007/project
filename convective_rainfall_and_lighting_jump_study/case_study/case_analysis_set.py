@@ -66,7 +66,7 @@ def case_data_set(year,month,day,time_start,time_end,dis,station_name,data_top_p
     # print(rain_file_paths)
     rain_data_save_datas = pd.DataFrame()
     for rain_path in tqdm(rain_file_paths,desc='雨量raw data讀取'):
-        time_str = rain_path.split('/')[-1].split('\\')[-1].split('.')[0]
+        time_str =os.path.basename( rain_path).split('.')[0]
         # print(time_str)
         file_time = datetime.datetime.strptime(time_str, '%Y%m%d%H%M')
         # print(file_time)
