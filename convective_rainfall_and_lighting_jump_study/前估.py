@@ -17,7 +17,7 @@ import os
 
 
 year = '2021' #年分
-month = '07' #月份
+month = '06' #月份
 dis = 36
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 
@@ -100,7 +100,7 @@ for rain_station_path in tqdm(result,desc='資料處理中....'):
             total_prefigurance_list.append(len(rain_data))
             prefigurance_lon_data_list.append(data[data['station name'] == rain_station_name]['lon'].iloc[0])
             prefigurance_lat_data_list.append(data[data['station name'] == rain_station_name]['lat'].iloc[0])
-print(rain_station_name,rain_data['LJ_in_time_range'].sum(),len(rain_data))
+# print(rain_station_name,rain_data['LJ_in_time_range'].sum(),len(rain_data))
 
 
 prefigurance_hit_persent_list = [] # 前估命中率
@@ -121,7 +121,7 @@ prefigurance_save_data = {
     'total':total_prefigurance_list,
     'hit persent':prefigurance_hit_persent_list,
 }
-prefigurance_save_path = f"{data_top_path}/前估後符/前估.csv"
+prefigurance_save_path = f"{data_top_path}/前估後符/{year}_{month}_前估.csv"
 pd.DataFrame(prefigurance_save_data).to_csv(prefigurance_save_path,index=False)
 
 ##前估繪圖

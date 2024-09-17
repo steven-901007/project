@@ -1,10 +1,11 @@
+
 import pandas as pd
 from glob import glob
 import os
 from tqdm import tqdm
 
 year = '2021'  # 年分
-month = '07'   # 月份
+month = '06'   # 月份
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 dis = 36
 
@@ -17,7 +18,7 @@ def check_in_time_range(row, lj_times):
     return int(any((lj_times >= row['start time']) & (lj_times <= row['end time'])))
 
 
-fileset(f"{data_top_path}/前估後符/前估命中個案")
+fileset(f"{data_top_path}/前估後符/{year}_{month}_前估命中個案")
 
 
 #取得對流性降雨station name
@@ -41,7 +42,7 @@ for convective_rainfall_path in result:
     # print(convective_rainfall_datas)
 
 
-    convective_rainfall_datas['start time'] = pd.to_datetime(convective_rainfall_datas["time data"]) - pd.Timedelta(minutes=50)
+    convective_rainfall_datas['start time'] = pd.to_datetime(convective_rainfall_datas["time data"]) - pd.Timedelta(minutes=40)
     convective_rainfall_datas['end time'] = pd.to_datetime(convective_rainfall_datas['time data']) + pd.Timedelta(minutes=10)
     flash_datas['LJ_time'] = pd.to_datetime(flash_datas['LJ_time'])
 
@@ -86,5 +87,5 @@ for convective_rainfall_path in result:
     convective_rainfall_datas['total rainfall'] = total_rainfall_list
     convective_rainfall_datas = convective_rainfall_datas.drop(['start time','end time'],axis=1)
     # print(convective_rainfall_datas)
-    save_path = f"{data_top_path}/前估後符/前估命中個案/{station_name}.csv"
+    save_path = f"{data_top_path}/前估後符/{year}_{month}_前估命中個案/{station_name}.csv"
     convective_rainfall_datas.to_csv(save_path,index= False)

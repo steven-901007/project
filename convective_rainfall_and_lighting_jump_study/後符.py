@@ -70,8 +70,9 @@ for flash_station_path in tqdm(result,desc='資料處理中....'):
         # print(flash_data)
         #end time< lighting jump <= time data
         flash_data['LJ_time'] = pd.to_datetime(flash_data['LJ_time'])
-        flash_data['start time'] = flash_data["LJ_time"] - pd.Timedelta(minutes= 40)
-        flash_data['end time'] = flash_data['LJ_time'] + pd.Timedelta(minutes=10)
+        flash_data['start time'] = flash_data["LJ_time"]
+        #  - pd.Timedelta(minutes= 40)
+        flash_data['end time'] = flash_data['LJ_time'] + pd.Timedelta(minutes=50)
         rain_data['time data'] = pd.to_datetime(rain_data['time data'])
         # print(rain_data)
         # print(flash_data)
@@ -113,7 +114,7 @@ post_agreement_save_data = {
     'total':total_post_agreement_list,
     'hit persent':post_agreement_hit_persent_list,
 }
-post_agreement_save_path = f"{data_top_path}/前估後符/後符.csv"
+post_agreement_save_path = f"{data_top_path}/前估後符/{year}_{month}_後符.csv"
 pd.DataFrame(post_agreement_save_data).to_csv(post_agreement_save_path,index=False)
 
 
