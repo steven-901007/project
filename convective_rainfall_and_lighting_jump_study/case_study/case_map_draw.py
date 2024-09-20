@@ -12,8 +12,8 @@ import matplotlib as mpl
 
 
 def case_map_draw(station_name,data_top_path,year,month,day,time_start,time_end,dis):
-    prefigurance_path = f"{data_top_path}/前估後符/前估.csv"
-    post_agreement_path = f"{data_top_path}/前估後符/後符.csv"
+    prefigurance_path = f"{data_top_path}/前估後符/{year}_{month}_前估.csv"
+    post_agreement_path = f"{data_top_path}/前估後符/{year}_{month}_後符.csv"
     position_path = f"{data_top_path}/雨量資料/測站資料/{year}_{month}.csv"
     range_station_name_path = f"{data_top_path}/雨量資料/測站範圍內測站數/{year}_{month}/{station_name}.csv"
 
@@ -34,7 +34,7 @@ def case_map_draw(station_name,data_top_path,year,month,day,time_start,time_end,
     # print(rain_data_station_counts)
     print(f"半徑強降雨次數最高為 {rain_data_station_counts['count'].max()}")
 
-    level = [0,2,3,5,6,7,9,10]
+    level = [0,5,10,15,20,25,30,35]
     color_box = ['silver','orange','y','g','blue','darkviolet','purple']
     conditions = [
         (rain_data_station_counts['count'] >= level[0]) & (rain_data_station_counts['count'] < level[1]),

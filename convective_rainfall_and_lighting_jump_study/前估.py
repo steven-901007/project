@@ -17,7 +17,7 @@ import os
 
 
 year = '2021' #年分
-month = '06' #月份
+month = '07' #月份
 dis = 36
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 
@@ -57,7 +57,7 @@ month_path =f"{data_top_path}/雨量資料/對流性降雨{dis}km/{year}/{month}
 
 result  =glob.glob(month_path)
 
-for rain_station_path in tqdm(result,desc='資料處理中....'):
+for rain_station_path in tqdm(result,desc=f"{year}{month}資料處理中...."):
 # rain_station_path = f"{data_top_path}/雨量資料/對流性降雨{dis}km/{year}/{month}/C0V730.csv"
     rain_station_name = os.path.basename(rain_station_path).split('.')[0]
     # print(rain_station_name)
@@ -153,7 +153,7 @@ gridlines.right_labels = False
 ## 計算某個地方達到10mm/10min的次數 + colorbar
 color_list = []
 
-level = [0,50,100,200,300,400,500,600,700]
+level = [0,100,200,300,400,500,550,600,650]
 color_box = ['silver','purple','darkviolet','blue','g','y','orange','r']
 
 for nb in prefigurance_hit_list:
@@ -225,7 +225,7 @@ gridlines.right_labels = False
 ## 計算某個地方達到10mm/10min的次數 + colorbar
 color_list = []
 
-level = [0,10,20,30,40,50,60,70,80]
+level = [0,15,30,35,40,45,50,55,60]
 color_box = ['silver','purple','darkviolet','blue','g','y','orange','r']
 
 for nb in prefigurance_hit_persent_list:

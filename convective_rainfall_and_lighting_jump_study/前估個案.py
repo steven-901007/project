@@ -24,7 +24,7 @@ fileset(f"{data_top_path}/前估後符/{year}_{month}_前估命中個案")
 #取得對流性降雨station name
 result = glob(f"{data_top_path}/雨量資料/對流性降雨36km/{year}/{month}/**.csv")
 for convective_rainfall_path in result:
-# convective_rainfall_path =f"{data_top_path}/雨量資料/對流性降雨36km/{year}/{month}/00H710.csv"
+# convective_rainfall_path =f"{data_top_path}/雨量資料/對流性降雨36km/{year}/{month}/466880.csv"
     station_name = os.path.basename(convective_rainfall_path).split('.')[0]
     # print(station_name)
 

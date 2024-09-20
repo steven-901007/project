@@ -47,7 +47,7 @@ post_agreement_lat_data_list = []
 month_path = f"{data_top_path}/閃電資料/lighting_jump/{year}_{month}_{dis}km/*.csv"
 result  =glob.glob(month_path)
 
-for flash_station_path in tqdm(result,desc='資料處理中....'):
+for flash_station_path in tqdm(result,desc=f"{year}{month}資料處理中...."):
     # print(flash_station_path)
 # flash_station_path = "C:/Users/steve/python_data/研究所/閃電資料/lighting_jump/36km/2021/06/00H710.csv"
     flash_station_name = os.path.basename(flash_station_path).split('.')[0]
@@ -147,7 +147,7 @@ gridlines.right_labels = False
 ## 計算某個地方達到10mm/10min的次數 + colorbar
 color_list = []
 
-level = [0,100,200,300,400,500,600,700,800]
+level = [0,100,200,300,400,500,600,700,850]
 color_box = ['silver','purple','darkviolet','blue','g','y','orange','r']
 
 for nb in post_agreement_hit_list:

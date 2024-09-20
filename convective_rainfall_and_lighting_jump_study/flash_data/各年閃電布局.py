@@ -4,11 +4,12 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 import os
 
+data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
+
 flash_data_list = [[],[]]
-flash_raw_data_paths = f"C:/Users/steve/python_data/研究所/閃電資料/raw_data/2019/201901.txt"
-flash_raw_data_year_paths = glob("C:/Users/steve/python_data/研究所/閃電資料/raw_data/**")
+flash_raw_data_year_paths = glob(f"{data_top_path}/閃電資料/raw_data/**")
 for flash_raw_data_year_path in tqdm(flash_raw_data_year_paths,desc='資料讀取中...'):
-    # print(flash_raw_data_year_path)
+    print(flash_raw_data_year_path)
     flash_raw_data_month_paths = glob(flash_raw_data_year_path + "/**")
     for flash_raw_data_month_path in flash_raw_data_month_paths:
         # print(flash_raw_data_month_path)
@@ -29,7 +30,7 @@ plt.rcParams['axes.unicode_minus'] = False  # 用來正常顯示正負號
 fig = plt.figure() #底圖(一張空白map可以在上面自行加上各種ax)
 ax = fig.add_subplot()
 ax.bar(flash_data_list[0],flash_data_list[1])
-plt.xticks(rotation=90)  # 旋轉 x 軸標籤，讓它們更易讀
+plt.xticks(rotation=90,size = 30)  # 旋轉 x 軸標籤，讓它們更易讀
 plt.tight_layout()  # 自動調整佈局
-plt.title('各年閃電布局')
+plt.title('各年閃電布局',size = 30)
 plt.show()
