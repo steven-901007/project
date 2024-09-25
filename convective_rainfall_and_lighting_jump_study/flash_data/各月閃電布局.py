@@ -30,7 +30,7 @@ plt.rcParams['axes.unicode_minus'] = False  # 用來正常顯示正負號
 fig = plt.figure() #底圖(一張空白map可以在上面自行加上各種ax)
 ax = fig.add_subplot()
 ax.bar(flash_data_list[0],flash_data_list[1])
-plt.xticks(rotation=90,size = 30)  # 旋轉 x 軸標籤，讓它們更易讀
+plt.xticks(rotation=75,size = 30)  # 旋轉 x 軸標籤，讓它們更易讀
 plt.tight_layout()  # 自動調整佈局
-plt.title('各年閃電布局',size = 30)
+plt.title('各月閃電布局',size = 30)
 plt.show()

@@ -7,6 +7,7 @@ year = '2021'  # 年分
 month = '07'   # 月份
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 dis = 36
+# pd.set_option('display.max_rows', None)  # 讓數據完整顯示
 
 def fileset(path):    #建立資料夾
     if not os.path.exists(path):
@@ -46,7 +47,7 @@ fileset(f"{data_top_path}/前估後符/{year}_{month}_後符命中個案")
 #取得LJ station name
 result = glob(f"{data_top_path}/閃電資料/lighting_jump/{year}_{month}_{dis}km/*.csv")
 for LJ_path in result:
-    # LJ_path = f"{data_top_path}/閃電資料/lighting_jump/{year}_{month}_{dis}km/00H710.csv"
+# LJ_path = f"{data_top_path}/閃電資料/lighting_jump/{year}_{month}_{dis}km/01E030.csv"
     station_name = os.path.basename(LJ_path).split('.')[0]
     # print(station_name)
 
@@ -124,6 +125,6 @@ for LJ_path in result:
     LJ_datas['more then 10mm count'] = more_then_10mm_count_list
     LJ_datas['total rainfall'] = total_rainfall_list
     LJ_datas = LJ_datas.drop(['end time'], axis=1)
-    # print(LJ_datas)
+    # print(LJ_datas.head(100))
     save_path = f"{data_top_path}/前估後符/{year}_{month}_後符命中個案/{station_name}.csv"
     LJ_datas.to_csv(save_path, index=False)

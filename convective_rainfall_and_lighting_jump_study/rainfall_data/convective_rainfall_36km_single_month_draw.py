@@ -12,7 +12,7 @@ import pandas as pd
 import os
 
 year = '2021' #年分
-month = '06' #月份
+month = '07' #月份
 dis = 36
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 
@@ -92,7 +92,7 @@ gridlines.right_labels = False
 ## 計算某個地方達到10mm/10min的次數 + colorbar
 color_list = []
 
-level = [0,50,100,150,200,300,350,400,500]
+level = [0,100,200,500,700,900,1000,1200,1500]
 color_box = ['silver','purple','darkviolet','blue','g','y','orange','r']
 
 for nb in rain_36km_count_list:

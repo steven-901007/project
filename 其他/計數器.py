@@ -10,11 +10,11 @@ counter2 = 0
 
 # 更新顯示計數器1的數值
 def update_display1():
-    display1.config(text=f"{counter1:03}")
+    display1.config(text=f"{counter1:02}")
 
 # 更新顯示計數器2的數值
 def update_display2():
-    display2.config(text=f"{counter2:03}")
+    display2.config(text=f"{counter2:02}")
 
 # 計數器1增減
 def increase1():
@@ -43,7 +43,7 @@ frame1 = tk.LabelFrame(root, text="陸地", padx=30, pady=30, font=("Helvetica",
 frame1.grid(row=0, column=0, padx=30, pady=30)  # 外邊距加大 1.5 倍
 
 # 顯示計數器1的數值
-display1 = tk.Label(frame1, text="000", font=("Helvetica", 108))  # 計數器字體變大 1.5 倍
+display1 = tk.Label(frame1, text="00", font=("Helvetica", 108))  # 計數器字體變大 1.5 倍
 display1.pack()
 
 # 計數器1加減按鈕並排
@@ -62,7 +62,7 @@ frame2 = tk.LabelFrame(root, text="海洋", padx=30, pady=30, font=("Helvetica",
 frame2.grid(row=0, column=1, padx=30, pady=30)  # 外邊距加大 1.5 倍
 
 # 顯示計數器2的數值
-display2 = tk.Label(frame2, text="000", font=("Helvetica", 108))  # 計數器字體變大 1.5 倍
+display2 = tk.Label(frame2, text="00", font=("Helvetica", 108))  # 計數器字體變大 1.5 倍
 display2.pack()
 
 # 計數器2加減按鈕並排

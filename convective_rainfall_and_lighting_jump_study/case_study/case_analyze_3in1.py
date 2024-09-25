@@ -3,13 +3,13 @@ from case_draw import case_draw
 from case_map_draw import case_map_draw
 import calendar
 ##變數設定
-
+#記得要先執行前估命中個案
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 year = '2021' #年分
-month = '06' #月份
-day = '12'
-time_start = 15
-time_end = 17
+month = '07' #月份
+day = '24'
+time_start = 9
+time_end = 15
 dis = 36
 alpha = 2 #統計檢定
 # station_name = 'O1P470' #前估max

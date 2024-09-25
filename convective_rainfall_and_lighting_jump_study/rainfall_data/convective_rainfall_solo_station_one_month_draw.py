@@ -12,7 +12,7 @@ from tqdm import tqdm
 import pandas as pd
 
 year = '2021' #年分
-month = '07' #月份
+month = '06' #月份
 dis = 36
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 
@@ -38,7 +38,7 @@ for rain_data_path in tqdm(result,desc='資料讀取+紀錄'):
     # print(rain_data_path)
     rain_data = pd.read_csv(rain_data_path,dtype=str)
     rain_data_count = rain_data[rain_data['rain data'].astype(float)>= 10]['station name']
-    # print(rain_data_count)
+    # print(rain_data[rain_data['rain data'].astype(float)>= 10])
     
     for rain_data_station_name in rain_data_count:
         rain_36km_count_list[station_name_list.index(str(rain_data_station_name))] += 1
@@ -60,7 +60,7 @@ plt.rcParams['font.sans-serif'] = [u'MingLiu']  # 設定字體為'細明體'
 plt.rcParams['axes.unicode_minus'] = False  # 用來正常顯示正負號
 
 # 加載台灣的行政邊界
-taiwan_shapefile = data_top_path+"/研究所/Taiwan_map_data/COUNTY_MOI_1090820.shp"  # 你需要提供台灣邊界的shapefile文件
+taiwan_shapefile = f"{data_top_path}/Taiwan_map_data/COUNTY_MOI_1090820.shp"  # 你需要提供台灣邊界的shapefile文件
 shape_feature = ShapelyFeature(Reader(taiwan_shapefile).geometries(),
                                ccrs.PlateCarree(), edgecolor='black', facecolor='white')
 ax.add_feature(shape_feature)
@@ -74,7 +74,7 @@ gridlines.right_labels = False
 ## 計算某個地方達到10mm/10min的次數 + colorbar
 color_list = []
 
-level = [0,1,3,5,7,10,15,25,35]
+level = [0,50,100,150,175,200,250,275,310]
 color_box = ['silver','purple','darkviolet','blue','g','y','orange','r']
 
 for nb in rain_36km_count_list:
