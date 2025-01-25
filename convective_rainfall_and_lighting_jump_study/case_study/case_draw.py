@@ -145,7 +145,7 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     ax2.bar(count_rain_data['data time'],count_rain_data['count']*10,color = 'black', width=0.0005, zorder=3,label = '>10mm站數(*10)')
     # ax2.axhline(10,c = "r" , ls = "--" , lw = 2)
     ax2.set_ylabel('雨量/1-min ICandCG',size = 20)
-    ax2.set_ylim(0,1100)
+    # ax2.set_ylim(0,1100)
     
     
 
@@ -163,7 +163,7 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     plt.setp(ax1.get_xticklabels(), rotation=90)
 
     plt.title(f"測站：{point_real_name}({station_name})\n日期：{year}/{month}/{day}\n時間{str(time_start).zfill(2)}:00~{str(time_end).zfill(2)}:00\n前估命中數：{this_case_prefigurance_hit_count}")
-    # fig.legend()
+    fig.legend()
 
     # 顯示and儲存圖表
     pic_save_path = case_root_path + '/picture.png'
@@ -176,7 +176,7 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     
     plt.savefig(pic_save_path, bbox_inches='tight', dpi=300)
     print(f"已生成照片：\n測站：{point_real_name}({station_name})\n半徑：{dis}\n日期：{year}/{month}/{day}\n時間{str(time_start).zfill(2)}:00~{str(time_end).zfill(2)}:00")    # plt.show()
-    plt.show()
+    # plt.show()
     
 
 
