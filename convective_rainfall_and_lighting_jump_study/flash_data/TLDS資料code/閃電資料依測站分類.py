@@ -32,7 +32,7 @@ def haversine(lon1, lat1, lon2, lat2):
     return c * r
 
 # 讀取閃電資料並轉換日期時間格式
-flash_rawdata_df = pd.read_csv(f"{data_top_path}/閃電資料/raw_data/{year}/{year}{month}.txt")
+flash_rawdata_df = pd.read_csv(f"{data_top_path}/閃電資料/raw_data/TLDS/{year}/{year}{month}.txt")
 flash_datas_df = flash_rawdata_df[['日期時間', '經度', '緯度']].copy()
 
 flash_datas_df['日期時間'] = pd.to_datetime(flash_datas_df['日期時間']).dt.floor('min')
