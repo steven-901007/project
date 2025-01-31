@@ -4,17 +4,19 @@ import os
 from tqdm import tqdm
 
 year = '2021' #年分
-month = '06' #月份
+month = '07' #月份
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 alpha = 2 #統計檢定
 dis = 36 #半徑
+
 
 # 建立資料夾
 def file_set(file_path):
     if not os.path.exists(file_path):
         os.makedirs(file_path)
         print(file_path + " 已建立")
-file_set(f"{data_top_path}/閃電資料/依測站分類/{year}_{month}_{dis}km")
+
+file_set(f"{data_top_path}/閃電資料/EN/依測站分類/EN_{year}{month}_{dis}km")
 
 # Haversine公式，用於計算兩點之間的球面距離（經緯度）
 def haversine(lon1, lat1, lon2, lat2):
@@ -32,10 +34,10 @@ def haversine(lon1, lat1, lon2, lat2):
     return c * r
 
 # 讀取閃電資料並轉換日期時間格式
-flash_rawdata_df = pd.read_csv(f"{data_top_path}/閃電資料/raw_data/TLDS/{year}/{year}{month}.txt")
-flash_datas_df = flash_rawdata_df[['日期時間', '經度', '緯度']].copy()
+flash_rawdata_df = pd.read_csv(f"{data_top_path}/閃電資料/raw_data/EN/{year}_EN/{year}{month}.csv")
+flash_datas_df = flash_rawdata_df[['observation_time', 'lon', 'lat']].copy()
 
-flash_datas_df['日期時間'] = pd.to_datetime(flash_datas_df['日期時間']).dt.floor('min')
+flash_datas_df['observation_time'] = pd.to_datetime(flash_datas_df['observation_time']).dt.floor('min')
 
 # 讀取測站資料
 station_datas_path = f"{data_top_path}/雨量資料/測站資料/{year}_{month}.csv"
@@ -49,16 +51,17 @@ for index, row in tqdm(station_datas.iterrows()):
     station_lat = row['lat']
 
     # 計算每個閃電點與測站的距離
-    flash_datas_df['distance'] = haversine(flash_datas_df['經度'], flash_datas_df['緯度'], station_lon, station_lat)
+    flash_datas_df['distance'] = haversine(flash_datas_df['lon'], flash_datas_df['lat'], station_lon, station_lat)
 
     # 過濾掉距離超過36公里的閃電資料
     need_flash_datas_df = flash_datas_df[flash_datas_df['distance'] <= dis]
 
     # 計算每分鐘內的閃電次數
-    need_inf_flash_data_df = need_flash_datas_df.groupby('日期時間').size().reset_index(name='flash_count')
+    need_inf_flash_data_df = need_flash_datas_df.groupby('observation_time').size().reset_index(name='flash_count')
     need_inf_flash_data_df.columns = ['data time','flash_count']
-    # 保存結果到對應測站的CSV
-    # print(need_inf_flash_data_df)
-    save_path = f"{data_top_path}/閃電資料/依測站分類/{year}_{month}_{dis}km/{station_name}.csv"
-    need_inf_flash_data_df.to_csv(save_path,index=False)    
-    # break
+
+    #UTC ==> LCT
+    need_inf_flash_data_df['data time'] = need_inf_flash_data_df['data time'] + pd.Timedelta(hours=8)
+
+    save_path = f"{data_top_path}/閃電資料/EN/依測站分類/EN_{year}{month}_{dis}km/{station_name}.csv"
+    need_inf_flash_data_df.to_csv(save_path,index=False)  

@@ -21,7 +21,7 @@ for flash_raw_data_year_path in tqdm(flash_raw_data_year_paths,desc='資料讀�
         except:
             flash_datas = pd.read_csv(flash_raw_data_month_path,encoding='big5')
         # print(flash_datas)
-        flash_data_count = flash_datas['日期時間'].count()
+        flash_data_count = flash_datas.shape[0]
         # print(flash_data_count)
         flash_data_list[1].append(flash_data_count)
 
@@ -30,7 +30,7 @@ plt.rcParams['axes.unicode_minus'] = False  # 用來正常顯示正負號
 fig = plt.figure() #底圖(一張空白map可以在上面自行加上各種ax)
 ax = fig.add_subplot()
 ax.bar(flash_data_list[0],flash_data_list[1])
-plt.xticks(rotation=75,size = 30)  # 旋轉 x 軸標籤，讓它們更易讀
+plt.xticks(rotation=75,size = 20)  # 旋轉 x 軸標籤，讓它們更易讀
 plt.tight_layout()  # 自動調整佈局
-plt.title('各月閃電布局',size = 30)
+plt.title('各月閃電布局(資料來源：TLDS)',size = 30)
 plt.show()

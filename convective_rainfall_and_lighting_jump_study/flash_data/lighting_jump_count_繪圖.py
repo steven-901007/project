@@ -11,10 +11,13 @@ from tqdm import tqdm
 import pandas as pd
 import os
 
+
+
 year = '2021' #年分
 month = '07' #月份
 dis = 36
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
+data_source = 'TLDS' #閃電資料來源
 
 
 
