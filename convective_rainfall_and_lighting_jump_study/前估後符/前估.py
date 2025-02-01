@@ -1,4 +1,4 @@
-##新後符
+##前估
 from openpyxl import load_workbook
 import glob
 import pandas as pd
@@ -15,13 +15,21 @@ import matplotlib as mpl
 import os
 
 
+
 year = '2021' #年分
 month = '07' #月份
 dis = 36
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
+data_source = 'EN'#閃電資料來源
 
-def check_in_time_range(row, rain_times):
-    return int(any((rain_times >= row['start time']) & (rain_times <= row['end time'])))
+
+def check_folder(folder_path):
+    if not os.path.exists(folder_path):
+        print(f"資料夾 '{folder_path}' 不存在。")
+        raise ValueError
+
+def check_in_time_range(row, lj_times):
+    return int(any((lj_times >= row['start time']) & (lj_times <= row['end time'])))
 
 def fileset(path):    #建立資料夾
     import os
@@ -32,91 +40,92 @@ def fileset(path):    #建立資料夾
 
 #建立前估後符資料夾
 fileset(f"{data_top_path}/前估後符")
+fileset(f"{data_top_path}/前估後符/{data_source}_{year}{month}")
 
-##有lighting jump但沒強降雨發生
+##強降雨發生但沒有lighting jump
 data_path = f"{data_top_path}/雨量資料/測站資料/{year}_{month}.csv"
+check_folder(data_path)
 data = pd.read_csv(data_path)
+
 # print(data)
+check_folder(f"{data_top_path}/雨量資料/對流性降雨{dis}km/{year}/{month}")
+check_folder(f"{data_top_path}/閃電資料/{data_source}/lighting_jump/{data_source}_{year}{month}_{dis}km")
+prefigurance_station_name_list = []#前估測站名稱
+prefigurance_hit_list = []#個測站命中的list
+total_prefigurance_list = []#前估總量(lighting jump and rain + non_lighting jump and rain)
+prefigurance_lon_data_list = []
+prefigurance_lat_data_list = []
 
-post_agreement_station_name_list = []#後符測站名稱
-post_agreement_hit_list = []#個測站後符命中的list
-total_post_agreement_list = []#後符總量(lighting jump and rain + lighting jump and non_rain)
-post_agreement_lon_data_list = []
-post_agreement_lat_data_list = []
+month_path =f"{data_top_path}/雨量資料/對流性降雨{dis}km/{year}/{month}/*.csv"
 
-month_path = f"{data_top_path}/閃電資料/lighting_jump/{year}_{month}_{dis}km/*.csv"
 result  =glob.glob(month_path)
 
-for flash_station_path in tqdm(result,desc=f"{year}{month}資料處理中...."):
-    # print(flash_station_path)
-# flash_station_path = "C:/Users/steve/python_data/研究所/閃電資料/lighting_jump/36km/2021/06/00H710.csv"
-    flash_station_name = os.path.basename(flash_station_path).split('.')[0]
-    # print(flash_station_name)
+for rain_station_path in tqdm(result,desc=f"{year}{month}資料處理中...."):
+# rain_station_path = f"{data_top_path}/雨量資料/對流性降雨{dis}km/{year}/{month}/C0V730.csv"
+    rain_station_name = os.path.basename(rain_station_path).split('.')[0]
+    # print(rain_station_name)
 
-    #rain
+    #flash
     try:
-        rain_station_path = f"{data_top_path}/雨量資料/對流性降雨{dis}km/{year}/{month}/{flash_station_name}.csv"
-        # print(rain_station_path)
-    except:
-        rain_station_path = None
-        # print(rain_station_path)
-
-
-
-    if rain_station_path != None:
+        flash_station_path = f"{data_top_path}/閃電資料/{data_source}/lighting_jump/{data_source}_{year}{month}_{dis}km/{rain_station_name}.csv"
         rain_data = pd.read_csv(rain_station_path)
         flash_data = pd.read_csv(flash_station_path)
+        # print(rain_station_name)
+    except:
+        flash_station_path = None
+        # print(rain_station_name)
+
+    if flash_station_path != None:
         # print(rain_data)
         # print(flash_data)
         #end time< lighting jump <= time data
-        flash_data['LJ_time'] = pd.to_datetime(flash_data['LJ_time'])
-        flash_data['start time'] = flash_data["LJ_time"]
-        #  - pd.Timedelta(minutes= 40)
-        flash_data['end time'] = flash_data['LJ_time'] + pd.Timedelta(minutes=50)
         rain_data['time data'] = pd.to_datetime(rain_data['time data'])
-        # print(rain_data)
-        # print(flash_data)
-
+        rain_data['start time'] = rain_data["time data"] - pd.Timedelta(minutes= 40)
+        rain_data['end time'] = rain_data['time data'] + pd.Timedelta(minutes=10)
+        flash_data['LJ_time'] = pd.to_datetime(flash_data['LJ_time'])
 
         try:
-            flash_data['convective_rainfall_in_time_range'] = flash_data.apply(lambda row: check_in_time_range(row, rain_data['time data']), axis=1)
+            rain_data['LJ_in_time_range'] = rain_data.apply(lambda row: check_in_time_range(row, flash_data['LJ_time']), axis=1)
         except:
-            print(flash_station_name)
-            print(flash_data)
+            print(rain_station_name)
+            print(rain_data)
             ValueError
-        # print(flash_data[flash_data['convective_rainfall_in_time_range'] == 1])
-        # pd.set_option('display.max_rows', None)
+        # print(rain_data[rain_data['LJ_in_time_range'] == 1])
+        pd.set_option('display.max_rows', None)
 
         # print(rain_data)
-        # print(flash_data['convective_rainfall_in_time_range'].sum())
-        # print(flash_data)
-        if flash_data['convective_rainfall_in_time_range'].sum() != 0:
-            post_agreement_station_name_list.append(flash_station_name)
+        # print(rain_data['LJ_in_time_range'].sum())
+
+        if rain_data['LJ_in_time_range'].sum() != 0:
+            prefigurance_station_name_list.append(rain_station_name)
             # print(data[data['station name'] == rain_station_name]['lon'].iloc[0])
-            post_agreement_hit_list.append(flash_data['convective_rainfall_in_time_range'].sum())
-            total_post_agreement_list.append(len(flash_data))
-            post_agreement_lon_data_list.append(data[data['station name'] == flash_station_name]['lon'].iloc[0])
-            post_agreement_lat_data_list.append(data[data['station name'] == flash_station_name]['lat'].iloc[0])
-    # print(flash_station_name,flash_data['convective_rainfall_in_time_range'].sum(),len(flash_data))
-# print(post_agreement_station_name_list)
-# print(post_agreement_hit_list)
-# print(total_post_agreement_list)
+            prefigurance_hit_list.append(rain_data['LJ_in_time_range'].sum())
+            total_prefigurance_list.append(len(rain_data))
+            prefigurance_lon_data_list.append(data[data['station name'] == rain_station_name]['lon'].iloc[0])
+            prefigurance_lat_data_list.append(data[data['station name'] == rain_station_name]['lat'].iloc[0])
+# print(rain_station_name,rain_data['LJ_in_time_range'].sum(),len(rain_data))
 
-post_agreement_hit_persent_list = [] # 前估命中率
-for i in range(len(total_post_agreement_list)):
-    post_agreement_hit_persent_list.append(post_agreement_hit_list[i]/(total_post_agreement_list[i])*100)
 
-post_agreement_save_data = {
-    'station name':post_agreement_station_name_list,
-    'lon':post_agreement_lon_data_list,
-    'lat':post_agreement_lat_data_list,
-    'hit':post_agreement_hit_list,
-    'total':total_post_agreement_list,
-    'hit persent':post_agreement_hit_persent_list,
+prefigurance_hit_persent_list = [] # 前估命中率
+for i in range(len(total_prefigurance_list)):
+    prefigurance_hit_persent_list.append(prefigurance_hit_list[i]/total_prefigurance_list[i]*100)
+
+# print(prefigurance_station_name_list)
+# print(prefigurance_hit_list)
+# print(total_prefigurance_list)
+# print(prefigurance_lon_data_list)
+# print(prefigurance_lat_data_list)
+# print(prefigurance_hit_persent_list)
+prefigurance_save_data = {
+    'station name':prefigurance_station_name_list,
+    'lon':prefigurance_lon_data_list,
+    'lat':prefigurance_lat_data_list,
+    'hit':prefigurance_hit_list,
+    'total':total_prefigurance_list,
+    'hit persent':prefigurance_hit_persent_list,
 }
-post_agreement_save_path = f"{data_top_path}/前估後符/{year}_{month}_後符.csv"
-pd.DataFrame(post_agreement_save_data).to_csv(post_agreement_save_path,index=False)
-
+prefigurance_save_path = f"{data_top_path}/前估後符/{data_source}_{year}{month}/前估.csv"
+pd.DataFrame(prefigurance_save_data).to_csv(prefigurance_save_path,index=False)
 
 ##前估繪圖
 
@@ -147,10 +156,10 @@ gridlines.right_labels = False
 ## 計算某個地方達到10mm/10min的次數 + colorbar
 color_list = []
 
-level = [0,100,200,300,400,500,600,700,850]
+level = [0,100,200,300,400,500,550,600,650]
 color_box = ['silver','purple','darkviolet','blue','g','y','orange','r']
 
-for nb in post_agreement_hit_list:
+for nb in prefigurance_hit_list:
     more_then_maxma_or_not = 0
     for j in range(len(level)-1):
         if level[j]<nb<=level[j+1]:
@@ -164,7 +173,7 @@ for nb in post_agreement_hit_list:
 
 
 # 標記經緯度點
-ax.scatter(post_agreement_lon_data_list, post_agreement_lat_data_list, color=color_list, s=3, zorder=5)
+ax.scatter(prefigurance_lon_data_list, prefigurance_lat_data_list, color=color_list, s=3, zorder=5)
 
 # colorbar setting
 
@@ -182,13 +191,14 @@ cbar1 = plt.colorbar(im,ax=ax, extend='neither', ticks=level)
 plt.xlabel('Longitude')
 plt.ylabel('Latitude')
 
-ax.set_title(f"{year}年{month}月\n後符命中數 max = "+ str(max(post_agreement_hit_list)))
-
+ax.set_title(f"{year}年{month}月\n前估 max = {round(max(prefigurance_hit_list),3)}\n flash data source：{data_source}")
+pic_save_path = f"{data_top_path}/前估後符/{data_source}_{year}{month}/前估.png"
+plt.savefig(pic_save_path, bbox_inches='tight', dpi=300)
 
 ## 這是用來確認colorbar的配置
 fig,ax1 = plt.subplots()
-X = [i for i in range(len(post_agreement_hit_list))]
-Y = sorted(post_agreement_hit_list)
+X = [i for i in range(len(prefigurance_hit_list))]
+Y = sorted(prefigurance_hit_list)
 ax1.plot(X,Y,color =  'black',marker = "*",linestyle = '--') #折線圖
 ax1.set_title('這是用來確認colorbar的配置')
 
@@ -219,10 +229,10 @@ gridlines.right_labels = False
 ## 計算某個地方達到10mm/10min的次數 + colorbar
 color_list = []
 
-level = [0,20,40,50,60,70,80,90,100]
+level = [0,15,30,35,40,45,50,55,60]
 color_box = ['silver','purple','darkviolet','blue','g','y','orange','r']
 
-for nb in post_agreement_hit_persent_list:
+for nb in prefigurance_hit_persent_list:
     more_then_maxma_or_not = 0
     for j in range(len(level)-1):
         if level[j]<nb<=level[j+1]:
@@ -236,7 +246,7 @@ for nb in post_agreement_hit_persent_list:
 
 
 # 標記經緯度點
-ax.scatter(post_agreement_lon_data_list, post_agreement_lat_data_list, color=color_list, s=3, zorder=5)
+ax.scatter(prefigurance_lon_data_list, prefigurance_lat_data_list, color=color_list, s=3, zorder=5)
 
 # colorbar setting
 
@@ -254,16 +264,19 @@ cbar1 = plt.colorbar(im,ax=ax, extend='neither', ticks=level)
 plt.xlabel('Longitude')
 plt.ylabel('Latitude')
 
-ax.set_title(f"{year}年{month}月\n後符命中率 [%] max = "+ str(max(post_agreement_hit_persent_list)))
-
+ax.set_title(f"{year}年{month}月\n前估命中率 [%] max = {round(max(prefigurance_hit_persent_list),3)}\n flash data source：{data_source}")
+pic_save_path = f"{data_top_path}/前估後符/{data_source}_{year}{month}/前估命中率(%).png"
+plt.savefig(pic_save_path, bbox_inches='tight', dpi=300)
 
 ## 這是用來確認colorbar的配置
 fig,ax1 = plt.subplots()
-X = [i for i in range(len(post_agreement_hit_persent_list))]
-Y = sorted(post_agreement_hit_persent_list)
+X = [i for i in range(len(prefigurance_hit_persent_list))]
+Y = sorted(prefigurance_hit_persent_list)
 ax1.plot(X,Y,color =  'black',marker = "*",linestyle = '--') #折線圖
 ax1.set_title('這是用來確認colorbar的配置')
 
 
 # 顯示地圖
-plt.show()
+# plt.show()
+
+print(f"Time：{year}{month}、dis：{dis}、source：{data_source}")

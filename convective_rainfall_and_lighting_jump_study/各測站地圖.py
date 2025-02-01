@@ -18,7 +18,7 @@ def fileset(path):    # 建立資料夾
         os.makedirs(path)
         print(path + " 已建立")
 
-fileset(f"{data_top_path}/前估後符/{year}_{month}_各測站地圖")
+fileset(f"{data_top_path}/各測站地圖/{year}{month}")
 
 # 讀取一次靜態資料
 position_path = f"{data_top_path}/雨量資料/測站資料/{year}_{month}.csv"
@@ -73,9 +73,11 @@ for station_path in tqdm(result, desc='地圖繪製中...'):
     ax.set_title(f"{mean_station_real_name} ({point_lon},{point_lat})\ndis = {dis}km")
 
     # 儲存圖片
-    pic_save_path = f"{data_top_path}/前估後符/{year}_{month}_各測站地圖/{station_name}_{mean_station_real_name}"
+    pic_save_path = f"{data_top_path}/各測站地圖/{year}{month}/{station_name}_{mean_station_real_name}"
     plt.savefig(pic_save_path, bbox_inches='tight', dpi=300)
     plt.close()
 
     # 清除變數
     del point_lat, point_lon, merge_range_stations, mean_station_real_name
+
+print(f"Time：{year}{month}、dis：{dis}")
