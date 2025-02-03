@@ -15,7 +15,7 @@ import pandas as pd
 
 
 
-def flash_pattern(year,month,day,time_start,time_end,dis,station_name,data_top_path):
+def flash_pattern(year,month,day,time_start,time_end,dis,station_name,data_top_path,flash_source):
 
     time_start_datatime = pd.to_datetime(f"{year}{month}{day} {time_start}:00:00")
     time_end_datatime = pd.to_datetime(f"{year}{month}{day} {time_end}:00:00")
@@ -25,7 +25,7 @@ def flash_pattern(year,month,day,time_start,time_end,dis,station_name,data_top_p
     lon_list = []
     lat_list = []
 
-    flash_paths = f"{data_top_path}/閃電資料/依時間分類/{year}/{month}/**.csv"
+    flash_paths = f"{data_top_path}/閃電資料/{flash_source}/依時間分類/{year}/{month}/**.csv"
     result = glob(flash_paths)
     for flash_path in result:
         data_time_str = flash_path.split('/')[-1].split('\\')[-1].split('.')[0]
@@ -91,23 +91,24 @@ def flash_pattern(year,month,day,time_start,time_end,dis,station_name,data_top_p
     ax.plot(circle[:, 0], circle[:, 1], color='blue', transform=ccrs.PlateCarree(),label = f"半徑 = {dis}")
     plt.legend()
 
-    plt.title(f"Flash Pattern \n {year}/{month}/{day} {time_start}:00~{time_end}:00 \n {point_real_name}({station_name})")
+    plt.title(f"Flash Pattern(source：{flash_source}) \n {year}/{month}/{day} {time_start}:00~{time_end}:00 \n {point_real_name}({station_name})")
 
     # 顯示地圖
 
-    case_root_path =  f"{data_top_path}/個案分析/{station_name}_{dis}_{year}{month}{day}_{str(time_start).zfill(2)}00to{str(time_end)}00"
+    case_root_path =  f"{data_top_path}/個案分析/{station_name}/{dis}_{flash_source}_{year}{month}{day}_{str(time_start).zfill(2)}00to{str(time_end)}00"
     pic_save_path = case_root_path + '/flash_pattern.png'
     plt.savefig(pic_save_path, bbox_inches='tight', dpi=300)
-    print('地圖已建立')
+    print('閃電分布地圖已建立')
     # plt.show()
 
-data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
-year = '2021' #年分
-month = '06' #月份
-day = '01'
-time_start = 12
-time_end = 23
-dis = 36
-alpha = 2 #統計檢定
-station_name = '01P190'
-flash_pattern(year,month,day,time_start,time_end,dis,station_name,data_top_path)
+# data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
+# year = '2021' #年分
+# month = '06' #月份
+# day = '01'
+# time_start = 00
+# time_end = 12
+# dis = 36
+# alpha = 2 #統計檢定
+# flash_source = 'EN' # EN or TLDS
+# station_name = '01P190'
+# flash_pattern(year,month,day,time_start,time_end,dis,station_name,data_top_path,flash_source)

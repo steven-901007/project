@@ -11,13 +11,13 @@ import matplotlib as mpl
 
 
 
-def case_map_draw(station_name,data_top_path,year,month,day,time_start,time_end,dis):
-    prefigurance_path = f"{data_top_path}/前估後符/{year}_{month}_前估.csv"
-    post_agreement_path = f"{data_top_path}/前估後符/{year}_{month}_後符.csv"
+
+def case_map_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,flash_source):
+    prefigurance_path = f"{data_top_path}/前估後符/{flash_source}_{year}{month}/前估.csv"
+    post_agreement_path = f"{data_top_path}/前估後符/{flash_source}_{year}{month}/後符.csv"
     position_path = f"{data_top_path}/雨量資料/測站資料/{year}_{month}.csv"
     range_station_name_path = f"{data_top_path}/雨量資料/測站範圍內測站數/{year}_{month}/{station_name}.csv"
-
-    rain_data_path = f"{data_top_path}/個案分析/{station_name}_{dis}_{year}{month}{day}_{str(time_start).zfill(2)}00to{str(time_end).zfill(2)}00/rain_raw_data.csv"
+    rain_data_path = f"{data_top_path}/個案分析/{station_name}/{dis}_{flash_source}_{year}{month}{day}_{str(time_start).zfill(2)}00to{str(time_end).zfill(2)}00/rain_raw_data.csv"
 
 
     prefigurance_datas = pd.read_csv(prefigurance_path)
@@ -126,7 +126,7 @@ def case_map_draw(station_name,data_top_path,year,month,day,time_start,time_end,
 
     # 顯示地圖
 
-    case_root_path =  f"{data_top_path}/個案分析/{station_name}_{dis}_{year}{month}{day}_{str(time_start).zfill(2)}00to{str(time_end)}00"
+    case_root_path =  f"{data_top_path}/個案分析/{station_name}/{dis}_{flash_source}_{year}{month}{day}_{str(time_start).zfill(2)}00to{str(time_end)}00"
     pic_save_path = case_root_path + '/map.png'
     plt.savefig(pic_save_path, bbox_inches='tight', dpi=300)
     print('地圖已建立')
@@ -136,13 +136,13 @@ def case_map_draw(station_name,data_top_path,year,month,day,time_start,time_end,
 # data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 # year = '2021' #年分
 # month = '06' #月份
-# day = '04'
-# time_start = 0
-# time_end = 23
+# day = '01'
+# time_start = 00
+# time_end = 12
 # dis = 36
 # alpha = 2 #統計檢定
-# station_name = 'C0F9N0'
+# flash_source = 'EN' # EN or TLDS
+# station_name = '01P190'
 
 
-
-# case_map_draw(station_name,data_top_path,year,month,day,time_start,time_end,dis)
+# case_map_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,flash_source)

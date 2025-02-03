@@ -37,7 +37,7 @@ def assign_status(x):
         return 'g'
 
 
-def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,alpha):
+def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,alpha,flash_source):
     pd.set_option('display.max_rows', None)
 
     #將時間的type改成時間型態
@@ -52,9 +52,9 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     position_data = pd.read_csv(data_path)
     point_real_name = position_data[position_data['station name'] == station_name]['station real name'].iloc[0]
     ##資料讀取
-    case_root_path =  f"{data_top_path}/個案分析/{station_name}_{dis}_{year}{month}{day}_{str(time_start).zfill(2)}00to{str(time_end)}00"
+    case_root_path =  f"{data_top_path}/個案分析/{station_name}/{dis}_{flash_source}_{year}{month}{day}_{str(time_start).zfill(2)}00to{str(time_end)}00"
     rain_data_path = case_root_path + '/rain_raw_data.csv'
-    flash_data_path = case_root_path + '/flash_data.csv'
+    flash_data_path = case_root_path + f'/{flash_source}_flash_data.csv'
     rain_data = pd.read_csv(rain_data_path)
     flash_data = pd.read_csv(flash_data_path)
 
@@ -117,12 +117,12 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     # print(count_rain_data)
 
     
-    this_case_prefigurance_hit_persent_paths = f"{data_top_path}/個案分析/前估命中個案/{year}_{month}/{station_name}_**.csv"
-    # print(glob(this_case_prefigurance_hit_persent_paths))    
-    this_case_prefigurance_hit_persent_path = glob(this_case_prefigurance_hit_persent_paths)[0]
-    this_case_prefigurance_hit_persent_datas = pd.read_csv(this_case_prefigurance_hit_persent_path,parse_dates=['time data'])['time data']
-    this_case_prefigurance_hit_persent_data = this_case_prefigurance_hit_persent_datas[(this_case_prefigurance_hit_persent_datas >= time_start_time_type) & (this_case_prefigurance_hit_persent_datas <= time_end_time_type)]
-    this_case_prefigurance_hit_count = this_case_prefigurance_hit_persent_data.count()
+    # this_case_prefigurance_hit_persent_paths = f"{data_top_path}/個案分析/前估命中個案/{year}_{month}/{station_name}_**.csv"
+    # # print(glob(this_case_prefigurance_hit_persent_paths))    
+    # this_case_prefigurance_hit_persent_path = glob(this_case_prefigurance_hit_persent_paths)[0]
+    # this_case_prefigurance_hit_persent_datas = pd.read_csv(this_case_prefigurance_hit_persent_path,parse_dates=['time data'])['time data']
+    # this_case_prefigurance_hit_persent_data = this_case_prefigurance_hit_persent_datas[(this_case_prefigurance_hit_persent_datas >= time_start_time_type) & (this_case_prefigurance_hit_persent_datas <= time_end_time_type)]
+    # this_case_prefigurance_hit_count = this_case_prefigurance_hit_persent_data.count()
 
     # print(time_start_time_type,time_end_time_type)
 
@@ -162,7 +162,9 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     # ax1.grid(True, which='both', axis='x', linestyle='--', linewidth=0.5)  # 添加网格线
     plt.setp(ax1.get_xticklabels(), rotation=90)
 
-    plt.title(f"測站：{point_real_name}({station_name})\n日期：{year}/{month}/{day}\n時間{str(time_start).zfill(2)}:00~{str(time_end).zfill(2)}:00\n前估命中數：{this_case_prefigurance_hit_count}")
+
+    plt.title(f"測站：{point_real_name}({station_name})\n日期：{year}/{month}/{day}\n時間{str(time_start).zfill(2)}:00~{str(time_end).zfill(2)}:00")
+    # plt.title(f"測站：{point_real_name}({station_name})\n日期：{year}/{month}/{day}\n時間{str(time_start).zfill(2)}:00~{str(time_end).zfill(2)}:00\n前估命中數：{this_case_prefigurance_hit_count}")
     fig.legend()
 
     # 顯示and儲存圖表
@@ -175,20 +177,21 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     # pic_save_path = f"{case_root_path}/{year}{month}{day}.png" 
     
     plt.savefig(pic_save_path, bbox_inches='tight', dpi=300)
-    print(f"已生成照片：\n測站：{point_real_name}({station_name})\n半徑：{dis}\n日期：{year}/{month}/{day}\n時間{str(time_start).zfill(2)}:00~{str(time_end).zfill(2)}:00")    # plt.show()
+    print(f"已生成照片：\n測站：{point_real_name}({station_name})\n半徑：{dis}\n日期：{year}/{month}/{day} {str(time_start).zfill(2)}:00~{str(time_end).zfill(2)}:00\nflash source：{flash_source}")    # plt.show()
     # plt.show()
     
 
 
 # data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
+
 # year = '2021' #年分
 # month = '06' #月份
-# day = '08'
-# time_start = 13
-# time_end = 20
+# day = '01'
+# time_start = 00
+# time_end = 12
 # dis = 36
 # alpha = 2 #統計檢定
-# # station_name = 'O1P470' #前估max
-# station_name = '466880' #板橋
+# flash_source = 'EN' # EN or TLDS
+# station_name = '01P190'
 
-# case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,alpha)
+# case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,alpha,flash_source)

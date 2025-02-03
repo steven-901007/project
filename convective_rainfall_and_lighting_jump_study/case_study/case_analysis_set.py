@@ -40,7 +40,7 @@ def fileset(path):    #建立資料夾
         os.makedirs(path)
         print(path + " 已建立") 
 
-def case_data_set(year,month,day,time_start,time_end,dis,station_name,data_top_path):
+def case_data_set(year,month,day,time_start,time_end,dis,station_name,data_top_path,flash_source):
 
     #測站經緯度and36km的測站有哪些
     stations_name_for_36km_path = f"{data_top_path}/雨量資料/測站範圍內測站數/{year}_{month}/{station_name}.csv"
@@ -49,7 +49,9 @@ def case_data_set(year,month,day,time_start,time_end,dis,station_name,data_top_p
 
 
     ## 建立資料夾
-    case_root_path = f"{data_top_path}/個案分析/{station_name}_{dis}_{year}{month}{day}_{str(time_start).zfill(2)}00to{str(time_end).zfill(2)}00"
+    case_station_path = f"{data_top_path}/個案分析/{station_name}"
+    fileset(case_station_path)
+    case_root_path = f"{data_top_path}/個案分析/{station_name}/{dis}_{flash_source}_{year}{month}{day}_{str(time_start).zfill(2)}00to{str(time_end).zfill(2)}00"
     fileset(case_root_path)
 
     # time_start = datetime.datetime(time_start,0)
@@ -93,30 +95,29 @@ def case_data_set(year,month,day,time_start,time_end,dis,station_name,data_top_p
 
 
     ##閃電資料建立(讀取依測站分類)
-    flash_path = f"{data_top_path}/閃電資料/依測站分類/{year}_{month}_{dis}km/{station_name}.csv"
+    flash_path = f"{data_top_path}/閃電資料/{flash_source}/依測站分類/{flash_source}_{year}{month}_{dis}km/{station_name}.csv"
     flash_data = pd.read_csv(flash_path)
     flash_data['data time'] = pd.to_datetime(flash_data['data time'])
     # print(flash_data['data time'])
     save_data = flash_data[(flash_data['data time'] >= time_start) & 
                         (flash_data['data time'] < time_end)]
     # print(save_data)
-    flash_data_save_path = case_root_path + '/flash_data.csv'
+    flash_data_save_path = case_root_path + f'/{flash_source}_flash_data.csv'
     save_data.to_csv(flash_data_save_path,index=False)
     print('閃電資料已建立')
 
 
-# # # ## 變數設定
+# # ## 變數設定
 # data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 # year = '2021' #年分
 # month = '06' #月份
-# day = '04'
-# time_start = 12
-# time_end = 18
+# day = '01'
+# time_start = 00
+# time_end = 12
 # dis = 36
 # alpha = 2 #統計檢定
-# # station_name = 'C0F9N0'
-# # station_name = 'C0V800' #六龜
-# station_name = '466920' #台北
+# flash_source = 'EN' # EN or TLDS
+# station_name = '01P190'
 
 
-# case_data_set(year,month,day,time_start,time_end,dis,station_name,data_top_path)
+# case_data_set(year,month,day,time_start,time_end,dis,station_name,data_top_path,flash_source)

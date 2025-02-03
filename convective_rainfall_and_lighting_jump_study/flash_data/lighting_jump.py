@@ -5,11 +5,11 @@ import os
 
 
 year = '2021'     # 年分
-month = '06'      # 月份
+month = '07'      # 月份
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 alpha = 2         # 統計檢定
 dis = 36          #檢定區半徑
-data_source = 'TLDS'#閃電資料來源
+data_source = 'EN'#閃電資料來源
 
 
 

@@ -60,8 +60,10 @@ for index, row in tqdm(station_datas.iterrows()):
     need_inf_flash_data_df = need_flash_datas_df.groupby('observation_time').size().reset_index(name='flash_count')
     need_inf_flash_data_df.columns = ['data time','flash_count']
 
-    #UTC ==> LCT
+    #UTC ==> LCT (20250201測試)
     need_inf_flash_data_df['data time'] = need_inf_flash_data_df['data time'] + pd.Timedelta(hours=8)
 
     save_path = f"{data_top_path}/閃電資料/EN/依測站分類/EN_{year}{month}_{dis}km/{station_name}.csv"
     need_inf_flash_data_df.to_csv(save_path,index=False)  
+
+print(f'Time：{year}{month}、dis：{dis}、alpha：{alpha}')

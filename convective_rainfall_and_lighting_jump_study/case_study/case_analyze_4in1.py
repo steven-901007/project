@@ -13,6 +13,7 @@ time_start = 00
 time_end = 12
 dis = 36
 alpha = 2 #統計檢定
+flash_source = 'TLDS' # EN or TLDS
 # station_name = 'O1P470' #前估max
 # station_name = '466880' #板橋
 # station_name = 'C0V800' #六龜
@@ -21,7 +22,7 @@ station_name = '01P190'
 # max_month_day = calendar.monthrange(int(year),int(month))[-1]
 # for i in range(1,max_month_day+1): #記得調case_draw的存檔位置
 #     day = str(i).zfill(2)
-case_data_set(year,month,day,time_start,time_end,dis,station_name,data_top_path)
-case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,alpha)
-case_map_draw(station_name,data_top_path,year,month,day,time_start,time_end,dis)
-flash_pattern(year,month,day,time_start,time_end,dis,station_name,data_top_path)
+case_data_set(year,month,day,time_start,time_end,dis,station_name,data_top_path,flash_source)
+case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,alpha,flash_source)
+case_map_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,flash_source)
+flash_pattern(year,month,day,time_start,time_end,dis,station_name,data_top_path,flash_source)
