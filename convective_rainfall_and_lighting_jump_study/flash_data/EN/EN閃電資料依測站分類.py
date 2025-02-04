@@ -6,7 +6,6 @@ from tqdm import tqdm
 year = '2021' #年分
 month = '07' #月份
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
-alpha = 2 #統計檢定
 dis = 36 #半徑
 
 
@@ -66,4 +65,4 @@ for index, row in tqdm(station_datas.iterrows()):
     save_path = f"{data_top_path}/閃電資料/EN/依測站分類/EN_{year}{month}_{dis}km/{station_name}.csv"
     need_inf_flash_data_df.to_csv(save_path,index=False)  
 
-print(f'Time：{year}{month}、dis：{dis}、alpha：{alpha}')
+print(f'Time：{year}{month}、dis：{dis}')

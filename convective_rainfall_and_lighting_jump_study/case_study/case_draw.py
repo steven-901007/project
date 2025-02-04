@@ -163,7 +163,7 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     plt.setp(ax1.get_xticklabels(), rotation=90)
 
 
-    plt.title(f"測站：{point_real_name}({station_name})\n日期：{year}/{month}/{day}\n時間{str(time_start).zfill(2)}:00~{str(time_end).zfill(2)}:00")
+    plt.title(f"測站：{point_real_name}({station_name})\n半徑：{dis}\n日期：{year}/{month}/{day} {str(time_start).zfill(2)}:00~{str(time_end).zfill(2)}:00\nflash source：{flash_source}")
     # plt.title(f"測站：{point_real_name}({station_name})\n日期：{year}/{month}/{day}\n時間{str(time_start).zfill(2)}:00~{str(time_end).zfill(2)}:00\n前估命中數：{this_case_prefigurance_hit_count}")
     fig.legend()
 

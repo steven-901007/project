@@ -4,21 +4,27 @@ from cartopy.io.shapereader import Reader
 from cartopy.feature import ShapelyFeature
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
+import pandas as pd
+from cartopy import geodesic
+
+
 
 ## 無縣市邊界
 
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
+dis = 36
 
 # 設定標記點的經緯度
-point_lon = [ 120.3877]
+station_lon = 120.46
 
-point_lat = [ 22.6074]
+station_lat = 22.98
 
-print(len(point_lon),len(point_lat))
+# print(len(point_lon),len(point_lat))
 ## 繪圖
+data = pd.read_csv(f"{data_top_path}/閃電資料/EN/依時間分類/2021/06/202106010854.csv")
 
-
-
+point_lon = data['lon']
+point_lat = data['lat']
 
 
 
@@ -41,7 +47,7 @@ plt.rcParams['font.sans-serif'] = [u'MingLiu']  # 設定字體為'細明體'
 plt.rcParams['axes.unicode_minus'] = False  # 用來正常顯示正負號
 
 # 加載台灣的行政邊界
-taiwan_shapefile = data_top_path+"/研究所/Taiwan_map_data/COUNTY_MOI_1090820.shp"  # 你需要提供台灣邊界的shapefile文件
+taiwan_shapefile = f"{data_top_path}/Taiwan_map_data/COUNTY_MOI_1090820.shp" # 你需要提供台灣邊界的shapefile文件
 shape_feature = ShapelyFeature(Reader(taiwan_shapefile).geometries(),
                                ccrs.PlateCarree(), edgecolor='black', facecolor='white')
 ax.add_feature(shape_feature)
@@ -53,6 +59,11 @@ gridlines.top_labels = False
 gridlines.right_labels = False
 
 ax.scatter(point_lon,point_lat,color = 'r', s=3, zorder=5)
+
+g = geodesic.Geodesic()
+circle = g.circle(lon=station_lon, lat=station_lat, radius=dis*1000)  # radius in meters
+ax.plot(circle[:, 0], circle[:, 1], color='blue', transform=ccrs.PlateCarree(),label = f"半徑 = {dis}")
+
 # 加入標籤
 plt.xlabel('Longitude')
 plt.ylabel('Latitude')
