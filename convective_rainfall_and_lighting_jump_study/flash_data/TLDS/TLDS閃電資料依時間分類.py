@@ -15,7 +15,7 @@ def fileset(path):  # 建立資料夾
 fileset(data_top_path + "/閃電資料/TLDS/依時間分類/" + year + '/' + month)
 
 ## 讀取閃電資料
-flash_data_path = data_top_path + '/閃電資料/raw_data/TLDS/' + year + '/' + year + month + '.txt'
+flash_data_path = f'{data_top_path}/閃電資料/raw_data/TLDS/{year}/{year}{month}.txt'
 flash_rawdata = pd.read_csv(flash_data_path, header=0)
 flash_rawdata['simple_time'] = pd.to_datetime(flash_rawdata['日期時間'], format='%Y-%m-%d %H:%M:%S', errors='coerce').dt.strftime('%Y%m%d%H%M')
 # print(flash_rawdata['simple_time'])

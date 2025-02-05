@@ -15,9 +15,9 @@ import pandas as pd
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 year = '2021' #年分
 month = '06' #月份
-day = '01'
-time_start = 8
-time_end = 12
+day = '29'
+time_start = 5
+time_end = 8
 dis = 36
 alpha = 2 #統計檢定
 flash_source = 'EN' # EN or TLDS
