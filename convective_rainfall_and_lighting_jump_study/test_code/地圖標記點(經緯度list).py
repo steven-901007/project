@@ -35,8 +35,8 @@ point_lat = data['lat']
 
 
 # 設定經緯度範圍
-lon_min, lon_max = 119, 122.1
-lat_min, lat_max = 21.5, 27.5
+lon_min, lon_max = 120.0, 122.03
+lat_min, lat_max = 21.88, 25.32
 
 plt.figure(figsize=(10, 10))
 ax = plt.axes(projection=ccrs.PlateCarree())

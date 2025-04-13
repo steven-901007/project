@@ -52,7 +52,7 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     position_data = pd.read_csv(data_path)
     point_real_name = position_data[position_data['station name'] == station_name]['station real name'].iloc[0]
     ##資料讀取
-    case_root_path =  f"{data_top_path}/個案分析/{station_name}/{dis}_{flash_source}_{year}{month}{day}_{str(time_start).zfill(2)}00to{str(time_end)}00"
+    case_root_path =  f"{data_top_path}/個案分析/{station_name}/{dis}_{flash_source}_{year}{month}{day}_{str(time_start).zfill(2)}00to{str(time_end).zfill(2)}00"
     rain_data_path = case_root_path + '/rain_raw_data.csv'
     flash_data_path = case_root_path + f'/{flash_source}_flash_data.csv'
     rain_data = pd.read_csv(rain_data_path)
@@ -175,6 +175,8 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     # case_root_path = f"{data_top_path}/個案分析/{station_name}_{dis}_{year}{month}_{str(time_start).zfill(2)}00to{str(time_end).zfill(2)}00"
     # fileset(case_root_path)
     # pic_save_path = f"{case_root_path}/{year}{month}{day}.png" 
+
+
     
     plt.savefig(pic_save_path, bbox_inches='tight', dpi=300)
     print(f"已生成照片：\n測站：{point_real_name}({station_name})\n半徑：{dis}\n日期：{year}/{month}/{day} {str(time_start).zfill(2)}:00~{str(time_end).zfill(2)}:00\nflash source：{flash_source}")    # plt.show()

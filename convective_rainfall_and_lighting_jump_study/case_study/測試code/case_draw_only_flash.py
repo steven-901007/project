@@ -52,7 +52,7 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     position_data = pd.read_csv(data_path)
     point_real_name = position_data[position_data['station name'] == station_name]['station real name'].iloc[0]
     ##資料讀取
-    case_root_path =  f"{data_top_path}/個案分析/{station_name}/{dis}_{flash_source}_{year}{month}{day}_{str(time_start).zfill(2)}00to{str(time_end)}00"
+    case_root_path =  f"{data_top_path}/個案分析/{station_name}/{dis}_{flash_source}_{year}{month}{day}_{str(time_start).zfill(2)}00to{str(time_end).zfill(2)}00"
     rain_data_path = case_root_path + '/rain_raw_data.csv'
     flash_data_path = case_root_path + f'/{flash_source}_flash_data.csv'
     rain_data = pd.read_csv(rain_data_path)

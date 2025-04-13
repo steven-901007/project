@@ -95,7 +95,7 @@ def flash_pattern(year,month,day,time_start,time_end,dis,station_name,data_top_p
 
     # 顯示地圖
 
-    case_root_path =  f"{data_top_path}/個案分析/{station_name}/{dis}_{flash_source}_{year}{month}{day}_{str(time_start).zfill(2)}00to{str(time_end)}00"
+    case_root_path =  f"{data_top_path}/個案分析/{station_name}/{dis}_{flash_source}_{year}{month}{day}_{str(time_start).zfill(2)}00to{str(time_end).zfill(2)}00"
     pic_save_path = case_root_path + '/flash_pattern.png'
     plt.savefig(pic_save_path, bbox_inches='tight', dpi=300)
     print('閃電分布地圖已建立')
