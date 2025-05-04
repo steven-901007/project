@@ -5,7 +5,7 @@ import os
 
 
 year = '2021'     # 年分
-month = '07'      # 月份
+month = '09'      # 月份
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 alpha = 2         # 統計檢定
 dis = 36          #檢定區半徑
@@ -121,4 +121,4 @@ for flash_data_path in tqdm(result,desc='data setting...'):
         output_path = f"{data_top_path}/閃電資料/{data_source}/lighting_jump/{data_source}_{year}{month}_{dis}km/{station_name}.csv"
         save_data.to_csv(output_path,index=False)
 
-print(f"資料來源：{data_source}、Time：{year}{month}、dis：{dis}")
+print(f"資料來源：{data_source}、Time：{year}/{month}、dis：{dis}")

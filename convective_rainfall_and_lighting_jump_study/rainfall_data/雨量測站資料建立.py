@@ -7,7 +7,7 @@ from geopy.distance import geodesic
 
 
 year = '2021' #年分
-month = '06' #月份
+month = '09' #月份
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 dis = 36
 max_lon = 122.1
@@ -31,18 +31,27 @@ def rain_station_location_data(path):
     real_name_data_list = [] #測站實際名稱
 
     line = 0
-    with open(data_path, 'r') as files:
-        for file in files:
-            if line >=3:
-                data = re.split(re.compile(r'\s+|\n|\*'),file.strip())
-                # print(data)
-                if min_lon <float(data[4])< max_lon and min_lat <float(data[3])< max_lat:
-                    lon_data_list.append(float(data[4]))
-                    lat_data_list.append(float(data[3]))
-                    name_data_list.append(data[0])
-                    real_name_data_list.append(data[1])
-            line +=1
-        files.close()
+    try:
+        with open(path, 'r', encoding='big5') as file:
+            for line_text in file:
+                if line >= 3:
+                    data = re.split(re.compile(r'\s+|\n|\*'), line_text.strip())
+                    if len(data) >= 5:
+                        try:
+                            lon = float(data[4])
+                            lat = float(data[3])
+                            if min_lon < lon < max_lon and min_lat < lat < max_lat:
+                                lon_data_list.append(lon)
+                                lat_data_list.append(lat)
+                                name_data_list.append(data[0])
+                                real_name_data_list.append(data[1])
+                        except ValueError:
+                            continue
+                line += 1
+    except UnicodeDecodeError:
+        print(f"❌ 檔案編碼錯誤: {path}")
+    except Exception as e:
+        print(f"❌ 其他錯誤發生: {path}, 錯誤訊息: {e}")
     
     return lon_data_list, lat_data_list ,name_data_list ,real_name_data_list
 
@@ -52,7 +61,7 @@ lon_data_list, lat_data_list ,station_name_data_list ,real_name_data_list = [],[
 
 ##確認所有資料的測站都有被記錄
 ## 讀取每月資料
-month_path = f"{data_top_path}/雨量資料/{year}_{month}/{month}"
+month_path = f"{data_top_path}/雨量資料/raw_data/{year}_{month}/{month}"
 result  =glob.glob(month_path+"/*")
 for day_path in tqdm(result,desc='測站資料'):
     # print(day_path)

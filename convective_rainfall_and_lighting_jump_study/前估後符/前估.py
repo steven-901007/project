@@ -17,7 +17,7 @@ import os
 
 
 year = '2021' #年分
-month = '07' #月份
+month = '09' #月份
 dis = 36
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 data_source = 'EN'#閃電資料來源
@@ -156,7 +156,7 @@ gridlines.right_labels = False
 ## 計算某個地方達到10mm/10min的次數 + colorbar
 color_list = []
 
-level = [0,100,200,300,400,500,550,600,650]
+level = [0,50,100,200,300,400,500,600,700]
 color_box = ['silver','purple','darkviolet','blue','g','y','orange','r']
 
 for nb in prefigurance_hit_list:
@@ -229,7 +229,7 @@ gridlines.right_labels = False
 ## 計算某個地方達到10mm/10min的次數 + colorbar
 color_list = []
 
-level = [0,15,30,35,40,45,50,55,60]
+level = [0,10,20,30,40,50,60,70,80]
 color_box = ['silver','purple','darkviolet','blue','g','y','orange','r']
 
 for nb in prefigurance_hit_persent_list:
@@ -278,5 +278,7 @@ ax1.set_title('這是用來確認colorbar的配置')
 
 # 顯示地圖
 # plt.show()
-
-print(f"Time：{year}{month}、dis：{dis}、source：{data_source}")
+from datetime import datetime
+now_time = datetime.now()
+formatted_time = now_time.strftime("%Y-%m-%d %H:%M:%S")
+print(f"{formatted_time} 完成 Time：{year}{month}、dis：{dis}、source：{data_source}")

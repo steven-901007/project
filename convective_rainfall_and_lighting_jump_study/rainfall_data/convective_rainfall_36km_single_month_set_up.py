@@ -8,7 +8,7 @@ import importset
 
 
 year = '2021' #年分
-month = '06' #月份
+month = '09' #月份
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 dis = 36
 
@@ -58,3 +58,8 @@ for station in tqdm(range(len(rain_data_36km_station_list_list)),desc='資料建
 
         save_path = f"{data_top_path}/雨量資料/對流性降雨{dis}km/{year}/{month}/{station_data_name[station]}.csv"
         pd.DataFrame(save_data, dtype=str).to_csv(save_path,index=False)
+
+from datetime import datetime
+now_time = datetime.now()
+formatted_time = now_time.strftime("%Y-%m-%d %H:%M:%S")
+print(f"{formatted_time} 完成 {year}/{month}")

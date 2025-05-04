@@ -5,7 +5,7 @@ from tqdm import tqdm
 import importset
 from datetime import datetime, timedelta
 year = '2021' #年分
-month = '06' #月份
+month = '09' #月份
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 
 
@@ -15,7 +15,7 @@ importset.fileset(file_path)
 ## 讀取每月資料
 
 
-month_path = f"{data_top_path}/雨量資料/{year}_{month}/{month}"
+month_path = f"{data_top_path}/雨量資料/raw_data/{year}_{month}/{month}"
 result  =glob.glob(month_path+"/*")
 
 for day_path in tqdm(result,desc='資料建立'):
@@ -64,4 +64,7 @@ for day_path in tqdm(result,desc='資料建立'):
             }
             pd.DataFrame(rain_data_save, dtype=str).to_csv(f"{data_top_path}/雨量資料/降雨data/{year}/{month}/{time}.csv",index=False)
 
-
+from datetime import datetime
+now_time = datetime.now()
+formatted_time = now_time.strftime("%Y-%m-%d %H:%M:%S")
+print(f"{formatted_time} 完成 {year}/{month} need inf set up")

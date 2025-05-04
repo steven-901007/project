@@ -2,10 +2,14 @@ import os
 import calendar
 from tqdm import tqdm
 import pandas as pd
+from datetime import datetime
+
 
 year = '2021'  # 年分
-month = '07'   # 月份
+month = '04'   # 月份
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
+title_name_time = 'Time'
+data_time_zone = 'LCT' #LCT or UTC
 
 def fileset(path):  # 建立資料夾
     if not os.path.exists(path):
@@ -17,7 +21,7 @@ fileset(f"{data_top_path}/閃電資料/EN/依時間分類/{year}/{month}")
 ## 讀取閃電資料
 flash_data_path =f"{data_top_path}/閃電資料/raw_data/EN/{year}_EN/{year}{month}.csv"
 flash_rawdata = pd.read_csv(flash_data_path, header=0)
-flash_rawdata['simple_time'] = pd.to_datetime(flash_rawdata['observation_time'], format='%Y-%m-%d %H:%M:%S', errors='coerce').dt.strftime('%Y%m%d%H%M')
+flash_rawdata['simple_time'] = pd.to_datetime(flash_rawdata[title_name_time], format='%Y-%m-%d %H:%M:%S', errors='coerce').dt.strftime('%Y%m%d%H%M')
 # print(flash_rawdata['simple_time'])
 
 
@@ -42,7 +46,8 @@ for dd in tqdm(range(1, last_day + 1), desc='寫入資料'):
             }
             day = pd.to_datetime(day, format='%Y%m%d%H%M')
             save_day = day + pd.Timedelta(minutes=1) #閃電應該是記錄前一分鐘的閃電量
-            save_day = save_day + pd.Timedelta(hours=8) #UTC ==> LCT
+            if data_time_zone == 'UTC':
+                save_day = save_day + pd.Timedelta(hours=8) #UTC ==> LCT
             save_day_str = save_day.strftime('%Y%m%d%H%M')
             save_data_month =  str(save_day.month).zfill(2) 
             # print(save_day_str)
@@ -53,3 +58,7 @@ for dd in tqdm(range(1, last_day + 1), desc='寫入資料'):
 
 
             pd.DataFrame(flash_data_to_save).to_csv(csv_file_path,index=False)
+
+now_time = datetime.now()
+formatted_time = now_time.strftime("%Y-%m-%d %H:%M:%S")
+print(f"{formatted_time} 完成EN {year}/{month} 閃電資料依時間分類,time zone = {data_time_zone}")

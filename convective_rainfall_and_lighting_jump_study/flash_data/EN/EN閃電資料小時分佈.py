@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 year = 2021
-flash_type = 'CG' #all or IC or CG
-
+flash_type = 'all' #all or IC or CG
+title_name_time = 'Time'
 
 lon_min, lon_max = 120.0, 122.03
 lat_min, lat_max = 21.88, 25.32
@@ -17,12 +17,12 @@ EN_flash_datas = pd.read_csv(f"{data_top_path}/閃電資料/raw_data/EN/{year}_E
 main_island_lon_lat_range = (lon_min < EN_flash_datas['lon']) & (EN_flash_datas['lon'] < lon_max) & (lat_min < EN_flash_datas['lat']) & (EN_flash_datas['lat'] < lat_max)
 flash_datas_main_island = EN_flash_datas[main_island_lon_lat_range]
 
-flash_datas_main_island['observation_time'] = flash_datas_main_island['observation_time'].apply(
+flash_datas_main_island[title_name_time] = flash_datas_main_island[title_name_time].apply(
     lambda x: f"{x} 00:00:00" if len(x) == 10 else x
 )
 
 
-flash_datas_main_island['H'] = pd.to_datetime(flash_datas_main_island['observation_time']).dt.hour
+flash_datas_main_island['H'] = pd.to_datetime(flash_datas_main_island[title_name_time]).dt.hour
 
 # print(flash_datas_main_island)
 

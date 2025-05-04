@@ -2,11 +2,15 @@ import pandas as pd
 import numpy as np
 import os
 from tqdm import tqdm
+from datetime import datetime
+
 
 year = '2021' #年分
-month = '07' #月份
+month = '09' #月份
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 dis = 36 #半徑
+title_name_time = 'Time'
+data_time_zone = 'LCT' #LCT or UTC
 
 
 # 建立資料夾
@@ -34,9 +38,9 @@ def haversine(lon1, lat1, lon2, lat2):
 
 # 讀取閃電資料並轉換日期時間格式
 flash_rawdata_df = pd.read_csv(f"{data_top_path}/閃電資料/raw_data/EN/{year}_EN/{year}{month}.csv")
-flash_datas_df = flash_rawdata_df[['observation_time', 'lon', 'lat']].copy()
+flash_datas_df = flash_rawdata_df[[title_name_time, 'lon', 'lat']].copy()
 
-flash_datas_df['observation_time'] = pd.to_datetime(flash_datas_df['observation_time']).dt.floor('min')
+flash_datas_df[title_name_time] = pd.to_datetime(flash_datas_df[title_name_time]).dt.floor('min')
 
 # 讀取測站資料
 station_datas_path = f"{data_top_path}/雨量資料/測站資料/{year}_{month}.csv"
@@ -56,13 +60,16 @@ for index, row in tqdm(station_datas.iterrows()):
     need_flash_datas_df = flash_datas_df[flash_datas_df['distance'] <= dis]
 
     # 計算每分鐘內的閃電次數
-    need_inf_flash_data_df = need_flash_datas_df.groupby('observation_time').size().reset_index(name='flash_count')
+    need_inf_flash_data_df = need_flash_datas_df.groupby(title_name_time).size().reset_index(name='flash_count')
     need_inf_flash_data_df.columns = ['data time','flash_count']
 
-    #UTC ==> LCT (20250201測試)
-    need_inf_flash_data_df['data time'] = need_inf_flash_data_df['data time'] + pd.Timedelta(hours=8)
+    if data_time_zone == 'UTC':
+        need_inf_flash_data_df['data time'] = need_inf_flash_data_df['data time'] + pd.Timedelta(hours=8) #UTC ==> LCT
 
     save_path = f"{data_top_path}/閃電資料/EN/依測站分類/EN_{year}{month}_{dis}km/{station_name}.csv"
     need_inf_flash_data_df.to_csv(save_path,index=False)  
 
-print(f'Time：{year}{month}、dis：{dis}')
+
+now_time = datetime.now()
+formatted_time = now_time.strftime("%Y-%m-%d %H:%M:%S")
+print(f"{formatted_time} 完成 Time：{year}/{month}、dis：{dis} ,time zone = {data_time_zone}")

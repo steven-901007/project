@@ -5,9 +5,11 @@ import os
 from tqdm import tqdm
 
 year = '2021'  # 年分
-month = '06'   # 月份
+month = '09'   # 月份
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 dis = 36
+data_source = 'EN'#閃電資料來源
+
 
 def fileset(path):    #建立資料夾
     if not os.path.exists(path):
@@ -18,11 +20,11 @@ def check_in_time_range(row, lj_times):
     return int(any((lj_times >= row['start time']) & (lj_times <= row['end time'])))
 
 
-fileset(f"{data_top_path}/前估後符/{year}_{month}_前估命中個案")
+fileset(f"{data_top_path}/前估後符/{data_source}_{year}{month}_前估命中個案")
 
 
 #取得對流性降雨station name
-result = glob(f"{data_top_path}/雨量資料/對流性降雨36km/{year}/{month}/**.csv")
+result = glob(f"{data_top_path}/雨量資料/對流性降雨{dis}km/{year}/{month}/**.csv")
 for convective_rainfall_path in result:
 # convective_rainfall_path =f"{data_top_path}/雨量資料/對流性降雨36km/{year}/{month}/466880.csv"
     station_name = os.path.basename(convective_rainfall_path).split('.')[0]
@@ -36,7 +38,7 @@ for convective_rainfall_path in result:
     convective_rainfall_datas = pd.read_csv(convective_rainfall_path)
     convective_rainfall_times_df =  pd.to_datetime(convective_rainfall_datas['time data'])
     #取得LJ資料
-    flash_path = f"{data_top_path}/閃電資料/lighting_jump/{year}_{month}_{dis}km/{station_name}.csv"
+    flash_path = f"{data_top_path}/閃電資料/{data_source}/lighting_jump/{data_source}_{year}{month}_{dis}km/{station_name}.csv"
     flash_datas = pd.read_csv(flash_path)
 
     # print(convective_rainfall_datas)
@@ -61,6 +63,9 @@ for convective_rainfall_path in result:
         if os.path.exists(rainfall_path):
             rainfall_datas_df = pd.read_csv(rainfall_path)
 
+            around_station_names_df['station name'] = around_station_names_df['station name'].astype(str)
+            rainfall_datas_df['station name'] = rainfall_datas_df['station name'].astype(str)
+            
             # 合併資料以取得周圍測站的降雨資料
             rainfall_merge_datas = pd.merge(around_station_names_df, rainfall_datas_df, on='station name', how='inner')
             # print(rainfall_merge_datas)
@@ -87,5 +92,5 @@ for convective_rainfall_path in result:
     convective_rainfall_datas['total rainfall'] = total_rainfall_list
     convective_rainfall_datas = convective_rainfall_datas.drop(['start time','end time'],axis=1)
     # print(convective_rainfall_datas)
-    save_path = f"{data_top_path}/前估後符/{year}_{month}_前估命中個案/{station_name}.csv"
+    save_path = f"{data_top_path}/前估後符/{data_source}_{year}{month}_前估命中個案/{station_name}.csv"
     convective_rainfall_datas.to_csv(save_path,index= False)
