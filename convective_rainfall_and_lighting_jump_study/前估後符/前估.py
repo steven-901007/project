@@ -91,7 +91,7 @@ for rain_station_path in tqdm(result,desc=f"{year}{month}資料處理中...."):
             print(rain_data)
             ValueError
         # print(rain_data[rain_data['LJ_in_time_range'] == 1])
-        pd.set_option('display.max_rows', None)
+        # pd.set_option('display.max_rows', None)
 
         # print(rain_data)
         # print(rain_data['LJ_in_time_range'].sum())

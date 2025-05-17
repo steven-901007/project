@@ -171,10 +171,10 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     pic_save_path = case_root_path + '/picture.png'
 
     
-    # ##一次處理一個月資料用
-    # case_root_path = f"{data_top_path}/個案分析/{station_name}_{dis}_{year}{month}_{str(time_start).zfill(2)}00to{str(time_end).zfill(2)}00"
-    # fileset(case_root_path)
-    # pic_save_path = f"{case_root_path}/{year}{month}{day}.png" 
+    ##一次處理一個月資料用
+    case_root_path = f"{data_top_path}/個案分析/{station_name}_{dis}_{flash_source}_{year}{month}_{str(time_start).zfill(2)}00to{str(time_end).zfill(2)}00"
+    fileset(case_root_path)
+    pic_save_path = f"{case_root_path}/{year}{month}{day}.png" 
 
 
     

@@ -17,7 +17,7 @@ import os
 
 
 year = '2021' #年分
-month = '06' #月份(01~12)
+month = '09' #月份(01~12)
 dis = 36
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 data_source = 'EN'#閃電資料來源 (EN、TLDS)
@@ -68,6 +68,8 @@ for flash_station_path in tqdm(result,desc=f"{year}{month}資料處理中...."):
     #rain
     try:
         rain_station_path = f"{data_top_path}/雨量資料/對流性降雨{dis}km/{year}/{month}/{flash_station_name}.csv"
+        rain_data = pd.read_csv(rain_station_path)
+        flash_data = pd.read_csv(flash_station_path)
         # print(rain_station_path)
     except:
         rain_station_path = None
@@ -76,8 +78,6 @@ for flash_station_path in tqdm(result,desc=f"{year}{month}資料處理中...."):
 
 
     if rain_station_path != None:
-        rain_data = pd.read_csv(rain_station_path)
-        flash_data = pd.read_csv(flash_station_path)
         # print(rain_data)
         # print(flash_data)
         #end time< lighting jump <= time data
