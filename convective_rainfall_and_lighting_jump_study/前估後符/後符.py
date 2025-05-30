@@ -17,10 +17,10 @@ import os
 
 
 year = '2021' #年分
-month = '09' #月份(01~12)
+month = '06' #月份(01~12)
 dis = 36
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
-data_source = 'EN'#閃電資料來源 (EN、TLDS)
+data_source = 'TLDS'#閃電資料來源 (EN、TLDS)
 
 def check_folder(folder_path):
     if not os.path.exists(folder_path):

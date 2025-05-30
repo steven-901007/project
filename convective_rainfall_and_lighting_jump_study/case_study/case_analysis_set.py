@@ -50,7 +50,7 @@ def case_data_set(year,month,day,time_start,time_end,dis,station_name,data_top_p
 
     ## 建立資料夾
     case_station_path = f"{data_top_path}/個案分析/{station_name}"
-    fileset(case_station_path)
+    fileset(case_station_path) 
     case_root_path = f"{data_top_path}/個案分析/{station_name}/{dis}_{flash_source}_{year}{month}{day}_{str(time_start).zfill(2)}00to{str(time_end).zfill(2)}00"
     fileset(case_root_path)
 
