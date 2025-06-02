@@ -11,14 +11,15 @@ from tqdm import tqdm
 
 
 year = '2021' #年分
-month = '07' #月份(01~12)
-day = '13'
-time_start = 12 #(00~23)
-time_end = 21 #(00~23)
+month = '06' #月份(01~12)
+day = '08'
+time_start = 13 #(00~23)
+time_end = 17 #(00~23)
 
 dis = 36
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 station_name = '01D180'
+# station_name = '01A430'
 
 
 ##測站位置(圖上的)
@@ -31,6 +32,9 @@ x_min = 1727
 x_max = 2222
 y_min = 1255
 y_max = 1590
+
+##是否在調整座標等等數值
+Adjustment = False
 
 
 
@@ -60,6 +64,7 @@ result = glob(f"{data_top_path}/CWA圖/雷達迴波/{year}{month}{day}{time_star
 for img_path in tqdm(result, desc='地圖繪製中...'):
     # print(img_path)
     save_data_name = os.path.basename(img_path.split('.')[0])
+    save_data_name = save_data_name.split('_')[-1][8:]
     # 讀取圖片
     img = Image.open(img_path)
     img_array = np.array(img)
@@ -81,6 +86,9 @@ for img_path in tqdm(result, desc='地圖繪製中...'):
     ax.add_patch(circle)
 
 
+    ##左上角加上時間
+    plt.text(30,80,save_data_name, fontsize=22,bbox=dict(facecolor='white', alpha=1))
+
 
     ax.axis('off')
 
@@ -88,8 +96,11 @@ for img_path in tqdm(result, desc='地圖繪製中...'):
     output_path = f"{data_top_path}/CWA圖/雷達迴波/{year}{month}{day}{time_start}00{time_end}00_{target_realname}測站個案圖/circle_draw/{save_data_name}.png"
     plt.savefig(output_path, bbox_inches='tight', pad_inches=0)
 
-    #調整座標位置用
-    # plt.show()
+
+    if Adjustment == True:
+    # #調整座標位置用
+        plt.show()
+        break
 
     plt.close()
 

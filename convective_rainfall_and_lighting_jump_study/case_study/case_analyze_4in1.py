@@ -17,8 +17,8 @@ flash_source = 'EN' # EN or TLDS
 # station_name = 'O1P470' #前估max
 # station_name = '466880' #板橋
 # station_name = 'C0V800' #六龜
-# station_name = '466920' #台北
-station_name = '01D180'
+station_name = '01A430'
+# station_name = '01D180'
 
 
 # max_month_day = calendar.monthrange(int(year),int(month))[-1]
