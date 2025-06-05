@@ -9,6 +9,7 @@ year = '2021' #年分
 month = '06' #月份
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 
+chouse_title = 'rain' # 10 or rain
 
 station_name_path = f"{data_top_path}/雨量資料/測站資料/{year}_{month}.csv"
 station_name_datas = pd.read_csv(station_name_path)
@@ -19,7 +20,7 @@ station_rain_sum_list = [0 for i in station_name_data_list]
 
 ##資料建立
 
-month_path = f"{data_top_path}/雨量資料/{year}_{month}/{month}"
+month_path = f"{data_top_path}/雨量資料/raw_data/{year}_{month}/{month}"
 result  =glob(month_path+"/*")
 
 for day_path in tqdm(result,desc='資料建立'):
@@ -44,10 +45,16 @@ for day_path in tqdm(result,desc='資料建立'):
                     rain_data_of_6_hour = float(elements[9]) #HOUR_6
                     rain_data_of_12_hour = float(elements[10]) #HOUR_12
                     rain_data_of_24_hour = float(elements[11]) #HOUR_24
-
-                    if 0<rain_data_of_rain<rain_data_of_10min <= rain_data_of_3_hour <=rain_data_of_6_hour<= rain_data_of_12_hour <= rain_data_of_24_hour: #QC and data !=0 or -999
+                    
+                    if 0<=rain_data_of_10min <= rain_data_of_3_hour <=rain_data_of_6_hour<= rain_data_of_12_hour <= rain_data_of_24_hour: #QC and data !=0 or -999
+                        # print(rain_data_of_rain,rain_data_of_10min)
                         try: #資料可能在研究經緯度外
-                            station_rain_sum_list[station_name_data_list.index(station_name)] += rain_data_of_rain
+                            if chouse_title == '10':
+                                station_rain_sum_list[station_name_data_list.index(station_name)] += rain_data_of_10min
+                            elif chouse_title == 'rain':
+                                station_rain_sum_list[station_name_data_list.index(station_name)] += rain_data_of_10min
+                            else:NameError
+
                         except:pass
                 line += 1
 
@@ -102,13 +109,13 @@ plt.rcParams['font.sans-serif'] = [u'MingLiu'] #設定字體為'細明體'
 plt.rcParams['axes.unicode_minus'] = False #用來正常顯示正負號
 fig,ax1 = plt.subplots()
 ax1.plot(cwa_and_raw_union_data_df['station real name'],cwa_and_raw_union_data_df['cwa data'], color='g',label='cwa data',zorder=4)
-ax1.plot(cwa_and_raw_union_data_df['station real name'],cwa_and_raw_union_data_df['raw data'], color='b',label='raw data',zorder=4)
-ax1.bar(cwa_and_raw_union_data_df['station real name'],cwa_and_raw_union_data_df['difference'], color='r',label='cwa data',zorder=5)
+ax1.plot(cwa_and_raw_union_data_df['station real name'],cwa_and_raw_union_data_df['raw data'], color='b',label='NCDR data',zorder=4)
+ax1.bar(cwa_and_raw_union_data_df['station real name'],cwa_and_raw_union_data_df['difference'], color='r',label='difference',zorder=5)
 plt.axhline(cwa_and_raw_union_data_df['difference'].mean(),c = "r" , ls = "--" , lw = 0.3,label='difference average')
 plt.xticks(rotation=90)
 plt.ylabel('月總雨量')
 diff_max = str(round(cwa_and_raw_union_data_df['difference'].max(),2))
 diff_min = str(round(cwa_and_raw_union_data_df['difference'].min(),2))
 plt.title(f"{year}/{month} 月總雨量 \ncwa data compare with raw data \n 相關係數 = {correlation} \n difference (以cwa為標準)\n max = {diff_max} min = {diff_min}")
-plt.legend()
+# plt.legend()
 plt.show()

@@ -7,18 +7,18 @@ import calendar
 #記得要先執行前估命中個案
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 year = '2021' #年分
-month = '07' #月份
-day = '28'
+month = '06' #月份
+day = '08'
 time_start = 12 #(00~23)
-time_end = 19 #(00~23)
+time_end = 23 #(00~23)
 dis = 36
 alpha = 2 #統計檢定
 flash_source = 'EN' # EN or TLDS
 # station_name = 'O1P470' #前估max
 # station_name = '466880' #板橋
-# station_name = 'C0V800' #六龜
-station_name = '01A430'
-# station_name = '01D180'
+# station_name = '01F680'
+# station_name = '01A430'
+station_name = '01D180'
 
 
 # max_month_day = calendar.monthrange(int(year),int(month))[-1]

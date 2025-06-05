@@ -28,13 +28,13 @@ target_y = 1436
 
 ##剪裁範圍
 cut_or_not = True ##是否要剪裁
-x_min = 1727
+x_min = 1527
 x_max = 2222
-y_min = 1255
-y_max = 1590
+y_min = 1155
+y_max = 1800
 
 ##是否在調整座標等等數值
-Adjustment = False
+Adjustment = True
 
 
 
