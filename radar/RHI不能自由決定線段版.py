@@ -68,34 +68,35 @@ class_field = {
     'valid_max': 5
 }
 radar.add_field('hydro_class', class_field, replace_existing=True)
+print(radar.fields['hydro_class'])
+# # ==== gridding（建立立體格點）====
+# grid = pyart.map.grid_from_radars(
+#     radar,
+#     grid_shape=(41, 201, 201),  # z, y, x
+#     grid_limits=((0, 20000), (-100000, 100000), (-100000, 100000)),
+#     fields=['hydro_class']
+# )
 
-# ==== gridding（建立立體格點）====
-grid = pyart.map.grid_from_radars(
-    radar,
-    grid_shape=(41, 201, 201),  # z, y, x
-    grid_limits=((0, 20000), (-100000, 100000), (-100000, 100000)),
-    fields=['hydro_class']
-)
+# # ==== 抽東西向剖面 ====
+# hydro_data = grid.fields['hydro_class']['data']
+# z = grid.z['data'] / 1000
+# x = grid.x['data'] / 1000
+# hydro_slice = hydro_data[:, hydro_data.shape[1] // 2, :]
+# hydro_slice = np.ma.masked_where(hydro_slice == -1, hydro_slice)  # 加這行處理無效值
 
-# ==== 抽東西向剖面 ====
-hydro_data = grid.fields['hydro_class']['data']
-z = grid.z['data'] / 1000
-x = grid.x['data'] / 1000
-hydro_slice = hydro_data[:, hydro_data.shape[1] // 2, :]
+# # ==== 畫圖 ====
+# fig, ax = plt.subplots(figsize=(10, 6))
+# cmap = plt.cm.get_cmap("tab10", 6)
+# pc = ax.pcolormesh(x, z, hydro_slice, cmap=cmap, vmin=0, vmax=5)
 
-# ==== 畫圖 ====
-fig, ax = plt.subplots(figsize=(10, 6))
-cmap = plt.cm.get_cmap("tab10", 6)
-pc = ax.pcolormesh(x, z, hydro_slice, cmap=cmap, vmin=0, vmax=5)
+# ax.set_xlabel("距離 (km)")
+# ax.set_ylabel("高度 (km)")
+# ax.set_title(f"水象粒子垂直剖面（東西向）\n{time_dt}")
 
-ax.set_xlabel("距離 (km)")
-ax.set_ylabel("高度 (km)")
-ax.set_title(f"水象粒子垂直剖面（東西向）\n{time_dt}")
+# label_names = ['Rain', 'Melting Layer', 'Wet Snow', 'Dry Snow', 'Graupel', 'Hail']
+# patches = [mpatches.Patch(color=cmap(i), label=label_names[i]) for i in range(6)]
+# ax.legend(handles=patches, loc='upper right', title='Hydrometeors')
 
-label_names = ['Rain', 'Melting Layer', 'Wet Snow', 'Dry Snow', 'Graupel', 'Hail']
-patches = [mpatches.Patch(color=cmap(i), label=label_names[i]) for i in range(6)]
-ax.legend(handles=patches, loc='upper right', title='Hydrometeors')
-
-plt.colorbar(pc, ax=ax, label='Hydrometeor Type')
-plt.tight_layout()
-plt.show()
+# plt.colorbar(pc, ax=ax, label='Hydrometeor Type')
+# plt.tight_layout()
+# plt.show()

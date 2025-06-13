@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from datetime import datetime
 
+
 # ==== 中文設定 ====
 plt.rcParams['font.sans-serif'] = [u'MingLiu']
 plt.rcParams['axes.unicode_minus'] = False
@@ -45,6 +46,8 @@ for sweep in range(radar.nsweeps):
     rhohv_valid = rhohv[valid_mask]
     kdp_valid = kdp[valid_mask]
 
+
+    ### 水象粒子分類表 ###
     label = np.full(z_valid.shape, -1)
     label[(z_valid >= 20) & (z_valid <= 45) & (zdr_valid >= 0.5) & (zdr_valid <= 2.5) & (rhohv_valid > 0.97) & (kdp_valid > 0.5)] = 0
     label[(z_valid >= 25) & (z_valid <= 40) & (zdr_valid > 1) & (rhohv_valid >= 0.90) & (rhohv_valid <= 0.96)] = 1
@@ -52,6 +55,7 @@ for sweep in range(radar.nsweeps):
     label[(z_valid >= 10) & (z_valid <= 30) & (zdr_valid >= 0.0) & (zdr_valid <= 0.5) & (rhohv_valid > 0.97)] = 3
     label[(z_valid >= 30) & (z_valid <= 45) & (zdr_valid >= 0.0) & (zdr_valid <= 0.3) & (rhohv_valid >= 0.85) & (rhohv_valid <= 0.95)] = 4
     label[(z_valid >= 50) & (zdr_valid >= -1.0) & (zdr_valid <= 1.0) & (rhohv_valid < 0.90)] = 5
+
 
     classification[valid_mask] = label
     vol_class[start_idx:end_idx, :] = classification
