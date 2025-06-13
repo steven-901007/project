@@ -9,7 +9,7 @@ data_top_path = "C:/Users/steve/python_data/radar"
 year = '2024'
 month = '05'
 day = '23'
-hh = '08'
+hh = '00'
 mm = '02'
 ss = '00'
 

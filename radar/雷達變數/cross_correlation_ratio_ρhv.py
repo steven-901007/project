@@ -7,7 +7,7 @@ data_top_path = "C:/Users/steve/python_data/radar"
 year = '2024'
 month = '05'
 day = '23'
-hh = '08'
+hh = '00'
 mm = '02'
 ss = '00'
 
@@ -21,6 +21,7 @@ time_dt = datetime.strptime(time, "%Y%m%d%H%M%S").strftime("%Y/%m/%d %H:%M:%S")
 
 radar = pyart.io.read(file_path)
 sweep_num = 0
+
 
 display = pyart.graph.RadarMapDisplay(radar)
 fig = plt.figure(figsize=(10, 10))
@@ -38,4 +39,6 @@ display.plot_ppi_map('cross_correlation_ratio',
                      embellish=False)
 
 ax.set_extent([119, 123.5, 21, 26.5])
+gl = ax.gridlines(draw_labels=True)
+gl.right_labels = False
 plt.show()
