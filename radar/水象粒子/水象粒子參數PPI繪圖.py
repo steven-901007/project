@@ -12,7 +12,7 @@ data_top_path = "C:/Users/steve/python_data/radar"
 year, month, day = '2024', '05', '23'
 hh, mm, ss = '00', '02', '00'
 time_str = f"{year}{month}{day}{hh}{mm}{ss}"
-sweep_num = 0
+sweep_num = 2
 
 
 
@@ -98,7 +98,7 @@ display.plot_ppi_map(
     vmax=5,
     cmap=cmap,
     colorbar_flag=False,
-    title=f"水象粒子分佈\n{time_dt}",
+    title=f"水象粒子分佈 sweep = {sweep_num}\n{time_dt}",
     shapefile=shapefile_path,
     shapefile_kwargs={"facecolor": 'none', 'edgecolor': 'r'},
     embellish=False
@@ -111,6 +111,18 @@ gl.right_labels = False
 label_names = ['Rain', 'Melting Layer', 'Wet Snow', 'Dry Snow', 'Graupel', 'Hail']
 patches = [mpatches.Patch(color=cmap(i), label=label_names[i]) for i in range(6)]
 plt.legend(handles=patches, loc='lower left', fontsize=10, title='Hydrometeors')
+
+# x, y, z = radar.get_gate_x_y_z(sweep=sweep_num)  # 單位：公尺
+# z_km = z / 1000.0  # 換成 km
+
+# # 換算成實際經緯度（近似，僅用 radar 中心偏移）
+# x_lon = x / 100000.0 + radar.longitude['data'][0]
+# y_lat = y / 100000.0 + radar.latitude['data'][0]
+
+# contour = ax.contour(x_lon, y_lat, z_km,
+#                      levels=[1, 2, 3, 4, 5],  # 可以自行調整要標示的高度層
+#                      colors='black', linewidths=1)
+# ax.clabel(contour, fmt='%1.0f km', fontsize=10)
 
 plt.tight_layout()
 plt.show()

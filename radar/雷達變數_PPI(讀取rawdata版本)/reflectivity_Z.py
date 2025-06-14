@@ -24,7 +24,7 @@ time_dt = datetime.strptime(time, "%Y%m%d%H%M%S").strftime("%Y/%m/%d %H:%M:%S")
 
 ## === 讀取雷達資料 ===
 radar = pyart.io.read(file_path)
-sweep_num = 0  # 你想畫第幾圈仰角
+sweep_num = 2  # 你想畫第幾圈仰角
 
 ## === 畫圖 ===
 display = pyart.graph.RadarMapDisplay(radar)
@@ -45,7 +45,7 @@ display.plot_ppi_map('reflectivity',
 # x, y, z = radar.get_gate_x_y_z(sweep=sweep_num)  # 單位：公尺
 # z_km = z / 1000.0  # 換成 km
 
-# 換算成實際經緯度（近似，僅用 radar 中心偏移）
+# # 換算成實際經緯度（近似，僅用 radar 中心偏移）
 # x_lon = x / 100000.0 + radar.longitude['data'][0]
 # y_lat = y / 100000.0 + radar.latitude['data'][0]
 

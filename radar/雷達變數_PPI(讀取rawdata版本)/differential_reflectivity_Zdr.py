@@ -20,7 +20,7 @@ time = file_path.split('/')[-1].split('.')[0]
 time_dt = datetime.strptime(time, "%Y%m%d%H%M%S").strftime("%Y/%m/%d %H:%M:%S")
 
 radar = pyart.io.read(file_path)
-sweep_num = 0
+sweep_num = 2
 
 display = pyart.graph.RadarMapDisplay(radar)
 fig = plt.figure(figsize=(10, 10))
