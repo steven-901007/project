@@ -37,13 +37,15 @@ display.plot_ppi_map(
     sweep=sweep_num,
     ax=ax,
     colorbar_label='雷達迴波 ($Z_{e}$) \n (dBZ)',
-    title=f'reflectivity\n{time_dt}',
     vmin=0,
     vmax=70,
     shapefile=shapefile_path,
     shapefile_kwargs={"facecolor": 'none', 'edgecolor': 'green'},
     embellish=False
 )
+
+# === 自行設定 title 字體大小 ===
+ax.set_title(f'reflectivity PPI\n{time_dt}', fontsize=16)
 
 # 顯示範圍與格線
 ax.set_extent([119, 123.5, 21, 26.5])

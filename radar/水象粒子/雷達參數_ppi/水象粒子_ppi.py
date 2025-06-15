@@ -1,67 +1,60 @@
 import pyart
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
+import matplotlib.patches as mpatches
 from datetime import datetime
 import numpy as np
-from matplotlib.colors import BoundaryNorm
-from matplotlib.ticker import FixedLocator
-
-# === 路徑與時間設定 ===
+## === 路徑與時間設定 ===
 data_top_path = "C:/Users/steve/python_data/radar"
 year, month, day = '2024', '05', '23'
 hh, mm, ss = '00', '02', '00'
 file_path = f"{data_top_path}/PID/{year}{month}{day}{hh}{mm}{ss}.nc"
 shapefile_path = f"{data_top_path}/Taiwan_map_data/COUNTY_MOI_1090820.shp"
+sweep_num = 2
+
+
+## === 字體設定（MingLiu 為例）===
 plt.rcParams['font.sans-serif'] = [u'MingLiu']
 plt.rcParams['axes.unicode_minus'] = False
 
-# === 讀取雷達資料與時間字串 ===
+## === 讀資料與時間處理 ===
 radar = pyart.io.read(file_path)
 time_str = file_path.split('/')[-1].split('.')[0]
 time_dt = datetime.strptime(time_str, "%Y%m%d%H%M%S").strftime("%Y/%m/%d %H:%M:%S")
-sweep_num = 2
+  
 
-# === 設定 colorbar 階層 ===
-boundaries = [0, 0.1, 0.5, 1, 10]  # 最後一格包含 >1 的值
-norm = BoundaryNorm(boundaries, ncolors=len(boundaries) - 1)
-ticks = boundaries[:-1] + [">1"]
-
-# === 繪圖 ===
+## === 畫 hydro_class 圖 ===
 display = pyart.graph.RadarMapDisplay(radar)
 fig = plt.figure(figsize=(10, 10))
 ax = plt.subplot(1, 1, 1, projection=ccrs.PlateCarree())
 
-# 使用指定色階（例如 jet，你可再指定）
-cmap = plt.get_cmap("turbo", len(boundaries) - 1)
+cmap = plt.cm.get_cmap("tab10", 6)
 
-# 繪圖
 pm = display.plot_ppi_map(
-    'kdp_maesaka',
+    'hydro_class',
     sweep=sweep_num,
     ax=ax,
+    vmin=0,
+    vmax=5,
     cmap=cmap,
-    norm=norm,
     colorbar_flag=False,
-    title=f'KDP\n{time_dt}',
+    colorbar_label='Hydrometeor Type',
     shapefile=shapefile_path,
     shapefile_kwargs={"facecolor": 'none', 'edgecolor': 'green'},
     embellish=False
 )
 
-# 加 colorbar
-cbar = plt.colorbar(pm, ax=ax, orientation='vertical', pad=0.02, shrink=0.9)
-cbar.set_label('KDP (deg/km)', fontsize=12)
+# === 自行設定 title 字體大小 ===
+ax.set_title(f"水象粒子 PPI\n{time_dt}", fontsize=16)
 
-# 自訂 colorbar 刻度標籤
-tick_values = boundaries
-tick_labels = ['0', '0.1', '0.5', '1', '>1']
-cbar.set_ticks(boundaries)
-cbar.set_ticklabels(tick_labels)
-
-# 地圖格線
 ax.set_extent([119, 123.5, 21, 26.5])
 gl = ax.gridlines(draw_labels=True)
 gl.right_labels = False
+
+## === 圖例設定 ===
+label_names = ['Rain', 'Melting Layer', 'Wet Snow', 'Dry Snow', 'Graupel', 'Hail']
+patches = [mpatches.Patch(color=cmap(i), label=label_names[i]) for i in range(6)]
+plt.legend(handles=patches, loc='lower left', fontsize=10, title='Hydrometeors')
 
 plt.tight_layout()
 plt.show()
