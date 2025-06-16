@@ -20,14 +20,26 @@ plt.rcParams['axes.unicode_minus'] = False
 radar = pyart.io.read(file_path)
 time_dt = datetime.strptime(time_str, "%Y%m%d%H%M%S").strftime("%Y/%m/%d %H:%M:%S")
 
-# ==== Grid ====
+# # ==== Grid ====
+# grid = pyart.map.grid_from_radars(
+#     radar,
+#     grid_shape=(21, 400, 400),
+#     grid_limits=((0, 10000), (-150000, 150000), (-150000, 150000)),
+#     fields=['cross_correlation_ratio'],
+#     weighting_function='nearest',
+#     gridding_algo='map_gates_to_grid'
+# )
 grid = pyart.map.grid_from_radars(
     radar,
-    grid_shape=(41, 400, 400),
+    grid_shape=(21, 400, 400),
     grid_limits=((0, 10000), (-150000, 150000), (-150000, 150000)),
     fields=['cross_correlation_ratio'],
-    weighting_function='nearest',
-    gridding_algo='map_gates_to_grid'
+
+    gridding_algo='map_gates_to_grid',
+    weighting_function='Barnes',  # 或 'Cressman'
+
+    roi_func='constant',          # 固定半徑函數
+    # constant_roi=500             # 搜尋半徑
 )
 z_index = np.abs(grid.z['data'] - 2000).argmin()
 
