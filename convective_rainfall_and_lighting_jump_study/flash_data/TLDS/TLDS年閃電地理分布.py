@@ -12,7 +12,7 @@ from matplotlib.colors import ListedColormap, BoundaryNorm
 
 # ==== 基本設定 ====
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
-year = 2022
+year = 2024
 flash_type = 'CG'  # 可選 'IC', 'CG', 'all'
 flash_type = 'IC'
 # ==== 讀取 TLDS 資料 ====
@@ -35,7 +35,7 @@ for file_path in tqdm(file_paths, desc="讀取TLDS資料"):
 lightning_data_df = pd.concat(all_data, ignore_index=True)
 
 # ==== 類型過濾 ====
-if year == 2023:
+if year in [2023 , 2024]:
     if flash_type == 'IC':
         df_plot = lightning_data_df[lightning_data_df['類型'] == 'IC']
     elif flash_type == 'CG':

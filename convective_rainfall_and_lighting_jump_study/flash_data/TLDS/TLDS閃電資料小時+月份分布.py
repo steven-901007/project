@@ -7,7 +7,7 @@ import seaborn as sns
 
 # ==== 基本設定 ====
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
-year = 2023
+year = 2024
 flash_type = 'CG'  # 可選 'IC', 'CG', 'all'
 # flash_type = 'IC'
 data_folder = f"{data_top_path}/閃電資料/raw_data/TLDS/{year}/"
@@ -18,6 +18,7 @@ file_paths = sorted(glob(os.path.join(data_folder, f"{year}*")))
 # ==== 讀取每個月的資料並合併 ====
 all_data = []
 
+
 for file_path in tqdm(file_paths, desc="讀取TLDS資料"):
     try:
         # 嘗試以標準格式讀取（你已經轉換過的 CSV 結構）
@@ -25,6 +26,7 @@ for file_path in tqdm(file_paths, desc="讀取TLDS資料"):
     except:
         data = pd.read_csv(file_path, encoding='big5')
 
+    # print(data.info())
     # 轉換時間欄位
     data['日期時間'] = pd.to_datetime(data['日期時間'], errors='coerce')
     data = data.dropna(subset=['日期時間'])  # 移除無效時間資料
@@ -40,7 +42,7 @@ for file_path in tqdm(file_paths, desc="讀取TLDS資料"):
 # ==== 合併所有月份資料 ====
 lightning_data_df = pd.concat(all_data, ignore_index=True)
 
-if year == 2023:  ##特別的year raw data
+if year in [2023 , 2024]:  ##特別的year raw data
     # ==== 根據類型過濾 ====
     if flash_type == 'IC':
         df_plot = lightning_data_df[lightning_data_df['類型'] == 'IC']

@@ -31,7 +31,7 @@ time_dt = datetime.strptime(time_str, "%Y%m%d%H%M%S").strftime("%Y/%m/%d %H:%M:%
 # )
 grid = pyart.map.grid_from_radars(
     radar,
-    grid_shape=(21, 400, 400),
+    grid_shape=(41, 400, 400),
     grid_limits=((0, 10000), (-150000, 150000), (-150000, 150000)),
     fields=['cross_correlation_ratio'],
 
@@ -39,7 +39,7 @@ grid = pyart.map.grid_from_radars(
     weighting_function='Barnes',  # 或 'Cressman'
 
     roi_func='constant',          # 固定半徑函數
-    # constant_roi=500             # 搜尋半徑
+    constant_roi=600             # 搜尋半徑
 )
 z_index = np.abs(grid.z['data'] - 2000).argmin()
 
