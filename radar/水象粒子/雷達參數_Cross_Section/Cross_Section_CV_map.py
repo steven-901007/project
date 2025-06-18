@@ -5,14 +5,12 @@ from datetime import datetime
 import cartopy.crs as ccrs
 from cartopy.io.shapereader import Reader
 import cartopy.feature as cfeature
+from matplotlib.colors import Normalize  # ✅ 新增
+import matplotlib.cm as cm  # ✅ 新增
 
-
-
-
-
-def cross_section_map(data_top_path,year,month,day,hh,mm,ss,lon0,lon1,lat0,lat1):
+def cross_section_map(data_top_path, year, month, day, hh, mm, ss, lon0, lon1, lat0, lat1):
     # ==== 中文字型設定 ====
-    plt.rcParams['font.sans-serif'] = ['MingLiu']  # '細明體'
+    plt.rcParams['font.sans-serif'] = ['MingLiu']
     plt.rcParams['axes.unicode_minus'] = False
 
     shapefile_path = f"{data_top_path}/Taiwan_map_data/COUNTY_MOI_1090820.shp"
@@ -23,35 +21,38 @@ def cross_section_map(data_top_path,year,month,day,hh,mm,ss,lon0,lon1,lat0,lat1)
     time = data_path.split('/')[-1].split('.')[0]
     time_dt = datetime.strptime(time, "%Y%m%d%H%M%S").strftime("%Y/%m/%d %H:%M:%S")
 
-
-
     # ==== 雷達位置 ====
     radar_lat = radar.latitude['data'][0]
     radar_lon = radar.longitude['data'][0]
+
+    # ==== colormap 設定 ====
+    cmap = cm.get_cmap('turbo')  # ✅ 平滑 colormap
+    norm = Normalize(vmin=0, vmax=70)
 
     # ==== 畫圖開始 ====
     fig = plt.figure(figsize=(10, 8))
     ax = plt.subplot(1, 1, 1, projection=ccrs.PlateCarree())
 
-    # ==== 畫 CV 圖（雷達站單層）====
+    # ==== 畫 PPI 圖 ====
     display = pyart.graph.RadarMapDisplay(radar)
     display.plot_ppi_map(
         'reflectivity',
         sweep=0,
         vmin=0,
-        vmax=65,
-        cmap='NWSRef',
+        vmax=70,
+        cmap=cmap,
+        norm=norm,
         ax=ax,
         colorbar_label='合成雷達回波 (dBZ)',
-        title=f"cross section\n觀測時間：{time_dt}",
+        title=f"CV\n觀測時間：{time_dt}",
         embellish=False,
         add_grid_lines=False,
-        zorder = 2,
+        zorder=2,
     )
 
     # ==== Colorbar 每 5 dBZ ====
     cbar = ax.collections[0].colorbar
-    cbar.set_ticks(np.arange(0, 70, 5))
+    cbar.set_ticks(np.arange(0, 75, 5))  # ✅ 每 5 dBZ 一格
 
     # ==== 加上台灣邊界 ====
     shape_feature = cfeature.ShapelyFeature(
@@ -59,22 +60,23 @@ def cross_section_map(data_top_path,year,month,day,hh,mm,ss,lon0,lon1,lat0,lat1)
         ccrs.PlateCarree(),
         edgecolor='green',
         facecolor='none',
-        zorder = 3,
+        zorder=3,
     )
     ax.add_feature(shape_feature, linewidth=1)
 
-    # ==== 畫雷達位置點 + 剖面線 ====
-    ax.plot(radar_lon, radar_lat, 'bo',color = 'black' ,zorder = 4,markersize=5, label='Radar')
-    ax.plot([lon0, lon1], [lat0, lat1], '-',color = 'black',zorder = 4, linewidth=3, label='剖面線')
+    # ==== 畫雷達位置與剖面線 ====
+    ax.plot(radar_lon, radar_lat, 'bo', color='black', zorder=4, markersize=5, label='Radar')
+    ax.plot([lon0, lon1], [lat0, lat1], '-', color='black', zorder=4, linewidth=3, label='剖面線')
 
-    # ==== 加格線與圖例 ====
-    ax.set_extent([119, 123.5, 21, 26.5])  # 台灣範圍
+    # ==== 顯示範圍與圖例 ====
+    ax.set_extent([119, 123.5, 21, 26.5])
     gl = ax.gridlines(draw_labels=True)
     gl.right_labels = False
     ax.legend(loc='lower left')
 
     plt.tight_layout()
     plt.show()
+
 
 
 cross_section_map(# ==== 基本設定 ====
@@ -85,7 +87,7 @@ day = '23',
 hh = '00',
 mm = '02',
 ss = '00',
-lon0 = 122.0,
-lon1 = 120.8,
-lat0 = 26.3,
-lat1 = 25.3)
+lon0 = 121.53,
+lon1 = 122.31,
+lat0 = 26.22,
+lat1 = 25.58)

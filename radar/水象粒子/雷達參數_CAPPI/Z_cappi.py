@@ -23,18 +23,21 @@ plt.rcParams['axes.unicode_minus'] = False
 radar = pyart.io.read(file_path)
 time_dt = datetime.strptime(time_str, "%Y%m%d%H%M%S").strftime("%Y/%m/%d %H:%M:%S")
 
-# ==== 製作 Grid ====
 grid = pyart.map.grid_from_radars(
     radar,
-    grid_shape=(41, 400, 400),
+    grid_shape=(21, 400, 400),
     grid_limits=((0, 10000), (-150000, 150000), (-150000, 150000)),
     fields=['reflectivity'],
-    weighting_function='nearest',
-    gridding_algo='map_gates_to_grid'
+
+    gridding_algo='map_gates_to_grid',
+    weighting_function='Barnes',  # 或 'Cressman'
+
+    roi_func='constant',          # 固定半徑函數
+    constant_roi=1500             # 搜尋半徑
 )
 
 # ==== 找出距離 z_target 最近的層 ====
-z_target = 2000
+z_target = 1000
 z_levels = grid.z['data']
 z_index = np.abs(z_levels - z_target).argmin()
 print(f"選擇切層 z_index={z_index}, 對應高度為 {z_levels[z_index]} m")

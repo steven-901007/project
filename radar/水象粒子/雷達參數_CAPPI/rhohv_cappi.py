@@ -29,9 +29,10 @@ time_dt = datetime.strptime(time_str, "%Y%m%d%H%M%S").strftime("%Y/%m/%d %H:%M:%
 #     weighting_function='nearest',
 #     gridding_algo='map_gates_to_grid'
 # )
+
 grid = pyart.map.grid_from_radars(
     radar,
-    grid_shape=(41, 400, 400),
+    grid_shape=(21, 400, 400),
     grid_limits=((0, 10000), (-150000, 150000), (-150000, 150000)),
     fields=['cross_correlation_ratio'],
 
@@ -39,11 +40,16 @@ grid = pyart.map.grid_from_radars(
     weighting_function='Barnes',  # 或 'Cressman'
 
     roi_func='constant',          # 固定半徑函數
-    constant_roi=600             # 搜尋半徑
+    constant_roi=1150             # 搜尋半徑
 )
-z_index = np.abs(grid.z['data'] - 2000).argmin()
 
-# ==== 畫圖 ====
+# ==== 找出距離 z_target 最近的層 ====
+z_target = 5000
+z_levels = grid.z['data']
+z_index = np.abs(z_levels - z_target).argmin()
+print(f"選擇切層 z_index={z_index}, 對應高度為 {z_levels[z_index]} m")
+
+# ==== 畫 CAPPI ====
 display = GridMapDisplay(grid)
 fig = plt.figure(figsize=(10, 10))
 ax = plt.subplot(1, 1, 1, projection=ccrs.PlateCarree())
@@ -57,7 +63,7 @@ display.plot_grid(
     colorbar_label='RHOHV',
     embellish=False
 )
-ax.set_title(f"RHOHV CAPPI@ 2.0 km\n{time_dt}", fontsize=16)
+ax.set_title(f"RHOHV CAPPI@ {z_levels[z_index]/1000:.1f} km\n{time_dt}", fontsize=16)
 shp = Reader(shapefile_path)
 ax.add_geometries(shp.geometries(), crs=ccrs.PlateCarree(), facecolor='none', edgecolor='red')
 center_lon = radar.longitude['data'][0]

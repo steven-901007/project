@@ -23,13 +23,22 @@ time_dt = datetime.strptime(time_str, "%Y%m%d%H%M%S").strftime("%Y/%m/%d %H:%M:%
 # ==== Grid ====
 grid = pyart.map.grid_from_radars(
     radar,
-    grid_shape=(41, 400, 400),
+    grid_shape=(21, 400, 400),
     grid_limits=((0, 10000), (-150000, 150000), (-150000, 150000)),
     fields=['differential_reflectivity'],
-    weighting_function='nearest',
-    gridding_algo='map_gates_to_grid'
+
+    gridding_algo='map_gates_to_grid',
+    weighting_function='Barnes',  # 或 'Cressman'
+
+    roi_func='constant',          # 固定半徑函數
+    constant_roi=1170             # 搜尋半徑
 )
-z_index = np.abs(grid.z['data'] - 2000).argmin()
+# ==== 找出距離 z_target 最近的層 ====
+z_target = 5000
+z_levels = grid.z['data']
+z_index = np.abs(z_levels - z_target).argmin()
+print(f"選擇切層 z_index={z_index}, 對應高度為 {z_levels[z_index]} m")
+
 
 # ==== 畫圖 ====
 display = GridMapDisplay(grid)
@@ -45,7 +54,7 @@ display.plot_grid(
     colorbar_label='ZDR (dB)',
     embellish=False
 )
-ax.set_title(f"ZDR CAPPI@ 2.0 km\n{time_dt}", fontsize=16)
+ax.set_title(f"ZDR CAPPI@ {z_levels[z_index]/1000:.1f} km\n{time_dt}", fontsize=16)
 shp = Reader(shapefile_path)
 ax.add_geometries(shp.geometries(), crs=ccrs.PlateCarree(), facecolor='none', edgecolor='red')
 center_lon = radar.longitude['data'][0]

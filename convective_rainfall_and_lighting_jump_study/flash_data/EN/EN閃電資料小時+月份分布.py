@@ -49,7 +49,7 @@ for year in range(2018,2025):
             ax.set_ylabel("Month")
             ax.invert_yaxis()
 
-        # ==== 繪圖 ====
+        # ==== 繪圖 ==== 
         fig, ax = plt.subplots(figsize=(9, 6))
 
         title_str = flash_type if flash_type != 'all' else 'IC+CG'
@@ -57,4 +57,4 @@ for year in range(2018,2025):
 
         plt.tight_layout()
         # plt.show()
-        plt.savefig(f"G:/我的雲端硬碟/工作/2025cook/工作進度_閃電/EN/{year}_{flash_type}_hour_month_heatmap.png", dpi=300)
+        plt.savefig(f"G:/我的雲端硬碟/工作/2025cook/工作進度_閃電/EN/{year}_{flash_type}_hour_month.png", dpi=300)

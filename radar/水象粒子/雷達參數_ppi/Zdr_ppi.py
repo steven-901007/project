@@ -5,8 +5,8 @@ from datetime import datetime
 
 # === 路徑與時間設定 ===
 data_top_path = "C:/Users/steve/python_data/radar"
-year, month, day = '2024', '05', '23'
-hh, mm, ss = '00', '02', '00'
+year, month, day = '2017', '06', '02'
+hh, mm, ss = '09', '57', '27'
 file_path = f"{data_top_path}/PID/{year}{month}{day}{hh}{mm}{ss}.nc"
 shapefile_path = f"{data_top_path}/Taiwan_map_data/COUNTY_MOI_1090820.shp"
 plt.rcParams['font.sans-serif'] = [u'MingLiu']
