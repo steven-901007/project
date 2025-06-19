@@ -3,9 +3,9 @@ import shutil
 import os
 
 data_top_path = "C:/Users/steve/python_data/radar"
-year = '2024'
-month = '05'
-day = '23'
+year = '2021'
+month = '07'
+day = '14'
 
 
 ## 資料夾位置
