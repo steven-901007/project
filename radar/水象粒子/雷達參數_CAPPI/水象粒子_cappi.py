@@ -38,7 +38,7 @@ grid = pyart.map.grid_from_radars(
 )
 
 # ==== 找出距離 z_target 最近的層 ====
-z_target = 5000
+z_target = 2000
 z_levels = grid.z['data']
 z_index = np.abs(z_levels - z_target).argmin()
 print(f"選擇切層 z_index={z_index}, 對應高度為 {z_levels[z_index]} m")
@@ -49,8 +49,18 @@ display = GridMapDisplay(grid)
 fig = plt.figure(figsize=(10, 10))
 ax = plt.subplot(1, 1, 1, projection=ccrs.PlateCarree())
 
-# ==== 設定 colormap ====
-cmap = plt.cm.get_cmap("tab10", 6)
+
+# ==== 設定 colormap（自訂顏色）====
+from matplotlib.colors import ListedColormap
+custom_colors = [
+    "#1f77b4",  # Rain
+    "#ff7f0e",  # Melting Layer
+    "#2ca02c",  # Wet Snow
+    "#27c2d6",  # Dry Snow
+    "#f51010",  # Graupel（紅）
+    "#9467bd",  # Hail
+]
+cmap = ListedColormap(custom_colors)
 field_data = grid.fields['hydro_class']['data'][z_index]
 
 # ==== 畫主圖 ====

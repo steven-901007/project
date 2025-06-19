@@ -6,11 +6,11 @@ import os
 
 # ==== 路徑與時間設定 ====
 data_top_path = "C:/Users/steve/python_data/radar"
-year, month, day = '2017', '06', '02'
-hh, mm, ss = '00', '02', '33'
+year, month, day = '2024', '05', '23'
+hh, mm, ss = '00', '02', '00'
 time_str = f"{year}{month}{day}{hh}{mm}{ss}"
 
-vol_path = f"{data_top_path}/{year}{month}{day}_u.RCWF/{time_str}00.vol"
+vol_path = f"{data_top_path}/{year}{month}{day}_u.RCWF/{time_str}.VOL"
 output_path = f"{data_top_path}/PID/{time_str}.nc"
 os.makedirs(os.path.dirname(output_path), exist_ok=True)
 # print(vol_path)

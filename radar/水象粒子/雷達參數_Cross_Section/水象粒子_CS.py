@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from pyproj import Geod
 from datetime import datetime
 import matplotlib.patches as mpatches
+from matplotlib.colors import ListedColormap
 
 # ==== 檔案與時間設定 ====
 data_top_path = "C:/Users/steve/python_data/radar"
@@ -13,8 +14,10 @@ time_str = f"{year}{month}{day}{hh}{mm}{ss}"
 file_path = f"{data_top_path}/PID/{time_str}.nc"
 
 # ==== 切線座標設定 ====
-lon0, lat0 = 121.53, 26.22
-lon1, lat1 = 122.31, 25.58
+lon0 = 122.08
+lat0 = 26.39
+lon1 = 121.53
+lat1 = 25.93
 
 # ==== 中文顯示 ====
 plt.rcParams['font.sans-serif'] = ['MingLiu']
@@ -63,21 +66,29 @@ for i, (px, py) in enumerate(zip(x, y)):
 
 # ==== 畫圖 ====
 fig, ax = plt.subplots(figsize=(12, 6))
-cmap = plt.get_cmap("tab10", 6)  # 6 種水象粒子分類顏色
+
+# 自訂 colormap（紅色給 Graupel）
+custom_colors = [
+    "#1f77b4",  # Rain
+    "#ff7f0e",  # Melting Layer
+    "#2ca02c",  # Wet Snow
+    "#27c2d6",  # Dry Snow
+    "#f51010",  # Graupel（紅）
+    "#9467bd",  # Hail
+]
+cmap = ListedColormap(custom_colors)
+
+# 畫 pcolormesh
 zz, xx = np.meshgrid(gz, np.linspace(0, dist / 1000, len(x)), indexing='ij')
 masked_cross_section = np.ma.masked_invalid(cross_section)
-
 pc = ax.pcolormesh(xx, zz, masked_cross_section, cmap=cmap, vmin=0, vmax=5, shading='auto')
 
-# ==== 顯示與圖例設定 ====
+# 標籤與標題
 ax.set_xlabel("距離 (km)")
 ax.set_ylabel("高度 (km)")
 ax.set_title(f"Hydrometeor Cross-Section\n{datetime.strptime(time_str, '%Y%m%d%H%M%S').strftime('%Y/%m/%d %H:%M:%S')}")
 
-# colorbar
-# cbar = plt.colorbar(pc, ax=ax, label='Hydrometeor Type')
-
-# 手動標籤 legend
+# 圖例
 label_names = ['Rain', 'Melting Layer', 'Wet Snow', 'Dry Snow', 'Graupel', 'Hail']
 patches = [mpatches.Patch(color=cmap(i), label=label_names[i]) for i in range(6)]
 ax.legend(handles=patches, loc='upper right', title='Hydrometeors')
