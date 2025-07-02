@@ -10,7 +10,7 @@ data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jum
 year = 2024
 flash_type = 'CG'  # 可選 'IC', 'CG', 'all'
 # flash_type = 'IC'
-data_folder = f"{data_top_path}/閃電資料/raw_data/TLDS/{year}/"
+data_folder = f"{data_top_path}/flash_data/raw_data/TLDS/{year}/"
 file_paths = sorted(glob(os.path.join(data_folder, f"{year}*")))
 
 

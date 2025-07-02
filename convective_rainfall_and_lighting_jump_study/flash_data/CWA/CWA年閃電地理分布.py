@@ -34,7 +34,7 @@ for year in range(2018, 2025):
     print(f"處理 {year} 年資料...")
     for flash_type in ['IC','CG']:
     # ====== 讀取資料 ======
-        file_path = f"{data_top_path}/閃電資料/raw_data/CWA/L{year}.csv"
+        file_path = f"{data_top_path}/flash_data/raw_data/CWA/L{year}.csv"
         df = pd.read_csv(file_path, encoding='utf-8', low_memory=False)
 
         for flash_type in ['IC','CG']:

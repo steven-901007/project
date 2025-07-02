@@ -7,7 +7,7 @@ import os
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 
 flash_data_list = [[],[]]
-flash_raw_data_year_paths = glob(f"{data_top_path}/閃電資料/raw_data/TLDS/**")
+flash_raw_data_year_paths = glob(f"{data_top_path}/flash_data/raw_data/TLDS/**")
 for flash_raw_data_year_path in tqdm(flash_raw_data_year_paths,desc='資料讀取中...'):
     print(flash_raw_data_year_path)
     flash_raw_data_month_paths = glob(flash_raw_data_year_path + "/**")

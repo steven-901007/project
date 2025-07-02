@@ -8,10 +8,10 @@ from pyart.graph import GridMapDisplay
 
 # ==== 時間與路徑設定 ==== 
 data_top_path = "C:/Users/steve/python_data/radar"
-year, month, day = '2024', '05', '23'
-hh, mm, ss = '00', '02', '00'
+year, month, day = '2021', '06', '12'
+hh, mm, ss = '00', '04', '00'
 time_str = f"{year}{month}{day}{hh}{mm}{ss}"
-file_path = f"{data_top_path}/PID/{time_str}.nc"
+file_path = f"{data_top_path}/PID/{year}{month}{day}/{time_str}.nc"
 shapefile_path = f"{data_top_path}/Taiwan_map_data/COUNTY_MOI_1090820.shp"
 
 # ==== 讀取雷達資料 ==== 
@@ -21,11 +21,12 @@ time_dt = datetime.strptime(time_str, "%Y%m%d%H%M%S").strftime("%Y/%m/%d %H:%M:%
 # ==== 製作 Grid ==== 
 grid = pyart.map.grid_from_radars(
     radar,
-    grid_shape=(41, 400, 400),
+    grid_shape=(21, 400, 400),
     grid_limits=((0, 10000), (-150000, 150000), (-150000, 150000)),
     fields=['kdp_maesaka'],
     weighting_function='nearest',
-    gridding_algo='map_gates_to_grid'
+    gridding_algo='map_gates_to_grid',
+    roi_func='dist_beam'
 )
 
 # ==== 找出 2 公里高層 ==== 

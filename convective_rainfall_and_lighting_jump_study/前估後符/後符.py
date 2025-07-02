@@ -20,7 +20,7 @@ year = '2021' #年分
 month = '06' #月份(01~12)
 dis = 36
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
-data_source = 'TLDS'#閃電資料來源 (EN、TLDS)
+data_source = 'TLDS'#flash_data來源 (EN、TLDS)
 
 def check_folder(folder_path):
     if not os.path.exists(folder_path):
@@ -49,19 +49,19 @@ data = pd.read_csv(data_path)
 
 # print(data)
 check_folder(f"{data_top_path}/雨量資料/對流性降雨{dis}km/{year}/{month}")
-check_folder(f"{data_top_path}/閃電資料/{data_source}/lighting_jump/{data_source}_{year}{month}_{dis}km")
+check_folder(f"{data_top_path}/flash_data/{data_source}/lighting_jump/{data_source}_{year}{month}_{dis}km")
 post_agreement_station_name_list = []#後符測站名稱
 post_agreement_hit_list = []#個測站後符命中的list
 total_post_agreement_list = []#後符總量(lighting jump and rain + lighting jump and non_rain)
 post_agreement_lon_data_list = []
 post_agreement_lat_data_list = []
 
-month_path = f"{data_top_path}/閃電資料/{data_source}/lighting_jump/{data_source}_{year}{month}_{dis}km/*.csv"
+month_path = f"{data_top_path}/flash_data/{data_source}/lighting_jump/{data_source}_{year}{month}_{dis}km/*.csv"
 result  =glob.glob(month_path)
 
 for flash_station_path in tqdm(result,desc=f"{year}{month}資料處理中...."):
     # print(flash_station_path)
-# flash_station_path = "C:/Users/steve/python_data/研究所/閃電資料/lighting_jump/36km/2021/06/00H710.csv"
+# flash_station_path = "C:/Users/steve/python_data/研究所/flash_data/lighting_jump/36km/2021/06/00H710.csv"
     flash_station_name = os.path.basename(flash_station_path).split('.')[0]
     # print(flash_station_name)
 

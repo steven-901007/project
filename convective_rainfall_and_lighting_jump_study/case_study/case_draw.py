@@ -37,7 +37,7 @@ def assign_status(x):
         return 'g'
 
 
-def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,alpha,flash_source):
+def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,alpha,flash_source,one_month_draw):
     pd.set_option('display.max_rows', None)
 
     #將時間的type改成時間型態
@@ -65,7 +65,7 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     # print(flash_data)
     # print(full_time_df)
 
-    ## 每分鐘閃電資料
+    ## 每分鐘flash_data
     flash_data_for_every_min_df = pd.merge(flash_data,full_time_df,on='data time', how='outer').fillna(0)# 與原始資料合併，缺少的時間點補上 count = 0
     # print(flash_data_for_every_min_df)
 
@@ -171,10 +171,11 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     pic_save_path = case_root_path + '/picture.png'
 
     
-    # ##一次處理一個月資料用
-    # case_root_path = f"{data_top_path}/個案分析/{station_name}_{dis}_{flash_source}_{year}{month}_{str(time_start).zfill(2)}00to{str(time_end).zfill(2)}00"
-    # fileset(case_root_path)
-    # pic_save_path = f"{case_root_path}/{year}{month}{day}.png" 
+    ##一次處理一個月資料用
+    if one_month_draw == True:
+        case_root_path = f"{data_top_path}/個案分析/{station_name}_{dis}_{flash_source}_{year}{month}_{str(time_start).zfill(2)}00to{str(time_end).zfill(2)}00"
+        fileset(case_root_path)
+        pic_save_path = f"{case_root_path}/{year}{month}{day}.png" 
 
 
     

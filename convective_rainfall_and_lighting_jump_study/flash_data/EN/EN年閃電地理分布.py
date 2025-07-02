@@ -25,7 +25,7 @@ for year in range(2018,2025):
 
 
         # ====== 載入資料並篩選範圍 ======
-        EN_flash_datas = pd.read_csv(f"{data_top_path}/閃電資料/raw_data/EN/lightning_{year}.txt")
+        EN_flash_datas = pd.read_csv(f"{data_top_path}/flash_data/raw_data/EN/lightning_{year}.txt")
 
         main_island_lon_lat_range = (
             (lon_min < EN_flash_datas['lon']) & (EN_flash_datas['lon'] < lon_max) &

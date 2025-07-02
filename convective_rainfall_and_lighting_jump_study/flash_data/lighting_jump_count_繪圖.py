@@ -17,7 +17,7 @@ year = '2021' #年分
 month = '07' #月份
 dis = 36
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
-data_source = 'TLDS' #閃電資料來源
+data_source = 'TLDS' #flash_data來源
 
 
 
@@ -39,7 +39,7 @@ name_data_list,station_real_data_name,lon_data_list, lat_data_list = rain_statio
 lj_count_lon_lat_list = [[],[],[]]
 
 ##lighting jump count
-lighting_jump_paths = f"{data_top_path}/閃電資料/lighting_jump/{year}_{month}_{dis}km/**.csv"
+lighting_jump_paths = f"{data_top_path}/flash_data/lighting_jump/{year}_{month}_{dis}km/**.csv"
 result = glob.glob(lighting_jump_paths)
 for lighting_jump_path in tqdm(result):
     # print(lighting_jump_path)

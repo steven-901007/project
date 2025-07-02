@@ -8,7 +8,7 @@ year = '2021'  # 年分
 month = '09'   # 月份
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 dis = 36
-data_source = 'EN'#閃電資料來源
+data_source = 'EN'#flash_data來源
 
 
 def fileset(path):    #建立資料夾
@@ -38,7 +38,7 @@ for convective_rainfall_path in result:
     convective_rainfall_datas = pd.read_csv(convective_rainfall_path)
     convective_rainfall_times_df =  pd.to_datetime(convective_rainfall_datas['time data'])
     #取得LJ資料
-    flash_path = f"{data_top_path}/閃電資料/{data_source}/lighting_jump/{data_source}_{year}{month}_{dis}km/{station_name}.csv"
+    flash_path = f"{data_top_path}/flash_data/{data_source}/lighting_jump/{data_source}_{year}{month}_{dis}km/{station_name}.csv"
     flash_datas = pd.read_csv(flash_path)
 
     # print(convective_rainfall_datas)

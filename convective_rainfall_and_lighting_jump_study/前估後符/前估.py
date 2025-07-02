@@ -17,10 +17,10 @@ import os
 
 
 year = '2021' #年分
-month = '04' #月份
+month = '06' #月份
 dis = 36
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
-data_source = 'EN'#閃電資料來源
+data_source = 'EN'#flash_data來源
 
 
 def check_folder(folder_path):
@@ -49,7 +49,7 @@ data = pd.read_csv(data_path)
 
 # print(data)
 check_folder(f"{data_top_path}/雨量資料/對流性降雨{dis}km/{year}/{month}")
-check_folder(f"{data_top_path}/閃電資料/{data_source}/lighting_jump/{data_source}_{year}{month}_{dis}km")
+check_folder(f"{data_top_path}/flash_data/{data_source}/lighting_jump/{data_source}_{year}{month}_{dis}km")
 prefigurance_station_name_list = []#前估測站名稱
 prefigurance_hit_list = []#個測站命中的list
 total_prefigurance_list = []#前估總量(lighting jump and rain + non_lighting jump and rain)
@@ -67,7 +67,7 @@ for rain_station_path in tqdm(result,desc=f"{year}{month}資料處理中...."):
 
     #flash
     try:
-        flash_station_path = f"{data_top_path}/閃電資料/{data_source}/lighting_jump/{data_source}_{year}{month}_{dis}km/{rain_station_name}.csv"
+        flash_station_path = f"{data_top_path}/flash_data/{data_source}/lighting_jump/{data_source}_{year}{month}_{dis}km/{rain_station_name}.csv"
         rain_data = pd.read_csv(rain_station_path)
         flash_data = pd.read_csv(flash_station_path)
         # print(rain_station_name)

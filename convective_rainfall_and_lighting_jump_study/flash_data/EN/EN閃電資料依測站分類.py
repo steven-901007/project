@@ -19,7 +19,7 @@ def file_set(file_path):
         os.makedirs(file_path)
         print(file_path + " 已建立")
 
-file_set(f"{data_top_path}/閃電資料/EN/依測站分類/EN_{year}{month}_{dis}km")
+file_set(f"{data_top_path}/flash_data/EN/sort_by_time/EN_{year}{month}_{dis}km")
 
 # Haversine公式，用於計算兩點之間的球面距離（經緯度）
 def haversine(lon1, lat1, lon2, lat2):
@@ -36,8 +36,8 @@ def haversine(lon1, lat1, lon2, lat2):
     r = 6371
     return c * r
 
-# 讀取閃電資料並轉換日期時間格式
-flash_rawdata_df = pd.read_csv(f"{data_top_path}/閃電資料/raw_data/EN/{year}_EN/{year}{month}.csv")
+# 讀取flash_data並轉換日期時間格式
+flash_rawdata_df = pd.read_csv(f"{data_top_path}/flash_data/raw_data/EN/{year}_EN/{year}{month}.csv")
 flash_datas_df = flash_rawdata_df[[title_name_time, 'lon', 'lat']].copy()
 
 flash_datas_df[title_name_time] = pd.to_datetime(flash_datas_df[title_name_time]).dt.floor('min')
@@ -56,7 +56,7 @@ for index, row in tqdm(station_datas.iterrows()):
     # 計算每個閃電點與測站的距離
     flash_datas_df['distance'] = haversine(flash_datas_df['lon'], flash_datas_df['lat'], station_lon, station_lat)
 
-    # 過濾掉距離超過36公里的閃電資料
+    # 過濾掉距離超過36公里的flash_data
     need_flash_datas_df = flash_datas_df[flash_datas_df['distance'] <= dis]
 
     # 計算每分鐘內的閃電次數
@@ -66,7 +66,7 @@ for index, row in tqdm(station_datas.iterrows()):
     if data_time_zone == 'UTC':
         need_inf_flash_data_df['data time'] = need_inf_flash_data_df['data time'] + pd.Timedelta(hours=8) #UTC ==> LCT
 
-    save_path = f"{data_top_path}/閃電資料/EN/依測站分類/EN_{year}{month}_{dis}km/{station_name}.csv"
+    save_path = f"{data_top_path}/flash_data/EN/sort_by_time/EN_{year}{month}_{dis}km/{station_name}.csv"
     need_inf_flash_data_df.to_csv(save_path,index=False)  
 
 

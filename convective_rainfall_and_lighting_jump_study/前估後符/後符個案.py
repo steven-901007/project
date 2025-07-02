@@ -45,9 +45,9 @@ def format_leading_time(leading_time):
 fileset(f"{data_top_path}/前估後符/{year}_{month}_後符命中個案")
 
 #取得LJ station name
-result = glob(f"{data_top_path}/閃電資料/lighting_jump/{year}_{month}_{dis}km/*.csv")
+result = glob(f"{data_top_path}/flash_data/lighting_jump/{year}_{month}_{dis}km/*.csv")
 for LJ_path in result:
-# LJ_path = f"{data_top_path}/閃電資料/lighting_jump/{year}_{month}_{dis}km/01E030.csv"
+# LJ_path = f"{data_top_path}/flash_data/lighting_jump/{year}_{month}_{dis}km/01E030.csv"
     station_name = os.path.basename(LJ_path).split('.')[0]
     # print(station_name)
 

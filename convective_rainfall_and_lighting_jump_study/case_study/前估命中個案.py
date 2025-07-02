@@ -18,7 +18,7 @@ year = '2021' #年分
 month = '07' #月份
 dis = 36
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
-data_source = 'TLDS'#閃電資料來源
+data_source = 'EN'#flash_data來源
 
 def fileset(path):    #建立資料夾
     import os
@@ -56,7 +56,7 @@ for rain_station_path in tqdm(result,desc='資料處理中....'):
 
     #flash
     try:
-        flash_station_path = f"{data_top_path}/閃電資料/{data_source}/lighting_jump/{data_source}_{year}{month}_{dis}km/{rain_station_name}.csv"
+        flash_station_path = f"{data_top_path}/flash_data/{data_source}/lighting_jump/{data_source}_{year}{month}_{dis}km/{rain_station_name}.csv"
         rain_data = pd.read_csv(rain_station_path)
         flash_data = pd.read_csv(flash_station_path)
         # if rain_station_name == 'C0G880':

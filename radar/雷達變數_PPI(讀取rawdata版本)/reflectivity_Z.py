@@ -6,11 +6,11 @@ from datetime import datetime
 
 ## === 路徑與時間設定 ===
 data_top_path = "C:/Users/steve/python_data/radar"
-year = '2024'
-month = '05'
-day = '23'
-hh = '00'
-mm = '02'
+year = '2021'
+month = '11'
+day = '26'
+hh = '07'
+mm = '36'
 ss = '00'
 
 file_path = f"{data_top_path}/{year}{month}{day}_u.RCWF/{year}{month}{day}{hh}{mm}{ss}.VOL"
@@ -24,7 +24,7 @@ time_dt = datetime.strptime(time, "%Y%m%d%H%M%S").strftime("%Y/%m/%d %H:%M:%S")
 
 ## === 讀取雷達資料 ===
 radar = pyart.io.read(file_path)
-sweep_num = 2  # 你想畫第幾圈仰角
+sweep_num = 4  # 你想畫第幾圈仰角
 
 ## === 畫圖 ===
 display = pyart.graph.RadarMapDisplay(radar)

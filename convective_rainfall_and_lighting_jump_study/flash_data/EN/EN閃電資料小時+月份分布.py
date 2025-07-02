@@ -13,7 +13,7 @@ for year in range(2018,2025):
     for flash_type in ['IC',"CG"]:
         print(flash_type)
 
-        file_path = f"{data_top_path}/閃電資料/raw_data/EN/lightning_{year}.txt"
+        file_path = f"{data_top_path}/flash_data/raw_data/EN/lightning_{year}.txt"
 
         # ==== 讀取資料 ====
         df = pd.read_csv(file_path)

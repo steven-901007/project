@@ -2,17 +2,18 @@ import pyart
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 from datetime import datetime
+import numpy.ma as ma
 
 # === 路徑與時間設定 ===
 data_top_path = "C:/Users/steve/python_data/radar"
-year = '2024'
-month = '05'
-day = '23'
-hh = '00'
-mm = '02'
+year = '2021'
+month = '11'
+day = '26'
+hh = '07'
+mm = '36'
 ss = '00'
 
-file_path = f"{data_top_path}/{year}{month}{day}_u.RCWF/{year}{month}{day}{hh}{mm}{ss}.VOL"
+file_path = f"{data_top_path}/PID/{year}{month}{day}/{year}{month}{day}{hh}{mm}{ss}.nc"
 shapefile_path = f"{data_top_path}/Taiwan_map_data/COUNTY_MOI_1090820.shp"
 
 # === 中文顯示設定 ===
@@ -25,7 +26,18 @@ time_dt = datetime.strptime(time, "%Y%m%d%H%M%S").strftime("%Y/%m/%d %H:%M:%S")
 
 # === 讀取雷達資料 ===
 radar = pyart.io.read(file_path)
-sweep_num = 2  # 可依需求修改
+sweep_num = 4  # 可依需求修改
+
+# === 讀取反射率與 rhohv 資料並設遮罩 ===
+ref_data = radar.fields['reflectivity']['data']
+rhohv_data = radar.fields['cross_correlation_ratio']['data']
+
+# 設定遮罩條件：反射率 < 0 或 rhohv < 0.8 的部分遮掉
+mask = (ref_data < 0) | (rhohv_data < 0.8)
+ref_data = ma.masked_where(mask, ref_data)
+
+# 更新回雷達物件
+radar.fields['reflectivity']['data'] = ref_data
 
 # === 畫 PPI 圖 ===
 display = pyart.graph.RadarMapDisplay(radar)
@@ -37,8 +49,8 @@ display.plot_ppi_map(
     sweep=sweep_num,
     ax=ax,
     colorbar_label='雷達迴波 ($Z_{e}$) \n (dBZ)',
-    vmin=0,
-    vmax=70,
+    vmin=-10,
+    vmax=60,
     shapefile=shapefile_path,
     shapefile_kwargs={"facecolor": 'none', 'edgecolor': 'green'},
     embellish=False

@@ -81,13 +81,13 @@ def cross_section_map(data_top_path, year, month, day, hh, mm, ss, lon0, lon1, l
 
 cross_section_map(# ==== 基本設定 ====
 data_top_path = "C:/Users/steve/python_data/radar",
-year = '2024',
-month = '05',
-day = '23',
+year = '2021',
+month = '06',
+day = '12',
 hh = '00',
-mm = '02',
+mm = '16',
 ss = '00',
-lon0 = 122.08,
-lon1 = 121.53,
-lat0 = 26.39,
-lat1 = 25.93)
+lon0 = 121.77,
+lat0 = 25.07,
+lon1 = 121.77,
+lat1 = 26.07)

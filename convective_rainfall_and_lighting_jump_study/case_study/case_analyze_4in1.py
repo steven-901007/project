@@ -8,8 +8,8 @@ import calendar
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 year = '2021' #年分
 month = '06' #月份
-day = '08'
-time_start = 12 #(00~23)
+day = '12'
+time_start = 11 #(00~23)
 time_end = 23 #(00~23)
 dis = 36
 alpha = 2 #統計檢定
@@ -17,19 +17,24 @@ flash_source = 'EN' # EN or TLDS
 # station_name = 'O1P470' #前估max
 # station_name = '466880' #板橋
 # station_name = '01F680'
-# station_name = '01A430'
-station_name = '01D180'
+station_name = '01C400'
+# station_name = 'C0AH30' #五分山
+one_month_draw = False
 
-
-# max_month_day = calendar.monthrange(int(year),int(month))[-1]
-# for i in range(1,max_month_day+1): #記得調case_draw的存檔位置
-#     day = str(i).zfill(2)
-
-
-case_data_set(year,month,day,time_start,time_end,dis,station_name,data_top_path,flash_source)
-case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,alpha,flash_source)
-case_map_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,flash_source)
-flash_pattern(year,month,day,time_start,time_end,dis,station_name,data_top_path,flash_source)
+if one_month_draw == True:
+    
+    max_month_day = calendar.monthrange(int(year),int(month))[-1]
+    for i in range(1,max_month_day+1):
+        day = str(i).zfill(2)
+        case_data_set(year,month,day,time_start,time_end,dis,station_name,data_top_path,flash_source)
+        case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,alpha,flash_source,one_month_draw)
+        case_map_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,flash_source)
+        flash_pattern(year,month,day,time_start,time_end,dis,station_name,data_top_path,flash_source)
+elif one_month_draw == False:
+    case_data_set(year,month,day,time_start,time_end,dis,station_name,data_top_path,flash_source)
+    case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,alpha,flash_source,one_month_draw)
+    case_map_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,flash_source)
+    flash_pattern(year,month,day,time_start,time_end,dis,station_name,data_top_path,flash_source)    
 
 from datetime import datetime
 now_time = datetime.now()

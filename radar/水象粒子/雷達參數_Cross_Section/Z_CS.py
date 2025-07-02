@@ -7,19 +7,20 @@ import matplotlib.patches as mpatches
 
 # ==== 檔案與時間設定 ====
 data_top_path = "C:/Users/steve/python_data/radar"
-year, month, day = '2024', '05', '23'
-hh, mm, ss = '00', '02', '00'
+year, month, day = '2021', '06', '12'
+hh, mm, ss = '00', '16', '00'
 time_str = f"{year}{month}{day}{hh}{mm}{ss}"
-file_path = f"{data_top_path}/PID/{time_str}.nc"
+file_path = f"{data_top_path}/PID/{year}{month}{day}/{time_str}.nc"
 
 
 
 # ==== 切線座標設定 ====
-lon0 = 122.08
-lat0 = 26.39
-lon1 = 121.53
-lat1 = 25.93
+lon0 = 121.77
+lat0 = 25.07
+lon1 = 121.77
+lat1 = 26.07
 # 任意兩點
+
 
 # ==== 中文顯示 ====
 plt.rcParams['font.sans-serif'] = ['MingLiu']
@@ -34,8 +35,9 @@ grid = pyart.map.grid_from_radars(
     fields=['reflectivity'],
     gridding_algo='map_gates_to_grid',
     weighting_function='Barnes',
-    roi_func='constant',
-    constant_roi=1500
+    roi_func='dist_beam'
+    # roi_func='constant',
+    # constant_roi=1500
 )
 
 # ==== 地理→雷達座標轉換 ====

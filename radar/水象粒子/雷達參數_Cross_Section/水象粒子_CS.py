@@ -8,16 +8,16 @@ from matplotlib.colors import ListedColormap
 
 # ==== 檔案與時間設定 ====
 data_top_path = "C:/Users/steve/python_data/radar"
-year, month, day = '2024', '05', '23'
-hh, mm, ss = '00', '02', '00'
+year, month, day = '2021', '06', '12'
+hh, mm, ss = '00', '16', '00'
 time_str = f"{year}{month}{day}{hh}{mm}{ss}"
-file_path = f"{data_top_path}/PID/{time_str}.nc"
+file_path = f"{data_top_path}/PID/{year}{month}{day}/{time_str}.nc"
 
 # ==== 切線座標設定 ====
-lon0 = 122.08
-lat0 = 26.39
-lon1 = 121.53
-lat1 = 25.93
+lon0 = 121.77
+lat0 = 25.07
+lon1 = 121.77
+lat1 = 26.07
 
 # ==== 中文顯示 ====
 plt.rcParams['font.sans-serif'] = ['MingLiu']
@@ -32,8 +32,8 @@ grid = pyart.map.grid_from_radars(
     fields=['hydro_class'],
     gridding_algo='map_gates_to_grid',
     weighting_function='Barnes',
-    roi_func='constant',
-    constant_roi=1500
+    roi_func='dist_beam',
+
 )
 
 # ==== 地理→雷達座標轉換 ====
@@ -80,6 +80,7 @@ cmap = ListedColormap(custom_colors)
 
 # 畫 pcolormesh
 zz, xx = np.meshgrid(gz, np.linspace(0, dist / 1000, len(x)), indexing='ij')
+# ax.pcolormesh(xx, zz, np.isnan(cross_section), cmap=ListedColormap(["black"]), shading='auto')
 masked_cross_section = np.ma.masked_invalid(cross_section)
 pc = ax.pcolormesh(xx, zz, masked_cross_section, cmap=cmap, vmin=0, vmax=5, shading='auto')
 

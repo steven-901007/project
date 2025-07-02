@@ -17,10 +17,10 @@ def file_set(file_path):
     if not os.path.exists(file_path):
         os.makedirs(file_path)
         print(file_path + " 已建立")
-file_set(f"{data_top_path}/閃電資料/EN/月份閃電地理分布/{year}_{month}")
+file_set(f"{data_top_path}/flash_data/EN/月份閃電地理分布/{year}_{month}")
 
 # 讀取資料
-data_path = f"{data_top_path}/閃電資料/raw_data/EN/{year}_EN/{year}{month}.csv"
+data_path = f"{data_top_path}/flash_data/raw_data/EN/{year}_EN/{year}{month}.csv"
 datas = pd.read_csv(data_path)
 data_lon = datas['lon']
 data_lat = datas['lat']
@@ -71,8 +71,8 @@ cbar.set_label("閃電次數")
 
 # 標題與儲存
 ax.set_title(f"{year}/{month} 閃電分佈以{lon_lat_gap}度分隔\nsoruce = EN raw data(.txt)", fontsize=14)
-pic_save_path = f"{data_top_path}/閃電資料/EN/月份閃電地理分布/{year}_{month}/{year}{month}_gap={lon_lat_gap}.png"
+pic_save_path = f"{data_top_path}/flash_data/EN/月份閃電地理分布/{year}_{month}/{year}{month}_gap={lon_lat_gap}.png"
 plt.savefig(pic_save_path, bbox_inches='tight', dpi=300)
-plt.close()
-# plt.show()
+# plt.close()
+plt.show()
 print(f"Time：{year}{month}")

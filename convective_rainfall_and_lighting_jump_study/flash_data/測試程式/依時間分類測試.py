@@ -46,8 +46,8 @@ def flash_color_set(x):
 
 reference_time = pd.to_datetime(f'{year}-{month}-{time[:2]} {time[2:4]}:{time[4:]}:00')
 flash_data_lon_lat_color_list = [[],[],[]] 
-## 讀取閃電資料
-flash_data_paths = f"{data_top_path}/閃電資料/依時間分類/{year}/{month}/**.csv"
+## 讀取flash_data
+flash_data_paths = f"{data_top_path}/flash_data/sort_by_time/{year}/{month}/**.csv"
 result = glob(flash_data_paths)
 for flash_data_path in result:
     # print(flash_data_path)

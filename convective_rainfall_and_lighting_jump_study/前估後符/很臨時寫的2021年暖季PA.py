@@ -14,7 +14,7 @@ import matplotlib as mpl
 import os
 
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
-data_source = 'EN'#閃電資料來源
+data_source = 'EN'#flash_data來源
 
 
 datas_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump/前估後符/EN_20210"

@@ -31,12 +31,12 @@ station_name = '01P190'
 time_start_datatime = pd.to_datetime(f"{year}{month}{day} {time_start}:00:00")
 time_end_datatime = pd.to_datetime(f"{year}{month}{day} {time_end}:00:00")
 # print(time_start_datatime,time_end_datatime)
-##閃電資料
+##flash_data
 
 lon_list = []
 lat_list = []
 
-flash_paths = f"{data_top_path}/閃電資料/{flash_source}/依時間分類/{year}/{month}/**.csv"
+flash_paths = f"{data_top_path}/flash_data/{flash_source}/sort_by_time/{year}/{month}/**.csv"
 result = glob(flash_paths)
 for flash_path in result:
     data_time_str = flash_path.split('/')[-1].split('\\')[-1].split('.')[0]

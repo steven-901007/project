@@ -94,8 +94,8 @@ def case_data_set(year,month,day,time_start,time_end,dis,station_name,data_top_p
     print('雨量資料已建立')
 
 
-    ##閃電資料建立(讀取依測站分類)
-    flash_path = f"{data_top_path}/閃電資料/{flash_source}/依測站分類/{flash_source}_{year}{month}_{dis}km/{station_name}.csv"
+    ##flash_data建立(讀取sort_by_time)
+    flash_path = f"{data_top_path}/flash_data/{flash_source}/sort_by_time/{flash_source}_{year}{month}_{dis}km/{station_name}.csv"
     flash_data = pd.read_csv(flash_path)
     flash_data['data time'] = pd.to_datetime(flash_data['data time'])
     # print(flash_data['data time'])
@@ -104,7 +104,7 @@ def case_data_set(year,month,day,time_start,time_end,dis,station_name,data_top_p
     # print(save_data)
     flash_data_save_path = case_root_path + f'/{flash_source}_flash_data.csv'
     save_data.to_csv(flash_data_save_path,index=False)
-    print('閃電資料已建立')
+    print('flash_data已建立')
 
 
 # # ## 變數設定

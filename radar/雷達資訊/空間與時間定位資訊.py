@@ -2,12 +2,13 @@ import pyart
 
 
 data_top_path = "C:/Users/steve/python_data/radar"
-year = '2024'
-month = '05'
-day = '23'
-hh = '08'
-mm = '02'
+year = '2021'
+month = '11'
+day = '26'
+hh = '07'
+mm = '36'
 ss = '00'
+
 
 
 
@@ -28,13 +29,13 @@ print(f"Range (gate 數): {radar.ngates} bins")
 print(f"Gate spacing   : {radar.range['meters_between_gates']} m")
 print(f"First gate dist: {radar.range['meters_to_center_of_first_gate']} m")
 
-## Azimuth / Elevation
+# Azimuth / Elevation
 print(f"Azimuth shape  : {radar.azimuth['data'].shape}")
 print(f"Elevation shape: {radar.elevation['data'].shape}")
 print(f"Azimuth (0-5): {radar.azimuth['data'][:5]}")
 print(f"Elevation (0-5): {radar.elevation['data'][:5]}")
-
-## 時間資訊
+print(f"sweep elevation:{radar.fixed_angle['data']}")
+# 時間資訊
 print(f"Time shape     : {radar.time['data'].shape}")
 print(f"Time units     : {radar.time['units']}")
 print(f"Time (0-5)     : {radar.time['data'][:5]} 秒")

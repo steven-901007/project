@@ -21,7 +21,7 @@ station_lat = 22.98
 
 # print(len(point_lon),len(point_lat))
 ## 繪圖
-data = pd.read_csv(f"{data_top_path}/閃電資料/EN/依時間分類/2021/06/202106010854.csv")
+data = pd.read_csv(f"{data_top_path}/flash_data/EN/sort_by_time/2021/06/202106010854.csv")
 
 point_lon = data['lon']
 point_lat = data['lat']

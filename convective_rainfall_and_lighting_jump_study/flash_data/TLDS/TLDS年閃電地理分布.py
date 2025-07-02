@@ -16,7 +16,7 @@ year = 2024
 flash_type = 'CG'  # 可選 'IC', 'CG', 'all'
 flash_type = 'IC'
 # ==== 讀取 TLDS 資料 ====
-data_folder = f"{data_top_path}/閃電資料/raw_data/TLDS/{year}/"
+data_folder = f"{data_top_path}/flash_data/raw_data/TLDS/{year}/"
 file_paths = sorted(glob(os.path.join(data_folder, f"{year}*")))
 all_data = []
 

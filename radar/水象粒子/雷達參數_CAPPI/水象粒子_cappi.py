@@ -9,11 +9,12 @@ import matplotlib.patches as mpatches
 
 # ==== 路徑與時間設定 ====
 data_top_path = "C:/Users/steve/python_data/radar"
-year, month, day = '2024', '05', '23'
-hh, mm, ss = '00', '02', '00'
+year, month, day = '2021', '06', '12'
+hh, mm, ss = '00', '16', '00'
 time_str = f"{year}{month}{day}{hh}{mm}{ss}"
-file_path = f"{data_top_path}/PID/{time_str}.nc"
+file_path = f"{data_top_path}/PID/{year}{month}{day}/{time_str}.nc"
 shapefile_path = f"{data_top_path}/Taiwan_map_data/COUNTY_MOI_1090820.shp"
+z_target = 1000
 
 # ==== 中文顯示設定 ====
 plt.rcParams['font.sans-serif'] = [u'MingLiu']
@@ -33,12 +34,12 @@ grid = pyart.map.grid_from_radars(
     gridding_algo='map_gates_to_grid',
     weighting_function='Barnes',  # 或 'Cressman'
 
-    roi_func='constant',          # 固定半徑函數
-    constant_roi=1500             # 搜尋半徑
+    roi_func='dist_beam',          # 固定半徑函數
+    # constant_roi=800           # 搜尋半徑
 )
 
 # ==== 找出距離 z_target 最近的層 ====
-z_target = 2000
+
 z_levels = grid.z['data']
 z_index = np.abs(z_levels - z_target).argmin()
 print(f"選擇切層 z_index={z_index}, 對應高度為 {z_levels[z_index]} m")

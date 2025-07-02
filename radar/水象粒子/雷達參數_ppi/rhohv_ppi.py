@@ -5,9 +5,13 @@ from datetime import datetime
 import numpy as np
 # === 路徑與時間設定 ===
 data_top_path = "C:/Users/steve/python_data/radar"
-year, month, day = '2024', '05', '23'
-hh, mm, ss = '00', '02', '00'
-file_path = f"{data_top_path}/PID/{year}{month}{day}{hh}{mm}{ss}.nc"
+year = '2021'
+month = '11'
+day = '26'
+hh = '07'
+mm = '36'
+ss = '00'
+file_path = f"{data_top_path}/PID/{year}{month}{day}/{year}{month}{day}{hh}{mm}{ss}.nc"
 shapefile_path = f"{data_top_path}/Taiwan_map_data/COUNTY_MOI_1090820.shp"
 plt.rcParams['font.sans-serif'] = [u'MingLiu']
 plt.rcParams['axes.unicode_minus'] = False
@@ -19,7 +23,7 @@ time_dt = datetime.strptime(time_str, "%Y%m%d%H%M%S").strftime("%Y/%m/%d %H:%M:%
 radar.fields['cross_correlation_ratio']['data'] = np.ma.masked_equal(
     radar.fields['cross_correlation_ratio']['data'], -999
 )
-sweep_num = 2
+sweep_num = 4
 
 # === 畫 RHOHV PPI ===
 display = pyart.graph.RadarMapDisplay(radar)

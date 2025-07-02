@@ -8,13 +8,17 @@ from cartopy.io.shapereader import Reader
 
 # ==== 基本設定 ====
 data_top_path = "C:/Users/steve/python_data/radar"
-year = '2024'
-month = '05'
-day = '23'
-hh = '00'
-mm = '02'
+year = '2021'
+month = '06'
+day = '12'
+hh = '20'
+mm = '19'
 ss = '00'
 
+draw_line_or_not = 'yes' #yes or no
+# 設定兩條射線角度（單位：度，0 度為正北，順時針）
+beam_angle_1 = 180  # 第一條射線角度
+beam_angle_2 = 290  # 第二條射線角度
 
 shapefile_path = f"{data_top_path}/Taiwan_map_data/COUNTY_MOI_1090820.shp"
 
@@ -102,6 +106,30 @@ ax.add_geometries(
     edgecolor='green',
     linewidth=1,
 )
+
+# ==== 畫雷達中心可控角度的射線 ====
+if draw_line_or_not == 'yes':
+
+    # 雷達位置（五分山）
+    radar_lon = 121.792
+    radar_lat = 25.067
+
+
+
+    # 射線長度（單位：度，約 1 度 = 100 km，可自行調整）
+    line_length = 1.0
+
+    # 計算第一條射線終點座標
+    import math
+    end_lon_1 = radar_lon + line_length * math.sin(math.radians(beam_angle_1))
+    end_lat_1 = radar_lat + line_length * math.cos(math.radians(beam_angle_1))
+
+    # 計算第二條射線終點座標
+    end_lon_2 = radar_lon + line_length * math.sin(math.radians(beam_angle_2))
+    end_lat_2 = radar_lat + line_length * math.cos(math.radians(beam_angle_2))
+
+    ax.plot([radar_lon, end_lon_1], [radar_lat, end_lat_1], color='black', linewidth=2, transform=ccrs.PlateCarree())
+    ax.plot([radar_lon, end_lon_2], [radar_lat, end_lat_2], color='black', linewidth=2, transform=ccrs.PlateCarree())
 
 # 地圖設定
 ax.set_extent([119, 123.5, 21, 26.5])  # 台灣範圍

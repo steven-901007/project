@@ -45,8 +45,8 @@ def flash_color_set(x):
         return 'blue'
 
 
-## 讀取閃電資料
-flash_data_path = f"{data_top_path}/閃電資料/依測站分類/{dis}km/{year}/{month}/{station_name}.csv"
+## 讀取flash_data
+flash_data_path = f"{data_top_path}/flash_data/sort_by_time/{dis}km/{year}/{month}/{station_name}.csv"
 flash_rawdata = pd.read_csv(flash_data_path)
 # print(flash_rawdata['data time'])
 flash_rawdata['data time'] = pd.to_datetime(flash_rawdata['data time'])

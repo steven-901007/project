@@ -2,12 +2,13 @@ import pyart
 
 
 data_top_path = "C:/Users/steve/python_data/radar"
-year = '2024'
-month = '05'
-day = '23'
-hh = '08'
-mm = '02'
+year = '2021'
+month = '11'
+day = '26'
+hh = '07'
+mm = '36'
 ss = '00'
+
 
 
 
