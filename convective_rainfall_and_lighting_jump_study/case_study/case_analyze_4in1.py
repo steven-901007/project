@@ -7,9 +7,9 @@ import calendar
 #記得要先執行前估命中個案
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 year = '2021' #年分
-month = '06' #月份
+month = '08' #月份
 day = '12'
-time_start = 11 #(00~23)
+time_start = 00 #(00~23)
 time_end = 23 #(00~23)
 dis = 36
 alpha = 2 #統計檢定
@@ -17,9 +17,9 @@ flash_source = 'EN' # EN or TLDS
 # station_name = 'O1P470' #前估max
 # station_name = '466880' #板橋
 # station_name = '01F680'
-station_name = '01C400'
-# station_name = 'C0AH30' #五分山
-one_month_draw = False
+# station_name = '01C400'
+station_name = 'C0AH30' #五分山
+one_month_draw = True
 
 if one_month_draw == True:
     

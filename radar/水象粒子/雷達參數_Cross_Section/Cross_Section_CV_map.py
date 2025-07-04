@@ -26,8 +26,8 @@ def cross_section_map(data_top_path, year, month, day, hh, mm, ss, lon0, lon1, l
     radar_lon = radar.longitude['data'][0]
 
     # ==== colormap 設定 ====
-    cmap = cm.get_cmap('turbo')  # ✅ 平滑 colormap
-    norm = Normalize(vmin=0, vmax=70)
+    # cmap = cm.get_cmap('turbo')  # ✅ 平滑 colormap
+    # norm = Normalize(vmin=0, vmax=70)
 
     # ==== 畫圖開始 ====
     fig = plt.figure(figsize=(10, 8))
@@ -40,8 +40,8 @@ def cross_section_map(data_top_path, year, month, day, hh, mm, ss, lon0, lon1, l
         sweep=0,
         vmin=0,
         vmax=70,
-        cmap=cmap,
-        norm=norm,
+        # cmap=cmap,
+        # norm=norm,
         ax=ax,
         colorbar_label='合成雷達回波 (dBZ)',
         title=f"CV\n觀測時間：{time_dt}",
@@ -65,9 +65,9 @@ def cross_section_map(data_top_path, year, month, day, hh, mm, ss, lon0, lon1, l
     ax.add_feature(shape_feature, linewidth=1)
 
     # ==== 畫雷達位置與剖面線 ====
-    ax.plot(radar_lon, radar_lat, 'bo', color='black', zorder=4, markersize=5, label='Radar')
+    ax.plot(radar_lon, radar_lat, 'x', color='r', zorder=5, markersize=15, label='Radar')
     ax.plot([lon0, lon1], [lat0, lat1], '-', color='black', zorder=4, linewidth=3, label='剖面線')
-
+    print(radar_lon,radar_lat)
     # ==== 顯示範圍與圖例 ====
     ax.set_extent([119, 123.5, 21, 26.5])
     gl = ax.gridlines(draw_labels=True)
@@ -81,13 +81,13 @@ def cross_section_map(data_top_path, year, month, day, hh, mm, ss, lon0, lon1, l
 
 cross_section_map(# ==== 基本設定 ====
 data_top_path = "C:/Users/steve/python_data/radar",
-year = '2021',
-month = '06',
-day = '12',
+year = '2024',
+month = '05',
+day = '23',
 hh = '00',
-mm = '16',
+mm = '02',
 ss = '00',
-lon0 = 121.77,
-lat0 = 25.07,
-lon1 = 121.77,
+lon0 = 121.77305603027344,
+lat0 = 25.073055267333984,
+lon1 = 121.77305603027344,
 lat1 = 26.07)

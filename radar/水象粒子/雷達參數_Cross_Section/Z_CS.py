@@ -7,17 +7,22 @@ import matplotlib.patches as mpatches
 
 # ==== 檔案與時間設定 ====
 data_top_path = "C:/Users/steve/python_data/radar"
-year, month, day = '2021', '06', '12'
-hh, mm, ss = '00', '16', '00'
+year = '2024'
+month = '05'
+day = '23'
+hh = '00'
+mm = '02'
+ss = '00'
 time_str = f"{year}{month}{day}{hh}{mm}{ss}"
 file_path = f"{data_top_path}/PID/{year}{month}{day}/{time_str}.nc"
 
 
 
+
 # ==== 切線座標設定 ====
-lon0 = 121.77
-lat0 = 25.07
-lon1 = 121.77
+lon0 = 121.77305603027344
+lat0 = 25.073055267333984
+lon1 = 121.77305603027344
 lat1 = 26.07
 # 任意兩點
 

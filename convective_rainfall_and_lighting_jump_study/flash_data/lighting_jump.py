@@ -5,7 +5,7 @@ import os
 
 
 year = '2021'     # 年分
-month = '05'      # 月份
+month = '04'      # 月份
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 alpha = 2         # 統計檢定
 dis = 36          #檢定區半徑

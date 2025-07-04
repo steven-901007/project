@@ -9,9 +9,13 @@ import pandas as pd
 # ==== 路徑與時間設定 ====
 data_top_path = "C:/Users/steve/python_data/radar"
 # data_top_path = "home/steven/python_data/radar"
-target_date = "20211126"  # yyyymmdd
-one_day_or_not = True  # True = 一次處理一天 False = 一次處理一個時間點
 
+one_day_or_not = True  # True = 一次處理一天 False = 一次處理一個時間點
+target_date = "20240523"  #一次處理一天用這個
+single_vol_file_name = "20210523000200.VOL" #一次處理一筆資料用這個
+
+if one_day_or_not == False:
+    target_date = single_vol_file_name[:8]
 vol_folder_path = f"{data_top_path}/{target_date}_u.RCWF"
 output_folder = f"{data_top_path}/PID/{target_date}"
 stats_folder = f"{output_folder}/stats"
@@ -22,8 +26,7 @@ os.makedirs(stats_folder, exist_ok=True)
 if one_day_or_not:
     vol_files = sorted(glob(os.path.join(vol_folder_path, "*.VOL")))
 else:
-    ## 這裡請你填入要處理的單一 VOL 檔名 (不含路徑)
-    single_vol_file_name = "20211126073600.VOL"
+
     vol_files = [os.path.join(vol_folder_path, single_vol_file_name)]
 
 # ==== 處理每一個 VOL 檔 ====
