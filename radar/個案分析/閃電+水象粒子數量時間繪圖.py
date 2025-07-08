@@ -11,7 +11,7 @@ from tqdm import tqdm
 # ==== 參數設定 ====
 target_date = "20210612"
 data_folder = f"C:/Users/steve/python_data/radar/PID/{target_date}"
-flash_path = r"C:/Users/steve/python_data/convective_rainfall_and_lighting_jump/個案分析/01C400/36_EN_20210612_1100to2300/EN_flash_data.csv"
+flash_path = r"C:/Users/steve/python_data/convective_rainfall_and_lighting_jump/case_study/01C400/36_EN_20210612_1100to2300/EN_flash_data.csv"
 
 # 想統計的分類
 target_classes = [4]  # 0:Rain、2:Wet Snow、4:Graupel
@@ -106,7 +106,7 @@ from tqdm import tqdm
 # ==== 參數設定 ====
 target_date = "20210612"
 data_folder = f"C:/Users/steve/python_data/radar/PID/{target_date}"
-flash_path = r"C:/Users/steve/python_data/convective_rainfall_and_lighting_jump/個案分析/01C400/36_EN_20210612_1100to2300/EN_flash_data.csv"
+flash_path = r"C:/Users/steve/python_data/convective_rainfall_and_lighting_jump/case_study/01C400/36_EN_20210612_1100to2300/EN_flash_data.csv"
 
 # 想統計的分類
 target_classes = [4]  # 0:Rain、2:Wet Snow、4:Graupel

@@ -43,12 +43,12 @@ fileset(f"{data_top_path}/前估後符")
 fileset(f"{data_top_path}/前估後符/{data_source}_{year}{month}")
 
 ##強降雨發生但沒有lighting jump
-data_path = f"{data_top_path}/雨量資料/測站資料/{year}_{month}.csv"
+data_path = f"{data_top_path}/rain_data/測站資料/{year}_{month}.csv"
 check_folder(data_path)
 data = pd.read_csv(data_path)
 
 # print(data)
-check_folder(f"{data_top_path}/雨量資料/對流性降雨{dis}km/{year}/{month}")
+check_folder(f"{data_top_path}/rain_data/對流性降雨{dis}km/{year}/{month}")
 check_folder(f"{data_top_path}/flash_data/{data_source}/lighting_jump/{data_source}_{year}{month}_{dis}km")
 prefigurance_station_name_list = []#前估測站名稱
 prefigurance_hit_list = []#個測站命中的list
@@ -56,12 +56,12 @@ total_prefigurance_list = []#前估總量(lighting jump and rain + non_lighting 
 prefigurance_lon_data_list = []
 prefigurance_lat_data_list = []
 
-month_path =f"{data_top_path}/雨量資料/對流性降雨{dis}km/{year}/{month}/*.csv"
+month_path =f"{data_top_path}/rain_data/對流性降雨{dis}km/{year}/{month}/*.csv"
 
 result  =glob.glob(month_path)
 
 for rain_station_path in tqdm(result,desc=f"{year}{month}資料處理中...."):
-# rain_station_path = f"{data_top_path}/雨量資料/對流性降雨{dis}km/{year}/{month}/C0V730.csv"
+# rain_station_path = f"{data_top_path}/rain_data/對流性降雨{dis}km/{year}/{month}/C0V730.csv"
     rain_station_name = os.path.basename(rain_station_path).split('.')[0]
     # print(rain_station_name)
 

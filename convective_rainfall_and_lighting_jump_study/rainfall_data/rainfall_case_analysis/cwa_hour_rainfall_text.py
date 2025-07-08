@@ -15,15 +15,15 @@ pd.set_option('future.no_silent_downcasting', True)
 station_name_data_list = []
 rmse_data_list = []
 # 讀取資料
-hour_data_paths = f"{data_top_path}/雨量資料/cwa小時雨量測試/hour_data/**.csv"
+hour_data_paths = f"{data_top_path}/rain_data/cwa小時雨量測試/hour_data/**.csv"
 result = glob(hour_data_paths)
 # hour_data_path = result[0]
 for hour_data_path in tqdm(result,desc='資料存取中...'):
     station_name = os.path.basename(hour_data_path).split('.')[0]
     # print(station_name)
     station_name_data_list.append(station_name)
-    hour_datas = pd.read_csv(f"{data_top_path}/雨量資料/cwa小時雨量測試/hour_data/{station_name}.csv")
-    min_data_to_hour_data = pd.read_csv(f"{data_top_path}/雨量資料/cwa小時雨量測試/min_data_to_hour/{station_name}.csv")
+    hour_datas = pd.read_csv(f"{data_top_path}/rain_data/cwa小時雨量測試/hour_data/{station_name}.csv")
+    min_data_to_hour_data = pd.read_csv(f"{data_top_path}/rain_data/cwa小時雨量測試/min_data_to_hour/{station_name}.csv")
 
     # 檢查 'data time' 欄位是否為 datetime 格式，如果不是則進行轉換
     if hour_datas['data time'].dtype != 'datetime64[ns]':
@@ -42,5 +42,5 @@ save_data = {
     'station name': station_name_data_list,
     'RMSE':rmse_data_list
 }
-save_path = f"{data_top_path}/雨量資料/cwa小時雨量測試/RMSE.csv"
+save_path = f"{data_top_path}/rain_data/cwa小時雨量測試/RMSE.csv"
 pd.DataFrame(save_data).to_csv(save_path,index=False)

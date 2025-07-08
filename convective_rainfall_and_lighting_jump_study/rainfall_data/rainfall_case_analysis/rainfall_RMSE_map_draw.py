@@ -19,7 +19,7 @@ data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jum
 
 
 
-station_data_path = f"{data_top_path}/雨量資料/測站資料/{year}_{month}.csv"
+station_data_path = f"{data_top_path}/rain_data/測站資料/{year}_{month}.csv"
 station_data = pd.read_csv(station_data_path)
 # print(station_data)
 
@@ -28,7 +28,7 @@ RMSE_lat_list = []
 RMSE_lsit = []
 ##降雨資料讀取
 
-RMSE_data_path = f"{data_top_path}/雨量資料/cwa小時雨量測試/RMSE.csv"
+RMSE_data_path = f"{data_top_path}/rain_data/cwa小時雨量測試/RMSE.csv"
 RMSE_datas = pd.read_csv(RMSE_data_path)
 # print(RMSE_datas)
 

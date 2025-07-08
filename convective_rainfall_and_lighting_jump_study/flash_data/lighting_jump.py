@@ -2,11 +2,12 @@ import pandas as pd
 from glob import glob
 from tqdm import tqdm
 import os
-
+import sys
 
 year = '2021'     # 年分
-month = '04'      # 月份
-data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
+month = sys.argv[1].zfill(2) if len(sys.argv) > 1 else "05" 
+# data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
+data_top_path = "/home/steven/python_data/convective_rainfall_and_lighting_jump"
 alpha = 2         # 統計檢定
 dis = 36          #檢定區半徑
 data_source = 'EN'#flash_data來源
@@ -86,7 +87,8 @@ def calculate_lj(flash_datas, window=5):
     return lj_list
 
 # 將數據放入 DataFrame
-result = glob(f"{data_top_path}/flash_data/{data_source}/sort_by_time/{data_source}_{year}{month}_{dis}km/**.csv")
+result = glob(f"{data_top_path}/flash_data/{data_source}/sort_by_station/{data_source}_{year}{month}_{dis}km/**.csv")
+# print(result)
 for flash_data_path in tqdm(result,desc='data setting...'):
     # print(flash_data_path)
     station_name = os.path.basename(flash_data_path).split('.')[0]

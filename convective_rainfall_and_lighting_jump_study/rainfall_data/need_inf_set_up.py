@@ -2,20 +2,33 @@ import pandas as pd
 import glob
 import re
 from tqdm import tqdm
-import importset
 from datetime import datetime, timedelta
-year = '2021' #年分
-month = '09' #月份
+import os
+
+
+import sys
+##變數設定
+#記得要先執行前估命中個案
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
+# data_top_path = "/home/steven/python_data/convective_rainfall_and_lighting_jump"
+year = sys.argv[2].zfill(2) if len(sys.argv) > 1 else "2021"
+month = sys.argv[1].zfill(2) if len(sys.argv) > 1 else "05" 
+
+def fileset(path):    #建立資料夾
+
+    if not os.path.exists(path):
+        os.makedirs(path)
+        print(path + " 已建立") 
+
 
 
 ##建立資料夾
-file_path = f"{data_top_path}/雨量資料/降雨data/{year}/{month}/"
-importset.fileset(file_path)
+file_path = f"{data_top_path}/rain_data/rainfall_data/{year}/{month}/"
+fileset(file_path)
 ## 讀取每月資料
 
 
-month_path = f"{data_top_path}/雨量資料/raw_data/{year}_{month}/{month}"
+month_path = f"{data_top_path}/rain_data/raw_data/{year}/{month}/{month}"
 result  =glob.glob(month_path+"/*")
 
 for day_path in tqdm(result,desc='資料建立'):
@@ -26,7 +39,7 @@ for day_path in tqdm(result,desc='資料建立'):
 
     result  =glob.glob(day_path+'/*')
     for rain_data_path in result:
-        time = rain_data_path.split('\\')[-1].split('.')[0]
+        time = os.path.splitext(os.path.basename(rain_data_path))[0].split('.')[0]
         time_obj = datetime.strptime(time, '%Y%m%d%H%M')+ timedelta(hours=8) #將UTC轉成LT
         # time_obj = datetime.strptime(time, '%Y%m%d%H%M')
         time = time_obj.strftime('%Y%m%d%H%M')
@@ -36,7 +49,7 @@ for day_path in tqdm(result,desc='資料建立'):
         rainfall_list = []
         # 每10分鐘資料處理 rain data >10mm (10min)
         line = 0
-        with open(rain_data_path, 'r') as files:
+        with open(rain_data_path, 'r', encoding='big5') as files:
             for file in files:
                 elements = re.split(re.compile(r'\s+|\n|\*'),file.strip()) 
 
@@ -62,7 +75,7 @@ for day_path in tqdm(result,desc='資料建立'):
                 'station name':rain_data_list,
                 'rain data':rainfall_list
             }
-            pd.DataFrame(rain_data_save, dtype=str).to_csv(f"{data_top_path}/雨量資料/降雨data/{year}/{month}/{time}.csv",index=False)
+            pd.DataFrame(rain_data_save, dtype=str).to_csv(f"{data_top_path}/rain_data/rainfall_data/{year}/{month}/{time}.csv",index=False)
 
 from datetime import datetime
 now_time = datetime.now()

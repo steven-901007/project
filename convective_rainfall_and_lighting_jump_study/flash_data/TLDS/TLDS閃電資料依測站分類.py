@@ -38,7 +38,7 @@ flash_datas_df = flash_rawdata_df[['日期時間', '經度', '緯度']].copy()
 flash_datas_df['日期時間'] = pd.to_datetime(flash_datas_df['日期時間']).dt.floor('min')
 
 # 讀取測站資料
-station_datas_path = f"{data_top_path}/雨量資料/測站資料/{year}_{month}.csv"
+station_datas_path = f"{data_top_path}/rain_data/測站資料/{year}_{month}.csv"
 station_datas = pd.read_csv(station_datas_path)
 
 # 遍歷測站，計算距離並保存結果

@@ -15,9 +15,9 @@ import matplotlib as mpl
 def case_map_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,flash_source):
     prefigurance_path = f"{data_top_path}/前估後符/{flash_source}_{year}{month}/前估.csv"
     post_agreement_path = f"{data_top_path}/前估後符/{flash_source}_{year}{month}/後符.csv"
-    position_path = f"{data_top_path}/雨量資料/測站資料/{year}_{month}.csv"
-    range_station_name_path = f"{data_top_path}/雨量資料/測站範圍內測站數/{year}_{month}/{station_name}.csv"
-    rain_data_path = f"{data_top_path}/個案分析/{station_name}/{dis}_{flash_source}_{year}{month}{day}_{str(time_start).zfill(2)}00to{str(time_end).zfill(2)}00/rain_raw_data.csv"
+    position_path = f"{data_top_path}/rain_data/測站資料/{year}_{month}.csv"
+    range_station_name_path = f"{data_top_path}/rain_data/測站範圍內測站數/{year}_{month}/{station_name}.csv"
+    rain_data_path = f"{data_top_path}/case_study/{station_name}/{dis}_{flash_source}_{year}{month}{day}_{str(time_start).zfill(2)}00to{str(time_end).zfill(2)}00/rain_raw_data.csv"
 
 
     prefigurance_datas = pd.read_csv(prefigurance_path)
@@ -126,7 +126,7 @@ def case_map_draw(year,month,day,time_start,time_end,dis,station_name,data_top_p
 
     # 顯示地圖
 
-    case_root_path =  f"{data_top_path}/個案分析/{station_name}/{dis}_{flash_source}_{year}{month}{day}_{str(time_start).zfill(2)}00to{str(time_end).zfill(2)}00"
+    case_root_path =  f"{data_top_path}/case_study/{station_name}/{dis}_{flash_source}_{year}{month}{day}_{str(time_start).zfill(2)}00to{str(time_end).zfill(2)}00"
     pic_save_path = case_root_path + '/map.png'
     plt.savefig(pic_save_path, bbox_inches='tight', dpi=300)
     print('地圖已建立')

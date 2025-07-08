@@ -11,7 +11,7 @@ data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jum
 
 chouse_title = 'rain' # 10 or rain
 
-station_name_path = f"{data_top_path}/雨量資料/測站資料/{year}_{month}.csv"
+station_name_path = f"{data_top_path}/rain_data/測站資料/{year}_{month}.csv"
 station_name_datas = pd.read_csv(station_name_path)
 station_name_data_list = station_name_datas['station name'].to_list()
 station_real_name_data_df = station_name_datas['station real name']
@@ -20,7 +20,7 @@ station_rain_sum_list = [0 for i in station_name_data_list]
 
 ##資料建立
 
-month_path = f"{data_top_path}/雨量資料/raw_data/{year}_{month}/{month}"
+month_path = f"{data_top_path}/rain_data/raw_data/{year}_{month}/{month}"
 result  =glob(month_path+"/*")
 
 for day_path in tqdm(result,desc='資料建立'):
@@ -67,7 +67,7 @@ raw_rain_data_df = pd.DataFrame(raw_rain_data)
 # print(raw_rain_data_df)
 
 ## cwa資料
-cwa_rain_data_path = f"{data_top_path}/雨量資料/cwa各測站每日降雨資料/{year}_{month}.csv"
+cwa_rain_data_path = f"{data_top_path}/rain_data/cwa各測站每日降雨資料/{year}_{month}.csv"
 cwa_rain_datas = pd.read_csv(cwa_rain_data_path)
 cwa_rain_datas = cwa_rain_datas.rename(columns={
     '測站':'station real name',
@@ -101,7 +101,7 @@ print(f"{year}年{month}月raw data 和cwa data交集的測站數為{cwa_and_raw
 
 
 ##raw測站所計算的結果存檔
-save_data_path = f"{data_top_path}/雨量資料/{year}{month}_total_rain_sum.csv"
+save_data_path = f"{data_top_path}/rain_data/{year}{month}_total_rain_sum.csv"
 raw_rain_data_df.to_csv(save_data_path,index=False,encoding='utf-8-sig')
 
 #繪圖

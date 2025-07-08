@@ -6,9 +6,9 @@ from tqdm import tqdm
 import sys
 
 
-month =  sys.argv[1] if len(sys.argv) > 1 else "01" 
-year = '2021'
-month = '01'
+month =  sys.argv[2] if len(sys.argv) > 1 else "05" 
+year = sys.argv[1] if len(sys.argv) > 1 else '2024'
+
 data_top_path = "/home/steven/python_data/convective_rainfall_and_lighting_jump"
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 data_time_zone = 'LCT'  # LCT or UTC

@@ -24,8 +24,11 @@ flash_data_df = pd.read_csv(file_path)
 flash_data_df['Time'] = pd.to_datetime(flash_data_df['Time'], format="%Y-%m-%d %H:%M:%S", errors='coerce')
 flash_data_df = flash_data_df.dropna(subset=['Time'])
 
+## 篩選指定月份的資料
+flash_data_df = flash_data_df[flash_data_df['Time'].dt.month == int(month)]
+
 ## === 讀測站資料 ===
-station_datas_path = f"{data_top_path}/雨量資料/測站資料/{year}_{month}.csv"
+station_datas_path = f"{data_top_path}/rain_data/測站資料/{year}_{month}.csv"
 station_datas_df = pd.read_csv(station_datas_path)
 
 ## === Haversine公式 計算兩點距離 ===

@@ -24,14 +24,14 @@ fileset(f"{data_top_path}/前估後符/{data_source}_{year}{month}_前估命中�
 
 
 #取得對流性降雨station name
-result = glob(f"{data_top_path}/雨量資料/對流性降雨{dis}km/{year}/{month}/**.csv")
+result = glob(f"{data_top_path}/rain_data/對流性降雨{dis}km/{year}/{month}/**.csv")
 for convective_rainfall_path in result:
-# convective_rainfall_path =f"{data_top_path}/雨量資料/對流性降雨36km/{year}/{month}/466880.csv"
+# convective_rainfall_path =f"{data_top_path}/rain_data/對流性降雨36km/{year}/{month}/466880.csv"
     station_name = os.path.basename(convective_rainfall_path).split('.')[0]
     # print(station_name)
 
     #取得周圍測站名稱
-    around_station_names_df = pd.read_csv(f"{data_top_path}/雨量資料/測站範圍內測站數/{year}_{month}/{station_name}.csv")
+    around_station_names_df = pd.read_csv(f"{data_top_path}/rain_data/測站範圍內測站數/{year}_{month}/{station_name}.csv")
     # print(around_station_names_df)
 
     #取得對流性降雨資料時間
@@ -57,7 +57,7 @@ for convective_rainfall_path in result:
 
     for convective_rainfall_time in tqdm(convective_rainfall_times_df,desc=f"{station_name}資料建立中"):
         convective_rainfall_time_str = convective_rainfall_time.strftime('%Y%m%d%H%M')
-        rainfall_path = f"{data_top_path}/雨量資料/降雨data/{year}/{month}/{convective_rainfall_time_str}.csv"
+        rainfall_path = f"{data_top_path}/rain_data/降雨data/{year}/{month}/{convective_rainfall_time_str}.csv"
         
         # 檢查檔案是否存在，避免出現錯誤
         if os.path.exists(rainfall_path):

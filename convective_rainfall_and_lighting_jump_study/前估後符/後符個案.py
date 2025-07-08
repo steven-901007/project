@@ -52,14 +52,14 @@ for LJ_path in result:
     # print(station_name)
 
     #取得周圍測站名稱
-    around_station_names_df = pd.read_csv(f"{data_top_path}/雨量資料/測站範圍內測站數/{year}_{month}/{station_name}.csv")
+    around_station_names_df = pd.read_csv(f"{data_top_path}/rain_data/測站範圍內測站數/{year}_{month}/{station_name}.csv")
     # print(around_station_names_df)
 
     #取得LJ資料時間
     LJ_datas = pd.read_csv(LJ_path)
     LJ_times_df = pd.to_datetime(LJ_datas['LJ_time'])
     # 取得對流性降雨資料
-    convective_rainfall_path = f"{data_top_path}/雨量資料/對流性降雨{dis}km/{year}/{month}/{station_name}.csv"
+    convective_rainfall_path = f"{data_top_path}/rain_data/對流性降雨{dis}km/{year}/{month}/{station_name}.csv"
     convective_rainfall_datas = pd.read_csv(convective_rainfall_path)
 
     # print(LJ_times_df)
@@ -88,7 +88,7 @@ for LJ_path in result:
         # print(rain_time)
         if pd.notnull(rain_time):
             rain_time_str = rain_time.strftime('%Y%m%d%H%M')
-            rainfall_path = f"{data_top_path}/雨量資料/降雨data/{year}/{month}/{rain_time_str}.csv"
+            rainfall_path = f"{data_top_path}/rain_data/降雨data/{year}/{month}/{rain_time_str}.csv"
             # print(rain_time_str)
             # 檢查檔案是否存在，避免出現錯誤
             if os.path.exists(rainfall_path):

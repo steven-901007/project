@@ -3,11 +3,14 @@ from case_draw import case_draw
 from case_map_draw import case_map_draw
 from flash_pattern import flash_pattern
 import calendar
+import sys
 ##變數設定
 #記得要先執行前估命中個案
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
-year = '2021' #年分
-month = '08' #月份
+# data_top_path = "/home/steven/python_data/convective_rainfall_and_lighting_jump"
+year = sys.argv[2].zfill(2) if len(sys.argv) > 1 else "2021"
+month = sys.argv[1].zfill(2) if len(sys.argv) > 1 else "06" 
+
 day = '12'
 time_start = 00 #(00~23)
 time_end = 23 #(00~23)

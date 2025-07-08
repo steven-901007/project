@@ -13,10 +13,10 @@ def fileset(path):    #建立資料夾
         os.makedirs(path)
         print(path + " 已建立") 
 
-fileset(f"{data_top_path}/雨量資料/cwa小時雨量測試/min_data_to_hour")
+fileset(f"{data_top_path}/rain_data/cwa小時雨量測試/min_data_to_hour")
 
 # 設置路徑
-station_name_paths = os.path.join(data_top_path, "雨量資料/cwa小時雨量測試/hour_data/**")
+station_name_paths = os.path.join(data_top_path, "rain_data/cwa小時雨量測試/hour_data/**")
 result = glob(station_name_paths)
 for station_name_path in result:
     # print(station_name_path)
@@ -31,7 +31,7 @@ for station_name_path in result:
         ten_min_rain_data_save = []
 
         # 讀取每個十分鐘雨量的檔案
-        ten_min_rain_paths = os.path.join(data_top_path, f"雨量資料/降雨data/{year}/{month}/**.csv")
+        ten_min_rain_paths = os.path.join(data_top_path, f"rain_data/降雨data/{year}/{month}/**.csv")
         ten_min_rain_result = glob(ten_min_rain_paths)
 
         for ten_min_rain_path in tqdm(ten_min_rain_result, desc=f"{station_name}資料建立中"):
@@ -63,5 +63,5 @@ for station_name_path in result:
     # print(hourly_rainfall)
 
     # 保存到CSV
-    save_path = f"{data_top_path}/雨量資料/cwa小時雨量測試/min_data_to_hour/{station_name}.csv"
+    save_path = f"{data_top_path}/rain_data/cwa小時雨量測試/min_data_to_hour/{station_name}.csv"
     hourly_rainfall.to_csv(save_path, index=False)

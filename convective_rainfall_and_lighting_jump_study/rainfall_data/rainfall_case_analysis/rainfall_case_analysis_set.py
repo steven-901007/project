@@ -2,7 +2,7 @@ import pandas as pd
 from openpyxl import Workbook
 from glob import glob
 from tqdm import tqdm
-from importset import fileset
+
 import re
 from openpyxl.styles import Font
 from datetime import datetime, timedelta
@@ -14,8 +14,28 @@ dis = 36
 
 station = 'V2C250'
 
+def fileset(path):    #建立資料夾
+    import os
+    
+    if not os.path.exists(path):
+        os.makedirs(path)
+        print(path + " 已建立") 
+
+
+
+def rain_station_location_data_to_list(data_top_path,year,month):## 讀取雨量站經緯度資料
+    import pandas as pd
+    data_path = f"{data_top_path}/rain_data/測站資料/{year}_{month}.csv"
+    data = pd.read_csv(data_path)
+    station_data_name = data['station name'].to_list()
+    station_real_data_name = data['station real name'].to_list()
+    lon_data = data['lon'].to_list()
+    lat_data = data['lat'].to_list()
+    # print(data)
+    return station_data_name,station_real_data_name,lon_data,lat_data
+
 print(station)
-file_path = f"{data_top_path}/雨量資料/{str(dis)}km個案分析/{month}/{station}"
+file_path = f"{data_top_path}/rain_data/{str(dis)}kmcase_study/{month}/{station}"
 fileset(file_path)
 
 ##save data set up
@@ -24,13 +44,13 @@ save_data_ws = save_data_wb.active
 
 
 ##周圍測站名稱建立
-around_station_data_path = f"{data_top_path}/雨量資料/測站範圍內測站數/{year}_{month}/{station}.csv"
+around_station_data_path = f"{data_top_path}/rain_data/測站範圍內測站數/{year}_{month}/{station}.csv"
 around_station_datas = pd.read_csv(around_station_data_path)
 around_station_datas['station name'] = around_station_datas['station name'].astype(str)
 # print(around_station_datas)
 
 #測站經緯度
-around_station_lon_lat_path = f"{data_top_path}/雨量資料/測站資料/{year}_{month}.csv"
+around_station_lon_lat_path = f"{data_top_path}/rain_data/測站資料/{year}_{month}.csv"
 around_station_lon_lat_datas = pd.read_csv(around_station_lon_lat_path)
 real_name = around_station_lon_lat_datas[around_station_lon_lat_datas['station name'] == station]['station real name'].iloc[0]
 print(real_name)
@@ -54,7 +74,7 @@ row_for_around_station_datas_lsit = around_station_datas['station name'].to_list
 
 col = 4
 
-month_path = f"{data_top_path}/雨量資料/{year}_{month}/{month}"
+month_path = f"{data_top_path}/rain_data/{year}_{month}/{month}"
 result  =glob(month_path+"/*")
 
 for day_path in tqdm(result,desc='資料建立'):
@@ -108,5 +128,5 @@ for day_path in tqdm(result,desc='資料建立'):
 
 
 save_data_ws.title = real_name
-save_data_path = f"{data_top_path}/雨量資料/{dis}km個案分析/{month}/{station}/{station}_rain_data.xlsx"
+save_data_path = f"{data_top_path}/rain_data/{dis}kmcase_study/{month}/{station}/{station}_rain_data.xlsx"
 save_data_wb.save(save_data_path)

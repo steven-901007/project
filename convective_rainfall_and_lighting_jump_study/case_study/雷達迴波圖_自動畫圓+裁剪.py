@@ -44,7 +44,7 @@ def fileset(path):    #建立資料夾
         print(path + " 已建立") 
 
 ##測站real name
-station_name_lon_lat_path = f"{data_top_path}/雨量資料/測站資料/{year}_{month}.csv"
+station_name_lon_lat_path = f"{data_top_path}/rain_data/測站資料/{year}_{month}.csv"
 station_name_lon_lat_datas = pd.read_csv(station_name_lon_lat_path)
 station_name_lon_lat_data = station_name_lon_lat_datas[station_name_lon_lat_datas['station name'] == station_name]
 target_realname = station_name_lon_lat_data['station real name'].iloc[0]

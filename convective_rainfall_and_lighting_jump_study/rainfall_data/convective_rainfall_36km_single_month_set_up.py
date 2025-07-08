@@ -4,18 +4,41 @@ import re
 import pandas as pd
 import os
 from tqdm import tqdm
-import importset
 
-
-year = '2021' #年分
-month = '05' #月份
+import sys
+##變數設定
+#記得要先執行前估命中個案
 data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
+# data_top_path = "/home/steven/python_data/convective_rainfall_and_lighting_jump"
+year = sys.argv[2].zfill(2) if len(sys.argv) > 1 else "2021"
+month = sys.argv[1].zfill(2) if len(sys.argv) > 1 else "05"
+
 dis = 36
 
-station_data_name,station_real_data_name,lon_data,lat_data = importset.rain_station_location_data_to_list(data_top_path,year,month)
+def fileset(path):    #建立資料夾
+    import os
+    
+    if not os.path.exists(path):
+        os.makedirs(path)
+        print(path + " 已建立") 
 
-file_path = f"{data_top_path}/雨量資料/對流性降雨{dis}km/{year}/{month}"
-importset.fileset(file_path)
+
+
+def rain_station_location_data_to_list(data_top_path,year,month):## 讀取雨量站經緯度資料
+    import pandas as pd
+    data_path = f"{data_top_path}/rain_data/station_data/{year}_{month}.csv"
+    data = pd.read_csv(data_path)
+    station_data_name = data['station name'].to_list()
+    station_real_data_name = data['station real name'].to_list()
+    lon_data = data['lon'].to_list()
+    lat_data = data['lat'].to_list()
+    # print(data)
+    return station_data_name,station_real_data_name,lon_data,lat_data
+
+station_data_name,station_real_data_name,lon_data,lat_data = rain_station_location_data_to_list(data_top_path,year,month)
+
+file_path = f"{data_top_path}/rain_data/CR_{dis}km/{year}/{month}"
+fileset(file_path)
 
 
 
@@ -23,7 +46,7 @@ importset.fileset(file_path)
 rain_data_36km_station_list_list = [[] for i in range(len(station_data_name))] ##二階list
 # print(rain_data_36km_sta_list_list)
 
-rain_data_paths = f"{data_top_path}/雨量資料/降雨data/{year}/{month}/**.csv"
+rain_data_paths = f"{data_top_path}/rain_data/rainfall_data/{year}/{month}/**.csv"
 result = glob(rain_data_paths)
 for rain_data_path in tqdm(result,desc='資料讀取中'):
 # rain_data_path = result[0]
@@ -36,7 +59,7 @@ for rain_data_path in tqdm(result,desc='資料讀取中'):
         if rain_data_rainfall >= 10:
             rain_data_station_name = row['station name']
             # print(row['station name'])
-            rain_data_station_path=  f"{data_top_path}/雨量資料/測站範圍內測站數/{year}_{month}/{rain_data_station_name}.csv"
+            rain_data_station_path=  f"{data_top_path}/rain_data/station_count_in_range/{year}_{month}/{rain_data_station_name}.csv"
             rain_data_stations = pd.read_csv(rain_data_station_path)
             # print(rain_data_stations)
             for rain_data in rain_data_stations['station name']:
@@ -51,12 +74,15 @@ for rain_data_path in tqdm(result,desc='資料讀取中'):
 ##資料建立
 for station in tqdm(range(len(rain_data_36km_station_list_list)),desc='資料建立'):
     if rain_data_36km_station_list_list[station] != []:
-        save_data = {
-            'time data':rain_data_36km_station_list_list[station]
-        }
-        save_data['time data'] = pd.to_datetime(save_data['time data']).strftime('%Y/%m/%d %H:%M')
+        save_data = pd.DataFrame({
+            'time data': rain_data_36km_station_list_list[station]
+        })
+        save_data['time data'] = pd.to_datetime(save_data['time data'], format='%Y%m%d%H%M', errors='coerce')
+        save_data = save_data.dropna(subset=['time data'])
+        save_data['time data'] = save_data['time data'].dt.strftime('%Y/%m/%d %H:%M')
 
-        save_path = f"{data_top_path}/雨量資料/對流性降雨{dis}km/{year}/{month}/{station_data_name[station]}.csv"
+
+        save_path = f"{data_top_path}/rain_data/CR_{dis}km/{year}/{month}/{station_data_name[station]}.csv"
         pd.DataFrame(save_data, dtype=str).to_csv(save_path,index=False)
 
 from datetime import datetime

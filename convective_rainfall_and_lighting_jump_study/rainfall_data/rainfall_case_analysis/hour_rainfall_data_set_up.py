@@ -32,10 +32,10 @@ def read_data_after_preamble(file_path, keyword):
     return data_df
 
 # 創建存放資料的資料夾
-fileset(f"{data_top_path}/雨量資料/cwa小時雨量測試/hour_data")
+fileset(f"{data_top_path}/rain_data/cwa小時雨量測試/hour_data")
 
 # 讀取資料並處理時間
-hour_rain_data_paths = f"{data_top_path}/雨量資料/小時雨量/{year}_hrrain/CWB/{year}{month}**.txt"
+hour_rain_data_paths = f"{data_top_path}/rain_data/小時雨量/{year}_hrrain/CWB/{year}{month}**.txt"
 result = glob(hour_rain_data_paths)
 keyword = '# stno'
 
@@ -59,4 +59,4 @@ for hour_rain_data_path in result:
     for station in tqdm(unique_stations, desc='資料建立中...'):
         station_data = hour_rain_auto_datas[hour_rain_auto_datas['stno'] == station][['yyyymmddhh', 'PP01']]
         station_data.columns = ['data time', 'one hour rain']
-        station_data.to_csv(f"{data_top_path}/雨量資料/cwa小時雨量測試/hour_data/{station}.csv", index=False)
+        station_data.to_csv(f"{data_top_path}/rain_data/cwa小時雨量測試/hour_data/{station}.csv", index=False)

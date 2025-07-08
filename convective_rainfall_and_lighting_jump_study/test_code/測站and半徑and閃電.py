@@ -63,7 +63,7 @@ for flash_path in result:
 
 ##底圖(地圖+半徑+測站)
 
-position_path = f"{data_top_path}/雨量資料/測站資料/{year}_{month}.csv"
+position_path = f"{data_top_path}/rain_data/測站資料/{year}_{month}.csv"
 position_datas = pd.read_csv(position_path)
 
 point_lon = position_datas[position_datas['station name'] == station_name]['lon'].iloc[0]

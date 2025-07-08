@@ -48,11 +48,11 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     full_time_df = pd.DataFrame(full_time_range, columns=['data time'])# 建立一個 DataFrame 包含完整的時間範圍
 
     ##測站資料
-    data_path = f"{data_top_path}/雨量資料/測站資料/{year}_{month}.csv"
+    data_path = f"{data_top_path}/rain_data/測站資料/{year}_{month}.csv"
     position_data = pd.read_csv(data_path)
     point_real_name = position_data[position_data['station name'] == station_name]['station real name'].iloc[0]
     ##資料讀取
-    case_root_path =  f"{data_top_path}/個案分析/{station_name}/{dis}_{flash_source}_{year}{month}{day}_{str(time_start).zfill(2)}00to{str(time_end).zfill(2)}00"
+    case_root_path =  f"{data_top_path}/case_study/{station_name}/{dis}_{flash_source}_{year}{month}{day}_{str(time_start).zfill(2)}00to{str(time_end).zfill(2)}00"
     rain_data_path = case_root_path + '/rain_raw_data.csv'
     flash_data_path = case_root_path + f'/{flash_source}_flash_data.csv'
     rain_data = pd.read_csv(rain_data_path)
@@ -66,7 +66,7 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     # print(full_time_df)
 
     ## 每分鐘flash_data
-    flash_data_for_every_min_df = pd.merge(flash_data,full_time_df,on='data time', how='outer').fillna(0)# 與原始資料合併，缺少的時間點補上 count = 0
+    flash_data_for_every_min_df = pd.merge(flash_data,full_time_df,on='data time', how='outer').fillna(0).infer_objects(copy=False)# 與原始資料合併，缺少的時間點補上 count = 0
     # print(flash_data_for_every_min_df)
 
     ## lighting jump and SR6
@@ -117,7 +117,7 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     # print(count_rain_data)
 
     
-    # this_case_prefigurance_hit_persent_paths = f"{data_top_path}/個案分析/前估命中個案/{year}_{month}/{station_name}_**.csv"
+    # this_case_prefigurance_hit_persent_paths = f"{data_top_path}/case_study/前估命中個案/{year}_{month}/{station_name}_**.csv"
     # # print(glob(this_case_prefigurance_hit_persent_paths))    
     # this_case_prefigurance_hit_persent_path = glob(this_case_prefigurance_hit_persent_paths)[0]
     # this_case_prefigurance_hit_persent_datas = pd.read_csv(this_case_prefigurance_hit_persent_path,parse_dates=['time data'])['time data']
@@ -173,7 +173,7 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     
     ##一次處理一個月資料用
     if one_month_draw == True:
-        case_root_path = f"{data_top_path}/個案分析/{station_name}_{dis}_{flash_source}_{year}{month}_{str(time_start).zfill(2)}00to{str(time_end).zfill(2)}00"
+        case_root_path = f"{data_top_path}/case_study/{station_name}_{dis}_{flash_source}_{year}{month}_{str(time_start).zfill(2)}00to{str(time_end).zfill(2)}00"
         fileset(case_root_path)
         pic_save_path = f"{case_root_path}/{year}{month}{day}.png" 
 
