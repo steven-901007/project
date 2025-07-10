@@ -43,14 +43,14 @@ def fileset(path):    #建立資料夾
 def case_data_set(year,month,day,time_start,time_end,dis,station_name,data_top_path,flash_source):
 
     #測站經緯度and36km的測站有哪些
-    stations_name_for_36km_path = f"{data_top_path}/rain_data/測站範圍內測站數/{year}_{month}/{station_name}.csv"
+    stations_name_for_36km_path = f"{data_top_path}/rain_data/station_count_in_range/{year}_{month}/{station_name}.csv"
     stations_name_for_36km_pd = pd.read_csv(stations_name_for_36km_path)
     # print(stations_name_for_36km_pd)
 
 
     ## 建立資料夾
-    case_station_path = f"{data_top_path}/case_study/{station_name}"
-    fileset(case_station_path) 
+    # case_station_path = f"{data_top_path}/case_study/{station_name}"
+    # fileset(case_station_path) 
     case_root_path = f"{data_top_path}/case_study/{station_name}/{dis}_{flash_source}_{year}{month}{day}_{str(time_start).zfill(2)}00to{str(time_end).zfill(2)}00"
     fileset(case_root_path)
 
