@@ -4,12 +4,20 @@ import os
 from tqdm import tqdm
 from datetime import datetime
 import sys
+
 ## === 參數設定 ===
-year = '2021'
-month = sys.argv[1].zfill(2) if len(sys.argv) > 1 else "05" 
-data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
-# data_top_path = "/home/steven/python_data/convective_rainfall_and_lighting_jump"
+
+month =  sys.argv[2] if len(sys.argv) > 1 else "05" 
+year = sys.argv[1] if len(sys.argv) > 1 else '2021'
 dis = 36  # 半徑(km)
+
+import platform
+if platform.system() == 'Windows':
+    data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
+elif platform.system() == 'Linux':
+    data_top_path = "/home/steven/python_data/convective_rainfall_and_lighting_jump"
+
+
 
 ## === 儲存資料夾建立 ===
 output_path = f"{data_top_path}/flash_data/EN/sort_by_station/EN_{year}{month}_{dis}km"
@@ -28,7 +36,7 @@ flash_data_df = flash_data_df.dropna(subset=['Time'])
 flash_data_df = flash_data_df[flash_data_df['Time'].dt.month == int(month)]
 
 ## === 讀測站資料 ===
-station_datas_path = f"{data_top_path}/rain_data/測站資料/{year}_{month}.csv"
+station_datas_path = f"{data_top_path}/rain_data/station_data/{year}_{month}.csv"
 station_datas_df = pd.read_csv(station_datas_path)
 
 ## === Haversine公式 計算兩點距離 ===
@@ -65,3 +73,5 @@ for index, row in tqdm(station_datas_df.iterrows(), total=station_datas_df.shape
     save_path = f"{output_path}/{station_name}.csv"
     flash_count_df.to_csv(save_path, index=False)
 
+now_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+print(f"{now_time} 完成 EN {year}/{month} flash_datasort_by_time，空白檔案已補上")

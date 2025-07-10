@@ -8,11 +8,16 @@ import os
 
 import sys
 ##變數設定
-#記得要先執行前估命中個案
-data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
-# data_top_path = "/home/steven/python_data/convective_rainfall_and_lighting_jump"
+
 year = sys.argv[2].zfill(2) if len(sys.argv) > 1 else "2021"
 month = sys.argv[1].zfill(2) if len(sys.argv) > 1 else "05" 
+
+import platform
+if platform.system() == 'Windows':
+    data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
+elif platform.system() == 'Linux':
+    data_top_path = "/home/steven/python_data/convective_rainfall_and_lighting_jump"
+
 
 def fileset(path):    #建立資料夾
 

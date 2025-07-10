@@ -11,9 +11,15 @@ import sys
 # ==== 參數設定 ====
 
 year =  sys.argv[1] if len(sys.argv) > 1 else "2018" 
-# data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
-data_top_path = "/home/steven/python_data/convective_rainfall_and_lighting_jump"
 lon_lat_gap = 0.02  # 經緯度切割間距
+
+import platform
+if platform.system() == 'Windows':
+    data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
+elif platform.system() == 'Linux':
+    data_top_path = "/home/steven/python_data/convective_rainfall_and_lighting_jump"
+
+
 
 # ==== 畫圖範圍 ====
 lon_min, lon_max = 120.0, 122.1

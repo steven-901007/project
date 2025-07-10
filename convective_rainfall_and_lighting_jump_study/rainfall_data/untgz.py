@@ -2,9 +2,15 @@ import tarfile
 import os
 import sys
 
-data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
-# data_top_path = "/home/steven/python_data/convective_rainfall_and_lighting_jump"
+
 year = sys.argv[1].zfill(2) if len(sys.argv) > 1 else "2021"
+
+import platform
+if platform.system() == 'Windows':
+    data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
+elif platform.system() == 'Linux':
+    data_top_path = "/home/steven/python_data/convective_rainfall_and_lighting_jump"
+
 
 ## 資料夾設定
 data_path = rf"{data_top_path}/rain_data/raw_data/{year}/"

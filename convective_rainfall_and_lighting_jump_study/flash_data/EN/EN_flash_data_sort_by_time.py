@@ -7,18 +7,23 @@ import sys
 
 
 month =  sys.argv[2] if len(sys.argv) > 1 else "05" 
-year = sys.argv[1] if len(sys.argv) > 1 else '2024'
+year = sys.argv[1] if len(sys.argv) > 1 else '2021'
 
-data_top_path = "/home/steven/python_data/convective_rainfall_and_lighting_jump"
-data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 data_time_zone = 'LCT'  # LCT or UTC
 
-def fileset(path):
-    if not os.path.exists(path):
-        os.makedirs(path)
-        print(path + " 已建立") 
+import platform
+if platform.system() == 'Windows':
+    data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
+elif platform.system() == 'Linux':
+    data_top_path = "/home/steven/python_data/convective_rainfall_and_lighting_jump"
 
-fileset(f"{data_top_path}/flash_data/EN/sort_by_time/{year}/{month}")
+
+
+month_path = f"{data_top_path}/flash_data/EN/sort_by_time/{year}/{month}"
+os.makedirs(month_path, exist_ok=True)
+print(f"{month_path} 已建立")
+
+
 
 # 讀取資料
 flash_data_path = f"{data_top_path}/flash_data/raw_data/EN/lightning_{year}.txt"
@@ -57,7 +62,7 @@ for dd in tqdm(range(1, last_day + 1), desc='檢查每分鐘'):
             save_time_str = (this_time_dt + timedelta(minutes=1)).strftime('%Y%m%d%H%M')
 
             save_folder = f"{data_top_path}/flash_data/EN/sort_by_time/{year}/{month}/"
-            fileset(save_folder)
+            os.makedirs(save_folder, exist_ok=True)
             csv_file_path = save_folder + f"{save_time_str}.csv"
 
             if save_time_str in grouped.groups:

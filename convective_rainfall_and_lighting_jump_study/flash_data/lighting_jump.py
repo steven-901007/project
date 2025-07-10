@@ -4,13 +4,21 @@ from tqdm import tqdm
 import os
 import sys
 
-year = '2021'     # 年分
-month = sys.argv[1].zfill(2) if len(sys.argv) > 1 else "05" 
-# data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
-data_top_path = "/home/steven/python_data/convective_rainfall_and_lighting_jump"
+month =  sys.argv[2] if len(sys.argv) > 1 else "05" 
+year = sys.argv[1] if len(sys.argv) > 1 else '2021'
 alpha = 2         # 統計檢定
 dis = 36          #檢定區半徑
 data_source = 'EN'#flash_data來源
+
+
+import platform
+if platform.system() == 'Windows':
+    data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
+elif platform.system() == 'Linux':
+    data_top_path = "/home/steven/python_data/convective_rainfall_and_lighting_jump"
+
+
+
 
 
 
