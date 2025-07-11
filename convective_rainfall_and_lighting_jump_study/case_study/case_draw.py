@@ -48,13 +48,14 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     full_time_df = pd.DataFrame(full_time_range, columns=['data time'])# 建立一個 DataFrame 包含完整的時間範圍
 
     ##測站資料
-    data_path = f"{data_top_path}/rain_data/測站資料/{year}_{month}.csv"
+    data_path = f"{data_top_path}/rain_data/station_data/{year}_{month}.csv"
     position_data = pd.read_csv(data_path)
     point_real_name = position_data[position_data['station name'] == station_name]['station real name'].iloc[0]
     ##資料讀取
     case_root_path =  f"{data_top_path}/case_study/{station_name}/{dis}_{flash_source}_{year}{month}{day}_{str(time_start).zfill(2)}00to{str(time_end).zfill(2)}00"
     rain_data_path = case_root_path + '/rain_raw_data.csv'
     flash_data_path = case_root_path + f'/{flash_source}_flash_data.csv'
+
     rain_data = pd.read_csv(rain_data_path)
     flash_data = pd.read_csv(flash_data_path)
 
@@ -99,11 +100,11 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
 
     total_rain_data = rain_data[['data time','rain data']].groupby(['data time'])['rain data'].sum().reset_index()
     total_rain_data['data time'] = pd.to_datetime(total_rain_data['data time'])
-    total_rain_data = pd.merge(total_rain_data,full_time_df,on='data time', how='outer').fillna(0)
+    total_rain_data = pd.merge(total_rain_data,full_time_df,on='data time', how='outer').fillna(0).infer_objects(copy=False)
 
     maxma_rain_data = rain_data[['data time','rain data']].groupby(['data time'])['rain data'].max().reset_index()
     maxma_rain_data['data time'] = pd.to_datetime(maxma_rain_data['data time'])
-    maxma_rain_data = pd.merge(maxma_rain_data,full_time_df,on='data time', how='outer').fillna(0)
+    maxma_rain_data = pd.merge(maxma_rain_data,full_time_df,on='data time', how='outer').fillna(0).infer_objects(copy=False)
     maxma_rain_data['color'] = maxma_rain_data['rain data'].apply(assign_status)
     # print(maxma_rain_data['color'])
 
@@ -126,12 +127,16 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
 
     # print(time_start_time_type,time_end_time_type)
 
+    #設定中文字體
+    from matplotlib.font_manager import FontProperties
+    myfont = FontProperties(fname=f'{data_top_path}/msjh.ttc', size=14)  
+    plt.rcParams['axes.unicode_minus'] = False
+
+
     # 繪製圖表
     fig, ax1 = plt.subplots(figsize = (19,9))
 
-    plt.rcParams['font.sans-serif'] = [u'MingLiu'] #細明體
-    plt.rcParams['axes.unicode_minus'] = False #設定中文
-    
+
     # 繪製每分鐘閃電量，右側y軸
     ax2 = ax1.twinx()
     ax2.plot(flash_data_for_every_min_df['data time'], flash_data_for_every_min_df['flash_count'], c='skyblue', zorder=3, label='1-min ICandCG') #每分鐘閃電量
@@ -141,10 +146,10 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
         color ='g', width=0.001, zorder=2,label = '最大單站雨量')
     ax2.bar(maxma_rain_data[maxma_rain_data['color'] == 'r']['data time'], 
         maxma_rain_data[maxma_rain_data['color'] == 'r']['rain data'], 
-        color='red', width=0.001, zorder=2, label='最大單站雨量>=10mm/10min')
+        color='red', width=0.001, zorder=2, label='最大單站雨量(>=10mm/10min)')
     ax2.bar(count_rain_data['data time'],count_rain_data['count']*10,color = 'black', width=0.0005, zorder=3,label = '>10mm站數(*10)')
     # ax2.axhline(10,c = "r" , ls = "--" , lw = 2)
-    ax2.set_ylabel('雨量/1-min ICandCG',size = 20)
+    ax2.set_ylabel('雨量/1-min ICandCG',size = 20, fontproperties=myfont)
     # ax2.set_ylim(0,1100)
     
     
@@ -153,7 +158,7 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     ax1.scatter(flash_data_for_lighting_jump_df['if_lj_time'], flash_data_for_lighting_jump_df['SR6'], c='red', s=2, zorder=5, label='jump threshold') #Lighting Jump的SR6
     ax1.plot(flash_data_for_SR6_df['if_lj_time'], flash_data_for_SR6_df['SR6'], c='yellow', zorder=1, label='SR6') #SR6
     # ax1.set_ylim(-10)
-    ax1.set_ylabel('SR6/jump threshold',size = 20)
+    ax1.set_ylabel('SR6/jump threshold',size = 20, fontproperties=myfont)
 
 
     # 設置x軸標籤和旋轉角度
@@ -163,9 +168,9 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     plt.setp(ax1.get_xticklabels(), rotation=90)
 
 
-    plt.title(f"測站：{point_real_name}({station_name})\n半徑：{dis}\n日期：{year}/{month}/{day} {str(time_start).zfill(2)}:00~{str(time_end).zfill(2)}:00\nflash source：{flash_source}")
-    # plt.title(f"測站：{point_real_name}({station_name})\n日期：{year}/{month}/{day}\n時間{str(time_start).zfill(2)}:00~{str(time_end).zfill(2)}:00\n前估命中數：{this_case_prefigurance_hit_count}")
-    fig.legend()
+    plt.title(f"測站:{point_real_name}({station_name})\n半徑:{dis}\n時間:{year}/{month}/{day} {str(time_start).zfill(2)}:00~{str(time_end).zfill(2)}:00\nflash source:{flash_source}", fontproperties=myfont)
+    fig.legend(prop=myfont)
+
 
     # 顯示and儲存圖表
     pic_save_path = case_root_path + '/picture.png'
@@ -181,6 +186,7 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     
     plt.savefig(pic_save_path, bbox_inches='tight', dpi=300)
     print(f"已生成照片：\n測站：{point_real_name}({station_name})\n半徑：{dis}\n日期：{year}/{month}/{day} {str(time_start).zfill(2)}:00~{str(time_end).zfill(2)}:00\nflash source：{flash_source}")    # plt.show()
+    plt.close('all')
     # plt.show()
     
 

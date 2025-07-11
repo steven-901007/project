@@ -130,7 +130,13 @@ pd.DataFrame(prefigurance_save_data).to_csv(prefigurance_save_path,index=False)
 ##前估繪圖
 # 加載台灣的行政邊界
 taiwan_shapefile = f"{data_top_path}/Taiwan_map_data/COUNTY_MOI_1090820.shp"  # 你需要提供台灣邊界的shapefile文件
+shape_feature = ShapelyFeature(Reader(taiwan_shapefile).geometries(),
+                            ccrs.PlateCarree(), edgecolor='black', facecolor="#0362025C")
 
+#設定中文字體
+from matplotlib.font_manager import FontProperties
+myfont = FontProperties(fname=f'{data_top_path}/msjh.ttc', size=14)  
+plt.rcParams['axes.unicode_minus'] = False
 
 # 設定經緯度範圍
 lon_min, lon_max = 120, 122.1
@@ -143,8 +149,7 @@ def CR_count():
     ax.set_xlim(lon_min, lon_max)
     ax.set_ylim(lat_min, lat_max)
 
-    shape_feature = ShapelyFeature(Reader(taiwan_shapefile).geometries(),
-                                ccrs.PlateCarree(), edgecolor='black', facecolor='white')
+
     ax.add_feature(shape_feature)
 
     gridlines = ax.gridlines(draw_labels=True, linestyle='--')
@@ -154,19 +159,19 @@ def CR_count():
     # 使用連續 colormap 設定
     cmap = plt.get_cmap('RdYlBu')
     interval = 25
-    raw_max = max(prefigurance_hit_list)
+    raw_max = round(max(total_prefigurance_list))
     vmax = int(np.ceil(raw_max / interval)) * interval  # 向上取整
     vmin = 0
     norm = mcolors.Normalize(vmin=vmin, vmax=vmax)
 
     sc = ax.scatter(prefigurance_lon_data_list, prefigurance_lat_data_list,
                     c=total_prefigurance_list, cmap=cmap, norm=norm, s=10, zorder=5)
-    cbar = plt.colorbar(sc, ax=ax)
-    # cbar.set_label('CR事件數')
+    plt.colorbar(sc, ax=ax, ticks=np.linspace(vmin, vmax, int((vmax - vmin) / interval) + 1))
+
 
     plt.xlabel('Longitude')
     plt.ylabel('Latitude')
-    ax.set_title(f"{year}/{month}\nNumber of convective rainfall events\n flash data source:{data_source}")
+    ax.set_title(f"{year}/{month}\n對流性降雨事件數 max = {raw_max}\nflash data source: {data_source}", fontproperties=myfont)
     plt.savefig(f"{data_top_path}/PFPA/{data_source}_{year}{month}/PF_CR_count.png", bbox_inches='tight', dpi=300)
 
 CR_count()
@@ -178,8 +183,6 @@ def hit_count():
     ax.set_xlim(lon_min, lon_max)
     ax.set_ylim(lat_min, lat_max)
 
-    shape_feature = ShapelyFeature(Reader(taiwan_shapefile).geometries(),
-                                ccrs.PlateCarree(), edgecolor='black', facecolor='white')
     ax.add_feature(shape_feature)
 
     gridlines = ax.gridlines(draw_labels=True, linestyle='--')
@@ -188,7 +191,6 @@ def hit_count():
 
     # 使用連續 colormap 設定
     cmap = plt.get_cmap('RdYlBu')
-    # 自動推算 colorbar 上限（例如以 25 為階距）
     interval = 25
     raw_max = max(prefigurance_hit_list)
     vmax = int(np.ceil(raw_max / interval)) * interval  # 向上取整
@@ -197,12 +199,12 @@ def hit_count():
 
     sc = ax.scatter(prefigurance_lon_data_list, prefigurance_lat_data_list,
                     c=prefigurance_hit_list, cmap=cmap, norm=norm, s=10, zorder=5)
-    cbar = plt.colorbar(sc, ax=ax)
-    # cbar.set_label('Lighting Jump 命中次數')
+    plt.colorbar(sc, ax=ax, ticks=np.linspace(vmin, vmax, int((vmax - vmin) / interval) + 1))
+
 
     plt.xlabel('Longitude')
     plt.ylabel('Latitude')
-    ax.set_title(f"{year}/{month}\n Prefigurance max = {round(max(prefigurance_hit_list),3)}\n flash data source:{data_source}")
+    ax.set_title(f"{year}/{month}\n 前估命中數 max = {round(max(prefigurance_hit_list),2)}\nflash data source: {data_source}", fontproperties=myfont)
     plt.savefig(f"{data_top_path}/PFPA/{data_source}_{year}{month}/PF.png", bbox_inches='tight', dpi=300)
 
 hit_count()
@@ -214,8 +216,6 @@ def hit_rate():
     ax.set_xlim(lon_min, lon_max)
     ax.set_ylim(lat_min, lat_max)
 
-    shape_feature = ShapelyFeature(Reader(taiwan_shapefile).geometries(),
-                                ccrs.PlateCarree(), edgecolor='black', facecolor='white')
     ax.add_feature(shape_feature)
 
     gridlines = ax.gridlines(draw_labels=True, linestyle='--')
@@ -230,12 +230,12 @@ def hit_rate():
 
     sc = ax.scatter(prefigurance_lon_data_list, prefigurance_lat_data_list,
                     c=prefigurance_hit_persent_list, cmap=cmap, norm=norm, s=10, zorder=5)
-    cbar = plt.colorbar(sc, ax=ax, ticks=levels)
-    # cbar.set_label('命中率 [%]')
+    plt.colorbar(sc, ax=ax, ticks=levels)
+
 
     plt.xlabel('Longitude')
     plt.ylabel('Latitude')
-    ax.set_title(f"{year}/{month}\nPrefigurance hit rate [%] max = {round(max(prefigurance_hit_persent_list),3)}\n flash data source:{data_source}")
+    ax.set_title(f"{year}/{month}\n前估 [%] max = {round(max(prefigurance_hit_persent_list),3)}\nflash data source: {data_source}", fontproperties=myfont)
     plt.savefig(f"{data_top_path}/PFPA/{data_source}_{year}{month}/PF_hit_rate.png", bbox_inches='tight', dpi=300)
 hit_rate()
 

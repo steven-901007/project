@@ -28,7 +28,7 @@ def check_in_time_range(row, lj_times):
     return int(any((lj_times >= row['start time']) & (lj_times <= row['end time'])))
 
 
-fileset(f"{data_top_path}/PFPA/{data_source}_{year}{month}_PF_hit_case")
+fileset(f"{data_top_path}/PFPA/{data_source}_{year}{month}_PF_case")
 
 
 #取得對流性降雨station name
@@ -100,5 +100,5 @@ for convective_rainfall_path in result:
     convective_rainfall_datas['total rainfall'] = total_rainfall_list
     convective_rainfall_datas = convective_rainfall_datas.drop(['start time','end time'],axis=1)
     # print(convective_rainfall_datas)
-    save_path = f"{data_top_path}/PFPA/{data_source}_{year}{month}_PF_hit_case/{station_name}.csv"
+    save_path = f"{data_top_path}/PFPA/{data_source}_{year}{month}_PF_case/{station_name}.csv"
     convective_rainfall_datas.to_csv(save_path,index= False)

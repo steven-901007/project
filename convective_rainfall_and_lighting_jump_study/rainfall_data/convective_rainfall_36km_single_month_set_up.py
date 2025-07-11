@@ -8,8 +8,8 @@ from tqdm import tqdm
 import sys
 ##變數設定
 
-year = sys.argv[2].zfill(2) if len(sys.argv) > 1 else "2021"
-month = sys.argv[1].zfill(2) if len(sys.argv) > 1 else "05"
+month =  sys.argv[2] if len(sys.argv) > 1 else "05" 
+year = sys.argv[1] if len(sys.argv) > 1 else '2021'
 dis = 36
 
 import platform

@@ -1,4 +1,3 @@
-##前估
 import os
 from openpyxl import load_workbook
 import glob
@@ -7,8 +6,10 @@ import pandas as pd
 import re
 import math
 from tqdm import tqdm
-
-
+import pandas as pd
+pd.set_option('future.no_silent_downcasting', True)
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
 
@@ -42,6 +43,7 @@ def fileset(path):    #建立資料夾
 
 def case_data_set(year,month,day,time_start,time_end,dis,station_name,data_top_path,flash_source):
 
+
     #測站經緯度and36km的測站有哪些
     stations_name_for_36km_path = f"{data_top_path}/rain_data/station_count_in_range/{year}_{month}/{station_name}.csv"
     stations_name_for_36km_pd = pd.read_csv(stations_name_for_36km_path)
@@ -63,12 +65,12 @@ def case_data_set(year,month,day,time_start,time_end,dis,station_name,data_top_p
 
 
     ##雨量raw data建立
-    rain_paths = f"{data_top_path}/rain_data/降雨data/{year}/{month}/**"
+    rain_paths = f"{data_top_path}/rain_data/rainfall_data/{year}/{month}/**"
     rain_file_paths  =glob.glob(rain_paths)
     # print(rain_file_paths)
-    rain_data_save_datas = pd.DataFrame()
+    rain_data_save_datas = pd.DataFrame(columns=['data time', 'station name', 'rain data'])
     for rain_path in tqdm(rain_file_paths,desc='雨量raw data讀取'):
-        time_str =os.path.basename( rain_path).split('.')[0]
+        time_str =os.path.basename(rain_path).split('.')[0]
         # print(time_str)
         file_time = datetime.datetime.strptime(time_str, '%Y%m%d%H%M')
         # print(file_time)
@@ -78,16 +80,16 @@ def case_data_set(year,month,day,time_start,time_end,dis,station_name,data_top_p
             stations_name_for_36km_pd['station name'] = stations_name_for_36km_pd['station name'].astype(str)
             rain_datas['station name'] = rain_datas['station name'].astype(str)
 
+            
             union_datas = pd.merge(stations_name_for_36km_pd,rain_datas, on='station name', how='inner')
-            # print(stations_name_for_36km_pd)
-            # print(rain_datas)
-            # print(stations_name_for_36km_pd.info())
-            # print(rain_datas.info())
+            if union_datas.empty or union_datas.isna().all().all():
+                continue
             union_datas['data time'] = file_time
             union_datas = union_datas[['data time', 'station name', 'rain data']]
             # print(union_datas)
             # print(rain_datas)
-            rain_data_save_datas = pd.concat([rain_data_save_datas, union_datas], axis=0, ignore_index=True)
+            if not union_datas.empty and not union_datas.isna().all().all():  # 檢查不是空表＆不是全是NaN
+                rain_data_save_datas = pd.concat([rain_data_save_datas, union_datas], axis=0, ignore_index=True)
 
     rain_data_save_path = case_root_path + '/rain_raw_data.csv'
     pd.DataFrame(rain_data_save_datas).to_csv(rain_data_save_path,index=False)
@@ -96,11 +98,14 @@ def case_data_set(year,month,day,time_start,time_end,dis,station_name,data_top_p
 
     ##flash_data建立(讀取sort_by_time)
     flash_path = f"{data_top_path}/flash_data/{flash_source}/sort_by_station/{flash_source}_{year}{month}_{dis}km/{station_name}.csv"
-    flash_data = pd.read_csv(flash_path)
-    flash_data['data time'] = pd.to_datetime(flash_data['data time'])
-    # print(flash_data['data time'])
-    save_data = flash_data[(flash_data['data time'] >= time_start) & 
-                        (flash_data['data time'] < time_end)]
+    try:
+        flash_data = pd.read_csv(flash_path)
+        flash_data['data time'] = pd.to_datetime(flash_data['data time'])
+        save_data = flash_data[(flash_data['data time'] >= time_start) & 
+                            (flash_data['data time'] < time_end)]
+    except (pd.errors.EmptyDataError, FileNotFoundError):
+        # 若資料為空或檔案不存在，建立空的欄位
+        save_data = pd.DataFrame(columns=['data time', 'flash_count'])
     # print(save_data)
     flash_data_save_path = case_root_path + f'/{flash_source}_flash_data.csv'
     save_data.to_csv(flash_data_save_path,index=False)

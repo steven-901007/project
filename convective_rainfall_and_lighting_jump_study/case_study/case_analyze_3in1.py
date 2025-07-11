@@ -1,17 +1,19 @@
 from case_analysis_set import case_data_set
 from case_draw import case_draw
-from case_map_draw import case_map_draw
-from flash_pattern import flash_pattern
+from flash_and_rainfall_pattern import flash_and_rainfall_pattern
+# from case_map_draw import case_map_draw
+# from flash_pattern import flash_pattern
 import calendar
 import sys
-##變數設定
-#記得要先執行前估命中個案
-data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
-# data_top_path = "/home/steven/python_data/convective_rainfall_and_lighting_jump"
-year = sys.argv[2].zfill(2) if len(sys.argv) > 1 else "2021"
-month = sys.argv[1].zfill(2) if len(sys.argv) > 1 else "06" 
+import pandas as pd
+pd.set_option('future.no_silent_downcasting', True)
 
-day = '12'
+#記得要先執行前估命中個案
+
+month =  sys.argv[2] if len(sys.argv) > 1 else "05" 
+year = sys.argv[1] if len(sys.argv) > 1 else '2021'
+
+day = '24'
 time_start = 00 #(00~23)
 time_end = 23 #(00~23)
 dis = 36
@@ -24,6 +26,15 @@ flash_source = 'EN' # EN or TLDS
 station_name = 'C0AH30' #五分山
 one_month_draw = True
 
+
+import platform
+if platform.system() == 'Windows':
+    data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
+elif platform.system() == 'Linux':
+    data_top_path = "/home/steven/python_data/convective_rainfall_and_lighting_jump"
+
+
+
 if one_month_draw == True:
     
     max_month_day = calendar.monthrange(int(year),int(month))[-1]
@@ -31,13 +42,14 @@ if one_month_draw == True:
         day = str(i).zfill(2)
         case_data_set(year,month,day,time_start,time_end,dis,station_name,data_top_path,flash_source)
         case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,alpha,flash_source,one_month_draw)
-        case_map_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,flash_source)
-        flash_pattern(year,month,day,time_start,time_end,dis,station_name,data_top_path,flash_source)
+        flash_and_rainfall_pattern(year, month, day, time_start, time_end, dis, station_name, data_top_path, flash_source)
+        
+
 elif one_month_draw == False:
     case_data_set(year,month,day,time_start,time_end,dis,station_name,data_top_path,flash_source)
     case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,alpha,flash_source,one_month_draw)
-    case_map_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,flash_source)
-    flash_pattern(year,month,day,time_start,time_end,dis,station_name,data_top_path,flash_source)    
+    flash_and_rainfall_pattern(year, month, day, time_start, time_end, dis, station_name, data_top_path, flash_source)
+ 
 
 from datetime import datetime
 now_time = datetime.now()

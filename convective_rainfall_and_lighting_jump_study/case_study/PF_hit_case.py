@@ -12,25 +12,32 @@ import matplotlib.colors as mcolors
 import matplotlib.cm as cm
 import matplotlib as mpl
 import os
+import sys
+import pandas as pd
 
-
-year = '2021' #年分
-month = '09' #月份
+month =  sys.argv[2] if len(sys.argv) > 1 else "05" 
+year = sys.argv[1] if len(sys.argv) > 1 else '2021'
 dis = 36
-data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 data_source = 'EN'#flash_data來源
 
+
+import platform
+if platform.system() == 'Windows':
+    data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
+elif platform.system() == 'Linux':
+    data_top_path = "/home/steven/python_data/convective_rainfall_and_lighting_jump"
+
 def fileset(path):    #建立資料夾
-    import os
+
     
     if not os.path.exists(path):
         os.makedirs(path)
         print(f"{path}已建立") 
-fileset(f"{data_top_path}/case_study/前估命中個案/{year}_{month}")
+fileset(f"{data_top_path}/case_study/PF_hit_case/{year}_{month}")
 
 def rain_station_location_data_to_list(data_top_path,year):## 讀取雨量站經緯度資料
-    import pandas as pd
-    data_path = f"{data_top_path}/rain_data/測站資料/{year}_{month}.csv"
+
+    data_path = f"{data_top_path}/rain_data/station_data/{year}_{month}.csv"
     data = pd.read_csv(data_path)
     station_data_name = data['station name'].to_list()
     station_real_data_name = data['station real name'].to_list()
@@ -46,7 +53,9 @@ def check_in_time_range(row, lj_times):
 ##強降雨發生但沒有lighting jump
 
 
-month_path = f"{data_top_path}/rain_data/對流性降雨{dis}km/{year}/{month}/**.csv"
+
+
+month_path = f"{data_top_path}/rain_data/CR_{dis}km/{year}/{month}/**.csv"
 result  =glob.glob(month_path)
 
 for rain_station_path in tqdm(result,desc='資料處理中....'):
@@ -81,7 +90,7 @@ for rain_station_path in tqdm(result,desc='資料處理中....'):
         # print(rain_data['LJ_in_time_range'].sum())
         if rain_data['LJ_in_time_range'].sum() != 0:
             time_data = pd.to_datetime(rain_data[rain_data['LJ_in_time_range'] == 1]['time data'])
-            LJ_data_save_path = f"{data_top_path}/case_study/前估命中個案/{year}_{month}/{rain_station_name}_{rain_data['LJ_in_time_range'].sum()}.csv"
+            LJ_data_save_path = f"{data_top_path}/case_study/PF_hit_case/{year}_{month}/{rain_station_name}_{rain_data['LJ_in_time_range'].sum()}.csv"
             LJ_data_save = {
                 'time data' : time_data
             }
