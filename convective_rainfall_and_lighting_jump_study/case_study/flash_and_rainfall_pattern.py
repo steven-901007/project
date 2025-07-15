@@ -7,7 +7,7 @@ from cartopy import geodesic
 import pandas as pd
 import numpy as np
 import matplotlib.colors as mcolors
-from matplotlib.font_manager import FontProperties
+
 
 
 def flash_and_rainfall_pattern(year, month, day, time_start, time_end, dis, station_name, data_top_path, flash_source):
@@ -63,7 +63,9 @@ def flash_and_rainfall_pattern(year, month, day, time_start, time_end, dis, stat
     ## 畫圖範圍與字型
     lon_min, lon_max = 120.0, 122.1
     lat_min, lat_max = 21.5, 25.5
+    from matplotlib.font_manager import FontProperties
     myfont = FontProperties(fname=f'{data_top_path}/msjh.ttc', size=14)
+    title_font = FontProperties(fname=f'{data_top_path}/msjh.ttc', size=20) 
     plt.rcParams['axes.unicode_minus'] = False
 
     ## 畫圖開始
@@ -85,7 +87,7 @@ def flash_and_rainfall_pattern(year, month, day, time_start, time_end, dis, stat
         ax.scatter(lon_list, lat_list, color='g', s=0.5, zorder=3, label='Flash')
 
     ## 畫中心測站
-    ax.scatter(point_lon, point_lat, color='r',marker ='*', s=20, zorder=5, label=f"{station_name}")
+    ax.scatter(point_lon, point_lat, color='r',marker ='x', s=30, zorder=5, label=f"{point_real_name}")
 
     ## 畫周圍測站（用次數數值 + plasma colormap 顯示）
     cmap = plt.get_cmap('plasma')
@@ -106,7 +108,7 @@ def flash_and_rainfall_pattern(year, month, day, time_start, time_end, dis, stat
     cbar.set_label("雨量站強降雨次數", fontproperties=myfont)
 
     ## 標題與圖例
-    ax.set_title(f"{point_real_name} ({point_lon},{point_lat})\n測站數 = {len(merged_df)} max = {raw_max}\n前估 = {pre_hit}  後符 = {post_hit}", fontproperties=myfont)
+    ax.set_title(f"{point_real_name} 測站數 = {len(merged_df)}\nmax = {raw_max} 前估 = {pre_hit}  後符 = {post_hit}", fontproperties=myfont)
     ax.legend(prop=myfont)
 
     ## 儲存
@@ -114,4 +116,5 @@ def flash_and_rainfall_pattern(year, month, day, time_start, time_end, dis, stat
     os.makedirs(case_root_path, exist_ok=True)
     pic_save_path = os.path.join(case_root_path, 'flash_and_rainfall_map.png')
     plt.savefig(pic_save_path, bbox_inches='tight', dpi=300)
+    plt.show()
     plt.close('all')

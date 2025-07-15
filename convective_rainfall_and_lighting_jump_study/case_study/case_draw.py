@@ -129,7 +129,8 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
 
     #設定中文字體
     from matplotlib.font_manager import FontProperties
-    myfont = FontProperties(fname=f'{data_top_path}/msjh.ttc', size=14)  
+    myfont = FontProperties(fname=f'{data_top_path}/msjh.ttc', size=14)
+    title_font = FontProperties(fname=f'{data_top_path}/msjh.ttc', size=20) 
     plt.rcParams['axes.unicode_minus'] = False
 
 
@@ -139,7 +140,7 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
 
     # 繪製每分鐘閃電量，右側y軸
     ax2 = ax1.twinx()
-    ax2.plot(flash_data_for_every_min_df['data time'], flash_data_for_every_min_df['flash_count'], c='skyblue', zorder=3, label='1-min ICandCG') #每分鐘閃電量
+    
     ax2.bar(total_rain_data['data time'],total_rain_data['rain data'],color = 'lime', width=0.001,zorder=1,label = '總雨量')
     ax2.bar(maxma_rain_data[maxma_rain_data['color'] == 'g']['data time'], 
         maxma_rain_data[maxma_rain_data['color'] == 'g']['rain data'],
@@ -149,16 +150,17 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
         color='red', width=0.001, zorder=2, label='最大單站雨量(>=10mm/10min)')
     ax2.bar(count_rain_data['data time'],count_rain_data['count']*10,color = 'black', width=0.0005, zorder=3,label = '>10mm站數(*10)')
     # ax2.axhline(10,c = "r" , ls = "--" , lw = 2)
-    ax2.set_ylabel('雨量/1-min ICandCG',size = 20, fontproperties=myfont)
-    # ax2.set_ylim(0,1100)
-    
+    ax2.set_ylabel('雨量',size = 20, fontproperties=myfont)
+
+    ax2.set_ylim(0, 2669)##調整y軸的最大值可以跟多個時間比較
     
 
     # 繪製SR6和lighting jump的SR6，左側y軸
     ax1.scatter(flash_data_for_lighting_jump_df['if_lj_time'], flash_data_for_lighting_jump_df['SR6'], c='red', s=2, zorder=5, label='jump threshold') #Lighting Jump的SR6
     ax1.plot(flash_data_for_SR6_df['if_lj_time'], flash_data_for_SR6_df['SR6'], c='yellow', zorder=1, label='SR6') #SR6
+    ax1.plot(flash_data_for_every_min_df['data time'], flash_data_for_every_min_df['flash_count'], c='skyblue', zorder=3, label='1-min ICandCG') #每分鐘閃電量
     # ax1.set_ylim(-10)
-    ax1.set_ylabel('SR6/jump threshold',size = 20, fontproperties=myfont)
+    ax1.set_ylabel('閃電',size = 20, fontproperties=myfont)
 
 
     # 設置x軸標籤和旋轉角度
@@ -168,8 +170,9 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     plt.setp(ax1.get_xticklabels(), rotation=90)
 
 
-    plt.title(f"測站:{point_real_name}({station_name})\n半徑:{dis}\n時間:{year}/{month}/{day} {str(time_start).zfill(2)}:00~{str(time_end).zfill(2)}:00\nflash source:{flash_source}", fontproperties=myfont)
-    fig.legend(prop=myfont)
+    plt.title(f"{point_real_name} 半徑：{dis}km flash source：{flash_source}\n日期：{year}/{month}/{day} {str(time_start).zfill(2)}:00~{str(time_end).zfill(2)}:00", fontproperties=title_font)
+    if one_month_draw is True:
+        fig.legend(prop=myfont)
 
 
     # 顯示and儲存圖表
@@ -186,8 +189,10 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     
     plt.savefig(pic_save_path, bbox_inches='tight', dpi=300)
     print(f"已生成照片：\n測站：{point_real_name}({station_name})\n半徑：{dis}\n日期：{year}/{month}/{day} {str(time_start).zfill(2)}:00~{str(time_end).zfill(2)}:00\nflash source：{flash_source}")    # plt.show()
+    if one_month_draw is False:
+        plt.show()
     plt.close('all')
-    # plt.show()
+    
     
 
 

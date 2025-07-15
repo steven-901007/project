@@ -1,32 +1,44 @@
 import pyart
 import numpy as np
 from datetime import datetime
+from pyart.retrieve import kdp_maesaka
 import os
 from glob import glob
 import pandas as pd
+import sys
 
-# ==== 路徑與時間設定 ====
-data_top_path = "C:/Users/steve/python_data/radar"
-# data_top_path = "home/steven/python_data/radar"
 
-one_day_or_not = True  # True = 一次處理一天 False = 一次處理一個時間點
-target_date = "20240523"  # 一次處理一天用這個
-single_vol_file_name = "20210523000200.VOL"  # 一次處理一筆資料用這個
 
-if one_day_or_not == False:
-    target_date = single_vol_file_name[:8]
-vol_folder_path = f"{data_top_path}/{target_date}_u.RCWF"
+## ==== 使用者參數設定 ==== ##
+year = sys.argv[1] if len(sys.argv) > 1 else '2021'
+month = sys.argv[2] if len(sys.argv) > 2 else '05'
+day = sys.argv[3] if len(sys.argv) > 3 else '30'
+mode = sys.argv[4] if len(sys.argv) > 4 else 'one'  # 'one' or 'all'
+hh = sys.argv[5] if len(sys.argv) > 5 else '00'
+mm = sys.argv[6] if len(sys.argv) > 6 else '04'
+ss = sys.argv[7] if len(sys.argv) > 7 else '00'
+
+target_date = f"{year}{month}{day}"
+
+import platform
+## ==== 系統路徑設定 ==== ##
+if platform.system() == 'Windows':
+    data_top_path = "C:/Users/steve/python_data/radar"
+else:
+    data_top_path = "/home/steven/python_data/radar"
+
+vol_folder_path = f"{data_top_path}/data/{target_date}_u.RCWF"
 output_folder = f"{data_top_path}/PID/{target_date}"
 stats_folder = f"{output_folder}/stats"
 os.makedirs(output_folder, exist_ok=True)
 os.makedirs(stats_folder, exist_ok=True)
 
-# ==== 取得要處理的檔案清單 ====
-if one_day_or_not:
+## ==== 取得處理檔案清單 ==== ##
+if mode == 'all':
     vol_files = sorted(glob(os.path.join(vol_folder_path, "*.VOL")))
 else:
-    vol_files = [os.path.join(vol_folder_path, single_vol_file_name)]
-
+    single_vol_file = f"{target_date}{hh}{mm}{ss}.VOL"
+    vol_files = [os.path.join(vol_folder_path, single_vol_file)]
 # ==== 處理每一個 VOL 檔 ====
 for vol_path in vol_files:
     try:
@@ -35,6 +47,11 @@ for vol_path in vol_files:
         time_str = os.path.basename(vol_path).split(".")[0]
         output_path = f"{output_folder}/{time_str}.nc"
         stats_csv_path = f"{stats_folder}/{time_str}_stats.csv"
+
+        # ==== 計算 KDP（Maesaka 方法） ====
+        print("⚙️ 計算 KDP（Maesaka 方法）...")
+        kdp_dict, _, _ = kdp_maesaka(radar)
+        radar.add_field('kdp_maesaka', kdp_dict, replace_existing=True)
 
         # ==== 建立分類陣列 ====
         n_rays, n_bins = radar.fields['reflectivity']['data'].shape
@@ -49,13 +66,15 @@ for vol_path in vol_files:
                 z = radar.fields['reflectivity']['data'][start_idx:end_idx]
                 zdr = radar.fields['differential_reflectivity']['data'][start_idx:end_idx]
                 rhohv = radar.fields['cross_correlation_ratio']['data'][start_idx:end_idx]
+                kdp = radar.fields['kdp_maesaka']['data'][start_idx:end_idx]
             except KeyError:
                 continue
 
             valid_mask = ~(
                 np.ma.getmaskarray(z) |
                 np.ma.getmaskarray(zdr) |
-                np.ma.getmaskarray(rhohv)
+                np.ma.getmaskarray(rhohv) |
+                np.ma.getmaskarray(kdp)
             )
 
             classification = np.full(z.shape, -1, dtype=int)
@@ -63,9 +82,10 @@ for vol_path in vol_files:
             z_valid = z[valid_mask]
             zdr_valid = zdr[valid_mask]
             rhohv_valid = rhohv[valid_mask]
+            kdp_valid = kdp[valid_mask]
 
             label = np.full(z_valid.shape, -1)
-            label[(z_valid >= 20) & (z_valid <= 45) & (zdr_valid >= 0.5) & (zdr_valid <= 2.5) & (rhohv_valid > 0.97)] = 0  # Rain
+            label[(z_valid >= 20) & (z_valid <= 45) & (zdr_valid >= 0.5) & (zdr_valid <= 2.5) & (rhohv_valid > 0.97) & (kdp_valid > 0.5)] = 0  # Rain
             label[(z_valid >= 25) & (z_valid <= 40) & (zdr_valid > 1) & (rhohv_valid >= 0.90) & (rhohv_valid <= 0.96)] = 1  # Melting Layer
             label[(z_valid >= 15) & (z_valid <= 35) & (zdr_valid >= 0.5) & (zdr_valid <= 1.5) & (rhohv_valid >= 0.90) & (rhohv_valid <= 0.96)] = 2  # Wet Snow
             label[(z_valid >= 10) & (z_valid <= 30) & (zdr_valid >= 0.0) & (zdr_valid <= 0.5) & (rhohv_valid > 0.97)] = 3  # Dry Snow

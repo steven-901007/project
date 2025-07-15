@@ -13,9 +13,9 @@ pd.set_option('future.no_silent_downcasting', True)
 month =  sys.argv[2] if len(sys.argv) > 1 else "05" 
 year = sys.argv[1] if len(sys.argv) > 1 else '2021'
 
-day = '24'
-time_start = 00 #(00~23)
-time_end = 23 #(00~23)
+day = '30'
+time_start = 12 #(00~23)
+time_end = 21 #(00~23)
 dis = 36
 alpha = 2 #統計檢定
 flash_source = 'EN' # EN or TLDS
@@ -24,7 +24,7 @@ flash_source = 'EN' # EN or TLDS
 # station_name = '01F680'
 # station_name = '01C400'
 station_name = 'C0AH30' #五分山
-one_month_draw = True
+one_month_draw = False
 
 
 import platform

@@ -1,15 +1,21 @@
 import gzip
 import shutil
 import os
+import sys
 
-data_top_path = "C:/Users/steve/python_data/radar"
-year = '2020'
-month = '04'
-day = '01'
+year = sys.argv[1] if len(sys.argv) > 1 else '2021'
+month =  sys.argv[2] if len(sys.argv) > 1 else "05" 
+day = sys.argv[3] if len(sys.argv) > 1 else "30" 
+
+import platform
+if platform.system() == 'Windows':
+    data_top_path = "C:/Users/steve/python_data/radar"
+elif platform.system() == 'Linux':
+    data_top_path = "/home/steven/python_data/radar"
 
 
 ## 資料夾位置
-folder_path = f"{data_top_path}/{year}{month}{day}_u.RCWF"  # ← 修改成你的資料夾路徑
+folder_path = f"{data_top_path}/data/{year}{month}{day}_u.RCWF"  # ← 修改成你的資料夾路徑
 
 ## 批次處理
 for filename in os.listdir(folder_path):
