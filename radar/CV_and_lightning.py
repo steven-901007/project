@@ -10,6 +10,7 @@ from cartopy import geodesic
 from matplotlib.font_manager import FontProperties
 import platform
 import sys
+import pandas as pd
 
 ## ==== 時間設定 ==== ##
 year = sys.argv[1] if len(sys.argv) > 1 else '2021'
@@ -24,8 +25,10 @@ draw_one_or_all = 'one'
 ## ==== 路徑設定 ==== ##
 if platform.system() == 'Windows':
     data_top_path = "C:/Users/steve/python_data/radar"
+    flash_data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 elif platform.system() == 'Linux':
     data_top_path = "/home/steven/python_data/radar"
+    flash_data_top_path = "/home/steven/python_data/convective_rainfall_and_lighting_jump"
 
 shapefile_path = f"{data_top_path}/Taiwan_map_data/COUNTY_MOI_1090820.shp"
 save_dir = f"{data_top_path}/CV/{year}{month}{day}"
@@ -48,7 +51,7 @@ for vol_file in vol_files:
         radar = pyart.io.read_nexrad_archive(vol_file)
         time_str = os.path.basename(vol_file).split('.')[0]
         time_dt = datetime.strptime(time_str, "%Y%m%d%H%M%S")  # 這裡保持 datetime 格式
-        time_str = (time_dt + timedelta(hours=8)).strftime("%Y/%m/%d %H:%M:%S")  # 轉 LCT 並轉成字串
+        time_str = (time_dt + timedelta(hours=8)).strftime("%Y%m%d%H%M")  # 轉 LCT 並轉成字串
 
 
         ## ==== 製作 Grid 資料 ==== ##
@@ -94,6 +97,16 @@ for vol_file in vol_files:
         lon_grid = radar_lon + (x / 111) / np.cos(np.radians(radar_lat))
         lat_grid = radar_lat + (y / 111)
 
+        ## ==== 加入閃電資料（EN，每分鐘一檔）==== ##
+        flash_path = f"{flash_data_top_path}/flash_data/EN/sort_by_time/{year}/{month}/{time_str}.csv"
+        # print(flash_path)
+        flash_data_now = None
+        if os.path.exists(flash_path):
+            try:
+                flash_data_now = pd.read_csv(flash_path)  # 該分鐘 EN 閃電資料（LCT）
+            except Exception as e:
+                print(f"⚠️ 讀取閃電檔案失敗：{flash_path}\n原因：{e}")
+
         ## ==== 畫圖 ==== ##
         fig = plt.figure(figsize=(10, 8))
         ax = plt.axes(projection=ccrs.PlateCarree())
@@ -108,11 +121,24 @@ for vol_file in vol_files:
             transform=ccrs.PlateCarree()
         )
 
+        # 畫出閃電點（如果有的話）
+        if flash_data_now is not None and not flash_data_now.empty:
+            ax.scatter(
+                flash_data_now['lon'], flash_data_now['lat'],
+                s=10, c='black', label='閃電', transform=ccrs.PlateCarree(), zorder=5
+            )
+            ax.legend(loc='upper right', fontsize=12, prop=myfont)
+
         # 標題與 colorbar
-        ax.set_title(f"CV 測站:RCWF(五分山)\n觀測時間:{time_dt}", fontproperties=title_font)
+        time_str_title = (time_dt + timedelta(hours=8)).strftime("%Y/%m/%d %H:%M:%S") 
+        ax.set_title(f"CV 測站:RCWF(五分山)\n觀測時間:{time_str_title}", fontproperties=title_font)
         cbar = plt.colorbar(mesh, ax=ax, shrink=0.8)
         cbar.set_label("反射率 (dBZ)", fontproperties=myfont)
         cbar.set_ticks(np.arange(0, 70, 5))
+
+        
+
+
 
         # 台灣邊界
         ax.add_geometries(
@@ -139,8 +165,10 @@ for vol_file in vol_files:
         gl = ax.gridlines(draw_labels=True)
         gl.right_labels = False
 
+
+
         plt.tight_layout()
-        output_path = f"{save_dir}/{time_str}_CV.png"
+        output_path = f"{save_dir}/{time_str}00_CV.png"
         plt.savefig(output_path, dpi=150)
         if draw_one_or_all == 'one':
             plt.show()
