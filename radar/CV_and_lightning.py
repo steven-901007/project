@@ -16,8 +16,8 @@ import pandas as pd
 year = sys.argv[1] if len(sys.argv) > 1 else '2021'
 month = sys.argv[2] if len(sys.argv) > 2 else '05'
 day = sys.argv[3] if len(sys.argv) > 3 else '30'
-hh = '04'
-mm = '01'
+hh = '05'
+mm = '55'
 ss = '00'
 
 draw_one_or_all = 'one'
@@ -132,9 +132,9 @@ for vol_file in vol_files:
         # 標題與 colorbar
         time_str_title = (time_dt + timedelta(hours=8)).strftime("%Y/%m/%d %H:%M:%S") 
         ax.set_title(f"CV 測站:RCWF(五分山)\n觀測時間:{time_str_title}", fontproperties=title_font)
-        cbar = plt.colorbar(mesh, ax=ax, shrink=0.8)
-        cbar.set_label("反射率 (dBZ)", fontproperties=myfont)
-        cbar.set_ticks(np.arange(0, 70, 5))
+        # cbar = plt.colorbar(mesh, ax=ax, shrink=0.8)
+        # cbar.set_label("反射率 (dBZ)", fontproperties=myfont)
+        # cbar.set_ticks(np.arange(0, 70, 5))
 
         
 

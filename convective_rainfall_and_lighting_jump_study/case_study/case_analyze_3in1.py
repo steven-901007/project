@@ -13,9 +13,9 @@ pd.set_option('future.no_silent_downcasting', True)
 month =  sys.argv[2] if len(sys.argv) > 1 else "05" 
 year = sys.argv[1] if len(sys.argv) > 1 else '2021'
 
-day = '30'
+day = '24'
 time_start = 12 #(00~23)
-time_end = 21 #(00~23)
+time_end = 22 #(00~23)
 dis = 36
 alpha = 2 #統計檢定
 flash_source = 'EN' # EN or TLDS

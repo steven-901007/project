@@ -5,7 +5,7 @@ import sys
 
 year = sys.argv[1] if len(sys.argv) > 1 else '2021'
 month =  sys.argv[2] if len(sys.argv) > 1 else "05" 
-day = sys.argv[3] if len(sys.argv) > 1 else "30" 
+day = sys.argv[3] if len(sys.argv) > 1 else "31" 
 
 import platform
 if platform.system() == 'Windows':
