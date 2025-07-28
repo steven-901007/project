@@ -14,6 +14,7 @@ day = sys.argv[3] if len(sys.argv) > 3 else '31'
 hh = '05'
 mm = '17'
 ss = '00'
+
 z_target = 4000
 
 import platform
@@ -128,9 +129,9 @@ import os
 save_dir = f"{data_top_path}/PID_CAPPI/{year}{month}{day}"
 os.makedirs(save_dir, exist_ok=True)
 
-save_path = f"{save_dir}/{time_str}.png"
+save_path = f"{save_dir}/{time_str}_at{int(z_target/1000)}_.png"
 plt.savefig(save_path, dpi=300)
 
 plt.tight_layout()
-plt.show()
+# plt.show()
 plt.close()

@@ -1,6 +1,6 @@
 from CV_map_lon_lat_set import lon_lat_set
 from PID_range_square_CVmap import square_map
-# from CS_PID import hydrometeor_cross_section
+from PID_hotmap import draw_PID_count_hotmap,draw_PID_percent_hotmap
 import sys
 import os
 
@@ -46,5 +46,5 @@ else:
 
 
 square_map(data_top_path,year,month,day,hh,mm,ss,lon0,lat0,lon1,lat1,show,add_flash,flash_data_top_path)
-
-# hydrometeor_cross_section(data_top_path,year,month,day,hh,mm,ss,lon0, lat0, lon1, lat1,show)
+draw_PID_count_hotmap(data_top_path,year,month,day,hh,mm,ss,lon0,lat0,lon1,lat1)
+draw_PID_percent_hotmap(data_top_path,year,month,day,hh,mm,ss,lon0,lat0,lon1,lat1)

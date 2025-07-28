@@ -152,6 +152,27 @@ def square_map(
             ax.plot([lon]*2, [lat0, lat1], '-', color='black', zorder=4, linewidth=3, transform=ccrs.PlateCarree())
         for lat in [lat0, lat1]:
             ax.plot([lon0, lon1], [lat]*2, '-', color='black', zorder=4, linewidth=3, transform=ccrs.PlateCarree())
+        
+        
+        # ==== 閃電點（每分鐘一種顏色）====
+        if add_flash and (flash_data_all_df is not None) and (not flash_data_all_df.empty):
+            for i in range(5):
+                df_minute = flash_data_all_df[flash_data_all_df["minute_offset"] == -i]
+                if not df_minute.empty:
+                    ax.scatter(
+                        df_minute['lon'], df_minute['lat'],
+                        s=50,
+                        c=[flash_colors[i]],
+                        edgecolors='white',  # ✅ 加上白框
+                        linewidths=0.5,       # ✅ 邊框線寬
+                        label=f"-{i}",
+                        transform=ccrs.PlateCarree(),
+                        zorder=10-i
+                    )
+            ax.legend(loc='upper right', fontsize=10, prop=myfont)
+        else:
+            # 沒有閃電或未指定資料夾，不顯示 legend
+            pass
 
         plt.tight_layout()
         save_dir = f"{data_top_path}/PID_square/{year}{month}{day}"
