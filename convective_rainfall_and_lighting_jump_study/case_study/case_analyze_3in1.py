@@ -13,9 +13,9 @@ pd.set_option('future.no_silent_downcasting', True)
 month =  sys.argv[2] if len(sys.argv) > 1 else "05" 
 year = sys.argv[1] if len(sys.argv) > 1 else '2021'
 
-day = '24'
+day = '30'
 time_start = 12 #(00~23)
-time_end = 22 #(00~23)
+time_end = 16 #(00~23)
 dis = 36
 alpha = 2 #統計檢定
 flash_source = 'EN' # EN or TLDS
@@ -42,13 +42,13 @@ if one_month_draw == True:
         day = str(i).zfill(2)
         case_data_set(year,month,day,time_start,time_end,dis,station_name,data_top_path,flash_source)
         case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,alpha,flash_source,one_month_draw)
-        flash_and_rainfall_pattern(year, month, day, time_start, time_end, dis, station_name, data_top_path, flash_source)
+        flash_and_rainfall_pattern(year, month, day, time_start, time_end, dis, station_name, data_top_path, flash_source,one_month_draw)
         
 
 elif one_month_draw == False:
     case_data_set(year,month,day,time_start,time_end,dis,station_name,data_top_path,flash_source)
     case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,alpha,flash_source,one_month_draw)
-    flash_and_rainfall_pattern(year, month, day, time_start, time_end, dis, station_name, data_top_path, flash_source)
+    flash_and_rainfall_pattern(year, month, day, time_start, time_end, dis, station_name, data_top_path, flash_source,one_month_draw)
  
 
 from datetime import datetime

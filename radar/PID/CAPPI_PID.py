@@ -70,12 +70,12 @@ ax = plt.subplot(1, 1, 1, projection=ccrs.PlateCarree())
 # ==== 設定 colormap（自訂顏色）====
 from matplotlib.colors import ListedColormap
 custom_colors = [
-    "#000000",  # Rain
-    "#ff7f0e",  # Melting Layer
+    "#1FE4F3FF",  # Rain
+    "#ebff0e",  # Melting Layer
     "#2ca02c",  # Wet Snow
-    "#27c2d6",  # Dry Snow
+    "#27d638",  # Dry Snow
     "#f51010",  # Graupel（紅）
-    "#9467bd",  # Hail
+    "#3c00ff",  # Hail
 ]
 cmap = ListedColormap(custom_colors)
 field_data = grid.fields['hydro_class']['data'][z_index]
@@ -129,7 +129,7 @@ import os
 save_dir = f"{data_top_path}/PID_CAPPI/{year}{month}{day}"
 os.makedirs(save_dir, exist_ok=True)
 
-save_path = f"{save_dir}/{time_str}_at{int(z_target/1000)}_.png"
+save_path = f"{save_dir}/{time_str}_{int(z_target/1000)}km.png"
 plt.savefig(save_path, dpi=300)
 
 plt.tight_layout()

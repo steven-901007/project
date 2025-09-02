@@ -1,18 +1,20 @@
 from CV_map_lon_lat_set import lon_lat_set
 from CS_line_CVmap import cross_section_map
 from CS_PID import hydrometeor_cross_section
-import sys
+
 import os
 
 
 
-year = sys.argv[1] if len(sys.argv) > 1 else '2021'
-month = sys.argv[2] if len(sys.argv) > 2 else '05'
-day = sys.argv[3] if len(sys.argv) > 3 else '31'
+year = '2021'
+month = '05'
+day = '30'
+pid = 'way' #park or way(魏) 使用哪個PID
 hh = '05'
-mm = '17'
-ss = '00'
+mm = '55'
 
+
+ss = '00'
 show = False
 add_flash=True
 import platform
@@ -42,9 +44,11 @@ if points and len(points) == 2:
     print(f"\n自動設定剖面線：\n起點: ({lon0:.5f}, {lat0:.5f})\n終點: ({lon1:.5f}, {lat1:.5f})")
 else:
     print("❌ 未正確取得兩個點，請重新執行")
-    sys.exit(1)
+
 
 
 cross_section_map(data_top_path,year,month,day,hh,mm,ss,lon0,lat0,lon1,lat1,show,add_flash,flash_data_top_path)
 
-hydrometeor_cross_section(data_top_path,year,month,day,hh,mm,ss,lon0, lat0, lon1, lat1,show)
+hydrometeor_cross_section(data_top_path,year,month,day,hh,mm,ss,lon0, lat0, lon1, lat1,pid,show)
+pid = 'park' #park or way(魏) 使用哪個PID
+hydrometeor_cross_section(data_top_path,year,month,day,hh,mm,ss,lon0, lat0, lon1, lat1,pid,show)

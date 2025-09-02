@@ -16,11 +16,11 @@ import pandas as pd
 year = sys.argv[1] if len(sys.argv) > 1 else '2021'
 month = sys.argv[2] if len(sys.argv) > 2 else '05'
 day = sys.argv[3] if len(sys.argv) > 3 else '30'
-hh = '04'
-mm = '01'
+hh = '03'
+mm = '49'
 ss = '00'
 
-draw_one_or_all = 'all'
+draw_one_or_all = 'one'
 
 ## ==== 路徑設定 ==== ##
 if platform.system() == 'Windows':
@@ -97,15 +97,6 @@ for vol_file in vol_files:
         lon_grid = radar_lon + (x / 111) / np.cos(np.radians(radar_lat))
         lat_grid = radar_lat + (y / 111)
 
-        ## ==== 加入閃電資料（EN，每分鐘一檔）==== ##
-        flash_path = f"{flash_data_top_path}/flash_data/EN/sort_by_time/{year}/{month}/{time_str}.csv"
-        # print(flash_path)
-        flash_data_now = None
-        if os.path.exists(flash_path):
-            try:
-                flash_data_now = pd.read_csv(flash_path)  # 該分鐘 EN 閃電資料（LCT）
-            except Exception as e:
-                print(f"⚠️ 讀取閃電檔案失敗：{flash_path}\n原因：{e}")
 
         ## ==== 畫圖 ==== ##
         fig = plt.figure(figsize=(10, 8))
@@ -121,22 +112,12 @@ for vol_file in vol_files:
             transform=ccrs.PlateCarree()
         )
 
-        # 畫出閃電點（如果有的話）
-        if flash_data_now is not None and not flash_data_now.empty:
-            ax.scatter(
-                flash_data_now['lon'], flash_data_now['lat'],
-                s=10, c='black', label='閃電', transform=ccrs.PlateCarree(), zorder=5
-            )
-            ax.legend(loc='upper right', fontsize=12, prop=myfont)
-
         # 標題與 colorbar
         time_str_title = (time_dt + timedelta(hours=8)).strftime("%Y/%m/%d %H:%M:%S") 
         ax.set_title(f"CV 測站:RCWF(五分山)\n觀測時間:{time_str_title}", fontproperties=title_font)
         cbar = plt.colorbar(mesh, ax=ax, shrink=0.8)
         cbar.set_label("反射率 (dBZ)", fontproperties=myfont)
         cbar.set_ticks(np.arange(0, 70, 5))
-
-        
 
 
 
@@ -145,34 +126,34 @@ for vol_file in vol_files:
             Reader(shapefile_path).geometries(),
             crs=ccrs.PlateCarree(),
             facecolor='none',
-            edgecolor='green',
-            linewidth=1,
+            edgecolor='black',
+            linewidth=2,
         )
 
-        # 雷達中心與 36km 圓
-        ax.plot(radar_lon, radar_lat, 'ro', transform=ccrs.PlateCarree())
-        circle = geodesic.Geodesic().circle(lon=radar_lon, lat=radar_lat, radius=36000, n_samples=360)
-        circle_lons, circle_lats = zip(*circle)
-        ax.plot(circle_lons, circle_lats, color='black', linewidth=2, linestyle='-', transform=ccrs.PlateCarree())
-        lon_min = np.min(lon_grid)
-        lon_max = np.max(lon_grid)
-        lat_min = np.min(lat_grid)
-        lat_max = np.max(lat_grid)
-        margin_lon = (lon_max - lon_min) * 0.02
-        margin_lat = (lat_max - lat_min) * 0.02
-        ax.set_extent([lon_min - margin_lon, lon_max + margin_lon,
-                    lat_min - margin_lat, lat_max + margin_lat])
-        gl = ax.gridlines(draw_labels=True)
-        gl.right_labels = False
+        # # 雷達中心與 36km 圓
+        # ax.plot(radar_lon, radar_lat, 'ro', transform=ccrs.PlateCarree())
+        # circle = geodesic.Geodesic().circle(lon=radar_lon, lat=radar_lat, radius=36000, n_samples=360)
+        # circle_lons, circle_lats = zip(*circle)
+        # ax.plot(circle_lons, circle_lats, color='black', linewidth=2, linestyle='-', transform=ccrs.PlateCarree())
+        # lon_min = np.min(lon_grid)
+        # lon_max = np.max(lon_grid)
+        # lat_min = np.min(lat_grid)
+        # lat_max = np.max(lat_grid)
+        # margin_lon = (lon_max - lon_min) * 0.02
+        # margin_lat = (lat_max - lat_min) * 0.02
+        # ax.set_extent([lon_min - margin_lon, lon_max + margin_lon,
+        #             lat_min - margin_lat, lat_max + margin_lat])
+        # gl = ax.gridlines(draw_labels=True)
+        # gl.right_labels = False
 
 
 
         plt.tight_layout()
-        output_path = f"{save_dir}/{time_str}00_CV.png"
-        plt.savefig(output_path, dpi=150)
+        # output_path = f"{save_dir}/{time_str}00_CV.png"
+        # plt.savefig(output_path, dpi=150)
         if draw_one_or_all == 'one':
             plt.show()
         plt.close()
-        print(f"✅ 儲存圖檔：{output_path}")
+        # print(f"✅ 儲存圖檔：{output_path}")
     except Exception as e:
         print(f"❌ 讀取錯誤：{vol_file}\n原因：{e}")

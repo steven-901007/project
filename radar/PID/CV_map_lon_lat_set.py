@@ -134,27 +134,30 @@ def lon_lat_set(
             Reader(shapefile_path).geometries(),
             crs=ccrs.PlateCarree(),
             facecolor='none',
-            edgecolor='green',
+            edgecolor='black',
             linewidth=1,
         )
 
+        dis = 36
         # 雷達中心與 36km 圓
         ax.plot(radar_lon, radar_lat, 'ro', transform=ccrs.PlateCarree())
-        circle = geodesic.Geodesic().circle(lon=radar_lon, lat=radar_lat, radius=36000, n_samples=360)
-        circle_lons, circle_lats = zip(*circle)
-        ax.plot(circle_lons, circle_lats, color='black', linewidth=2, linestyle='-', transform=ccrs.PlateCarree())
-        lon_min = np.min(lon_grid)
-        lon_max = np.max(lon_grid)
-        lat_min = np.min(lat_grid)
-        lat_max = np.max(lat_grid)
-        margin_lon = (lon_max - lon_min) * 0.02
-        margin_lat = (lat_max - lat_min) * 0.02
-        ax.set_extent([lon_min - margin_lon, lon_max + margin_lon,
-                    lat_min - margin_lat, lat_max + margin_lat])
-        gl = ax.gridlines(draw_labels=True)
-        gl.right_labels = False
+        # 畫 36km 藍圈
+        ## 基本參數
+        center_lon = radar_lon
+        center_lat = radar_lat
+        radius_m = dis * 1000
 
-        ax.plot(radar_lon, radar_lat, 'x', color='r', zorder=5, markersize=15, label='Radar')
+        ## 產生兩段圓：第一段從 0°~180°，第二段從 90°~360°
+        circle1 = geodesic.Geodesic().circle(lon=center_lon, lat=center_lat, radius=radius_m, n_samples=180, endpoint=False)
+        circle2 = geodesic.Geodesic().circle(lon=center_lon, lat=center_lat, radius=radius_m, n_samples=180, endpoint=False)
+        # 把第二段的角度往後平移 90°
+        circle2 = np.roll(circle2, shift=90, axis=0)
+
+        # 畫兩段
+        ax.plot(circle1[:, 0], circle1[:, 1], color='lime',linestyle='--', transform=ccrs.PlateCarree())
+        ax.plot(circle2[:, 0], circle2[:, 1], color='lime',linestyle='--', transform=ccrs.PlateCarree(), label=f'{dis}km')
+
+        # ax.plot(radar_lon, radar_lat, 'x', color='r', zorder=5, markersize=15, label='Radar')
 
         # ==== 閃電點（每分鐘一種顏色）====
         if add_flash and (flash_data_all_df is not None) and (not flash_data_all_df.empty):

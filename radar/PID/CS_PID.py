@@ -17,6 +17,7 @@ def hydrometeor_cross_section(
     mm,
     ss,
     lon0, lat0, lon1, lat1,
+    pid,
     show=True,
 ):
 
@@ -27,7 +28,7 @@ def hydrometeor_cross_section(
     myfont = FontProperties(fname=f'{data_top_path}/msjh.ttc', size=14)
     title_font = FontProperties(fname=f'{data_top_path}/msjh.ttc', size=20)
     plt.rcParams['axes.unicode_minus'] = False
-    file_path = f"{data_top_path}/PID/{year}{month}{day}/{time_str}.nc"
+    file_path = f"{data_top_path}/PID/{year}{month}{day}_{pid}/{time_str}.nc"
     # ==== 讀取雷達 Grid 資料 ====
     radar = pyart.io.read(file_path)
     grid = pyart.map.grid_from_radars(
@@ -71,20 +72,47 @@ def hydrometeor_cross_section(
     # ==== 畫圖 ====
     fig, ax = plt.subplots()
 
-    # 自訂 colormap（紅色給 Graupel）
-    custom_colors = [
-        "#000000",  # Rain
-        "#ff7f0e",  # Melting Layer
-        "#2ca02c",  # Wet Snow
-        "#27c2d6",  # Dry Snow
-        "#f51010",  # Graupel（紅）
-        "#9467bd",  # Hail
-    ]
-    cmap = ListedColormap(custom_colors)
-
     zz, xx = np.meshgrid(gz, np.linspace(0, dist / 1000, len(x)), indexing='ij')
     masked_cross_section = np.ma.masked_invalid(cross_section)
-    pc = ax.pcolormesh(xx, zz, masked_cross_section, cmap=cmap, vmin=0, vmax=5, shading='auto')
+    
+    # 自訂 colormap（紅色給 Graupel）
+    if pid == 'park':
+        custom_colors = [
+            "#1FE4F3FF",  # Rain
+            "#ebff0e",  # Melting Layer
+            "#2ca02c",  # Wet Snow
+            "#27d638",  # Dry Snow
+            "#f51010",  # Graupel（紅）
+            "#3c00ff",  # Hail
+        ]
+        label_names = ['Rain', 'Melting Layer', 'Wet Snow', 'Dry Snow', 'Graupel', 'Hail']
+    elif pid == 'way':
+        custom_colors = [
+            "#1FE4F3FF",  # 0 Drizzle
+            "#1FE4F3FF",  # 1 Rain
+            "#2ca02c",  # 2 Weak Snow
+            "#2ca02c",  # 3 Strong Snow
+            "#2ca02c",  # 4 Wet Snow
+            "#f51010",  # 5 Dry Graupel
+            "#f51010",  # 6 Wet Graupel
+            "#3c00ff",  # 7 Small Hail
+            "#3c00ff",  # 8 Large Hail
+            "#ebff0e",  # 9 Rain-Hail Mixture
+            "#f49d07",  # 10 Suppercooled water
+        ]
+        label_names = [
+        'Drizzle', 'Rain', 'Weak Snow', 'Strong Snow', 'Wet Snow',
+        'Dry Graupel', 'Wet Graupel', 'Small Hail', 'Large Hail', 'Rain-Hail Mixture','Suppercooled water'
+        ]
+
+
+
+    cmap = ListedColormap(custom_colors)
+    ax.pcolormesh(xx, zz, masked_cross_section, cmap=cmap, vmin=0, vmax=len(custom_colors) - 1, shading='auto')
+
+
+
+    # ax.pcolormesh(xx, zz, masked_cross_section, cmap=cmap, vmin=0, vmax=9, shading='auto')
 
     # 標籤與標題
     ax.set_xlabel("km", fontproperties=myfont)
@@ -94,13 +122,13 @@ def hydrometeor_cross_section(
                  fontsize=16)
 
     # 圖例
-    label_names = ['Rain', 'Melting Layer', 'Wet Snow', 'Dry Snow', 'Graupel', 'Hail']
-    patches = [mpatches.Patch(color=cmap(i), label=label_names[i]) for i in range(6)]
-    ax.legend(handles=patches, loc='upper right')
+
+    # patches = [mpatches.Patch(color=cmap(i), label=label_names[i]) for i in range(len(custom_colors))]
+    # ax.legend(handles=patches, loc='upper right')
 
     plt.tight_layout()
 
-    save_path = f"{data_top_path}/PID_CS/{year}{month}{day}/{time_str}_PID.png"
+    save_path = f"{data_top_path}/PID_CS/{year}{month}{day}/{time_str}_{pid}_PID.png"
     plt.savefig(save_path, dpi=150)
     print(f"✅ 圖檔已儲存：{save_path}")
     if show:
