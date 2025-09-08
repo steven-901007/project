@@ -20,11 +20,6 @@ time_tag_str     = "20250813_064200"      # 同一時刻（UTC）
 batch_str        = "02"                   # 檔尾碼
 file_pattern_str = rf"{data_dir_path}\{task_id_str}_{time_tag_str}_??_{batch_str}.scn.nc"
 
-## ==== grid 參數（比照你的設定） ==== ##
-grid_shape  = (31, 241, 241)                                # (nz, ny, nx)
-grid_limits = ((0, 15000), (-150000, 150000), (-150000, 150000))  # (z,y,x) in meters
-weighting   = "Nearest"   # 小寫
-
 ## ==== 找檔 ==== ##
 scn_files = sorted(glob(file_pattern_str))
 if not scn_files:
@@ -69,16 +64,19 @@ for fp in scn_files:
     }
 
     radar_list.append(radar)
-    print(f"封裝：{os.path.basename(fp)} -> rays={nray}, gates={ngate}")
+    # print(f"封裝：{os.path.basename(fp)} -> rays={nray}, gates={ngate}")
 
 ## ==== gridding：建立 3D 矩陣（nz, ny, nx） ==== ##
 grid = pyart.map.grid_from_radars(
-    radar_list,
-    grid_shape=grid_shape,
-    grid_limits=grid_limits,
+    radar_list,                           
+    grid_shape=(41, 1001, 1001),                   
+    grid_limits=((0, 15000), (-150000, 150000), (-150000, 150000)),
     fields=["reflectivity"],
-    weighting_function=weighting,
+    weighting_function="Nearest",
+    # roi_func='constant',
+    # constant_roi=500.0,  
 )
+print('grid')
 
 # 取 3D 反射率場
 ref3d = grid.fields["reflectivity"]["data"]    # (nz, ny, nx)，masked array

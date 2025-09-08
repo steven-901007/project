@@ -15,9 +15,9 @@ month = sys.argv[2] if len(sys.argv) > 2 else '05'
 day = sys.argv[3] if len(sys.argv) > 3 else '30'
 mode = sys.argv[4] if len(sys.argv) > 4 else 'all'  # 'one' or 'all'
 pid = sys.argv[5] if len(sys.argv) > 5 else 'park' #park or way(魏) 使用哪個PID
-hh = sys.argv[6] if len(sys.argv) > 6 else '00'
-mm = sys.argv[7] if len(sys.argv) > 7 else '04'
-ss = sys.argv[8] if len(sys.argv) > 8 else '00'
+station = sys.argv[6] if len(sys.argv) > 1 else 'RCWF'
+
+
 
 target_date = f"{year}{month}{day}"
 
@@ -28,8 +28,8 @@ if platform.system() == 'Windows':
 else:
     data_top_path = "/home/steven/python_data/radar"
 
-vol_folder_path = f"{data_top_path}/data/{target_date}_u.RCWF"
-output_folder = f"{data_top_path}/PID/{target_date}_{pid}"
+vol_folder_path = f"{data_top_path}/data/{target_date}_u.{station}"
+output_folder = f"{data_top_path}/PID/{target_date}_{station}_{pid}"
 stats_folder = f"{output_folder}/stats"
 os.makedirs(output_folder, exist_ok=True)
 os.makedirs(stats_folder, exist_ok=True)
@@ -38,6 +38,9 @@ os.makedirs(stats_folder, exist_ok=True)
 if mode == 'all':
     vol_files = sorted(glob(os.path.join(vol_folder_path, "*.VOL")))
 else:
+    hh = sys.argv[7] if len(sys.argv) > 6 else '00'
+    mm = sys.argv[8] if len(sys.argv) > 7 else '04'
+    ss = sys.argv[9] if len(sys.argv) > 8 else '00'
     single_vol_file = f"{target_date}{hh}{mm}{ss}.VOL"
     vol_files = [os.path.join(vol_folder_path, single_vol_file)]
 # ==== 處理每一個 VOL 檔 ====
