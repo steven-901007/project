@@ -10,6 +10,7 @@ year = '2021'
 month = '05'
 day = '30'
 pid = 'way' #park or way(魏) 使用哪個PID
+station = 'RCWF'
 hh = '05'
 mm = '55'
 

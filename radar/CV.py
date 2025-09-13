@@ -16,11 +16,13 @@ import pandas as pd
 year = sys.argv[1] if len(sys.argv) > 1 else '2021'
 month = sys.argv[2] if len(sys.argv) > 2 else '05'
 day = sys.argv[3] if len(sys.argv) > 3 else '30'
-hh = '03'
-mm = '49'
+station = sys.argv[4] if len(sys.argv) > 4 else 'RCWF'
+draw_one_or_all = sys.argv[5] if len(sys.argv) > 5 else'one'
+hh = '00'
+mm = '04'
 ss = '00'
 
-draw_one_or_all = 'one'
+
 
 ## ==== 路徑設定 ==== ##
 if platform.system() == 'Windows':
@@ -30,8 +32,19 @@ elif platform.system() == 'Linux':
     data_top_path = "/home/steven/python_data/radar"
     flash_data_top_path = "/home/steven/python_data/convective_rainfall_and_lighting_jump"
 
+
+##測站名
+if station == 'RCWF':
+    station_realname = '五分山'
+elif station == 'RCCG':
+    station_realname = '七股'
+elif station == 'RCKT':
+    station_realname = '墾丁'
+elif station == 'RCHL':
+    station_realname = '花蓮'
+
 shapefile_path = f"{data_top_path}/Taiwan_map_data/COUNTY_MOI_1090820.shp"
-save_dir = f"{data_top_path}/CV/{year}{month}{day}"
+save_dir = f"{data_top_path}/CV/{year}{month}{day}_{station}"
 os.makedirs(save_dir, exist_ok=True)
 
 myfont = FontProperties(fname=f'{data_top_path}/msjh.ttc', size=14)
@@ -40,10 +53,10 @@ plt.rcParams['axes.unicode_minus'] = False
 
 ## ==== 找出要處理的 VOL 檔案清單 ==== ##
 if draw_one_or_all == 'one':
-    vol_file = f"{data_top_path}/data/{year}{month}{day}_u.RCWF/{year}{month}{day}{hh}{mm}{ss}.VOL"
+    vol_file = f"{data_top_path}/data/{year}{month}{day}_u.{station}/{year}{month}{day}{hh}{mm}{ss}.VOL"
     vol_files = [vol_file]
 else:
-    vol_folder = f"{data_top_path}/data/{year}{month}{day}_u.RCWF"
+    vol_folder = f"{data_top_path}/data/{year}{month}{day}_u.{station}"
     vol_files = sorted(glob(f"{vol_folder}/*.VOL"))
 
 for vol_file in vol_files:
@@ -111,12 +124,12 @@ for vol_file in vol_files:
             vmax=65,
             transform=ccrs.PlateCarree()
         )
-
+        print('資料處理完成')
         # 標題與 colorbar
         time_str_title = (time_dt + timedelta(hours=8)).strftime("%Y/%m/%d %H:%M:%S") 
-        ax.set_title(f"CV 測站:RCWF(五分山)\n觀測時間:{time_str_title}", fontproperties=title_font)
+        ax.set_title(f"CV 測站:{station_realname}\n{time_str_title} LCT", fontproperties=title_font)
         cbar = plt.colorbar(mesh, ax=ax, shrink=0.8)
-        cbar.set_label("反射率 (dBZ)", fontproperties=myfont)
+        cbar.set_label("dBZ", fontproperties=myfont)
         cbar.set_ticks(np.arange(0, 70, 5))
 
 
@@ -129,7 +142,7 @@ for vol_file in vol_files:
             edgecolor='black',
             linewidth=2,
         )
-
+        print('繪圖完成')
         # # 雷達中心與 36km 圓
         # ax.plot(radar_lon, radar_lat, 'ro', transform=ccrs.PlateCarree())
         # circle = geodesic.Geodesic().circle(lon=radar_lon, lat=radar_lat, radius=36000, n_samples=360)
@@ -147,13 +160,14 @@ for vol_file in vol_files:
         # gl.right_labels = False
 
 
-
+        
         plt.tight_layout()
-        # output_path = f"{save_dir}/{time_str}00_CV.png"
-        # plt.savefig(output_path, dpi=150)
+        output_path = f"{save_dir}/{time_str}00_CV.png"
+        plt.savefig(output_path, dpi=150)
+
         if draw_one_or_all == 'one':
             plt.show()
         plt.close()
-        # print(f"✅ 儲存圖檔：{output_path}")
+        print(f"✅ 儲存圖檔：{time_str}")
     except Exception as e:
         print(f"❌ 讀取錯誤：{vol_file}\n原因：{e}")

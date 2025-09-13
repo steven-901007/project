@@ -8,11 +8,11 @@ day = '23'
 hh = '08'
 mm = '02'
 ss = '00'
-
+station = 'RCWF'
 
 
 ## === 讀取雷達檔案 ===
-file_path = f"{data_top_path}/{year}{month}{day}_u.RCWF/{year}{month}{day}{hh}{mm}{ss}.VOL" 
+file_path = f"{data_top_path}/{year}{month}{day}_u.{station}/{year}{month}{day}{hh}{mm}{ss}.VOL" 
 radar = pyart.io.read(file_path)
 
 ## 取得所有 field 名稱

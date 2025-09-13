@@ -10,6 +10,7 @@ import os
 year = sys.argv[1] if len(sys.argv) > 1 else '2021'
 month = sys.argv[2] if len(sys.argv) > 2 else '05'
 day = sys.argv[3] if len(sys.argv) > 3 else '30'
+station = sys.argv[4] if len(sys.argv) > 1 else 'RCWF'
 hh = '05'
 mm = '55'
 pid = 'way' #park or way(魏) 使用哪個PID

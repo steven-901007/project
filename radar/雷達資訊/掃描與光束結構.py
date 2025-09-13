@@ -8,12 +8,13 @@ day = '26'
 hh = '07'
 mm = '36'
 ss = '00'
+station = 'RCWF'
 
 
 
 
 ## === 讀取雷達檔案 ===
-file_path = f"{data_top_path}/{year}{month}{day}_u.RCWF/{year}{month}{day}{hh}{mm}{ss}.VOL" 
+file_path = f"{data_top_path}/{year}{month}{day}_u.{station}/{year}{month}{day}{hh}{mm}{ss}.VOL" 
 radar = pyart.io.read(file_path)
 
 ## === 印出掃描與光束結構資訊 ===

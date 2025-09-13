@@ -15,6 +15,7 @@ import sys
 year = sys.argv[1] if len(sys.argv) > 1 else '2021'
 month = sys.argv[2] if len(sys.argv) > 2 else '05'
 day = sys.argv[3] if len(sys.argv) > 3 else '30'
+station = sys.argv[4] if len(sys.argv) > 1 else 'RCWF'
 hh = '00'
 mm = '04'
 ss = '00'
@@ -37,10 +38,10 @@ plt.rcParams['axes.unicode_minus'] = False
 
 ## ==== 找出要處理的 VOL 檔案清單 ==== ##
 if draw_one_or_all == 'one':
-    vol_file = f"{data_top_path}/data/{year}{month}{day}_u.RCWF/{year}{month}{day}{hh}{mm}{ss}.VOL"
+    vol_file = f"{data_top_path}/data/{year}{month}{day}_u.{station}/{year}{month}{day}{hh}{mm}{ss}.VOL"
     vol_files = [vol_file]
 else:
-    vol_folder = f"{data_top_path}/data/{year}{month}{day}_u.RCWF"
+    vol_folder = f"{data_top_path}/data/{year}{month}{day}_u.{station}"
     vol_files = sorted(glob(f"{vol_folder}/*.VOL"))
 
 ## ==== 主程式 ==== ##

@@ -20,6 +20,7 @@ def square_map(
     ss,
     lon0, lat0, lon1, lat1,
     show,
+    station,
     add_flash=False,
     flash_data_top_path=None
 ):
@@ -36,7 +37,7 @@ def square_map(
     title_font = FontProperties(fname=f'{data_top_path}/msjh.ttc', size=20)
     plt.rcParams['axes.unicode_minus'] = False
 
-    vol_file = f"{data_top_path}/data/{year}{month}{day}_u.RCWF/{year}{month}{day}{hh}{mm}{ss}.VOL"
+    vol_file = f"{data_top_path}/data/{year}{month}{day}_u.{station}/{year}{month}{day}{hh}{mm}{ss}.VOL"
     if not os.path.exists(vol_file):
         print(f"❌ 檔案不存在：{vol_file}")
         return

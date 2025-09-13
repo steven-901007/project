@@ -20,8 +20,10 @@ def cross_section_map(
     ss,
     lon0, lat0, lon1, lat1,
     show,
+    station,
     add_flash=False,
-    flash_data_top_path=None
+    flash_data_top_path=None,
+    
 ):
     """
     畫 composite reflectivity+剖面線+雷達位置，可疊加 EN 閃電點。
@@ -36,7 +38,7 @@ def cross_section_map(
     plt.rcParams['axes.unicode_minus'] = False
 
     # EN閃電時間字串
-    vol_file = f"{data_top_path}/data/{year}{month}{day}_u.RCWF/{year}{month}{day}{hh}{mm}{ss}.VOL"
+    vol_file = f"{data_top_path}/data/{year}{month}{day}_u.{station}/{year}{month}{day}{hh}{mm}{ss}.VOL"
     if not os.path.exists(vol_file):
         print(f"❌ 檔案不存在：{vol_file}")
         return
