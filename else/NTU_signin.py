@@ -10,7 +10,7 @@ import time
 import random
 
 ## === 參數設定（保持你的命名） === ##
-driver_path_str = r"C:\Users\wang\Downloads\chromedriver-win64\chromedriver-win64\chromedriver.exe"  # chromedriver位置_str
+driver_path_str = r"C:\Users\Kevin\Downloads\chromedriver-win64\chromedriver-win64\chromedriver.exe"  # chromedriver位置_str
 
 chrome_options = Options()  # 需要無頭、規避訊息等等再加
 # chrome_options.add_argument("--headless=new")  # 無頭模式（可選）
