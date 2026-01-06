@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>雨量視覺化系統</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 50px; }
+        .container { width: 80%; margin: auto; }
+        select { padding: 10px; font-size: 16px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+    <h2>🌧️ 年度雨量查詢系統</h2>
+    
+    <label>選擇年份：</label>
+    <select id="yearSelect" onchange="updateChart()">
+        <option value="2023">2023 年</option>
+        <option value="2024">2024 年</option>
+    </select>
+
+    <div class="container">
+        <canvas id="rainChart"></canvas>
+    </div>
+
+    <script>
+        let myChart = null;
+
+        async function updateChart() {
+            const year = document.getElementById('yearSelect').value;
+            
+            // 1. 呼叫後端 API
+            const response = await fetch(`/api/data?year=${year}`);
+            const result = await response.json();
+
+            // 2. 設定圖表資料
+            const ctx = document.getElementById('rainChart').getContext('2d');
+            
+            // 如果圖表已經存在，先銷毀舊的再畫新的
+            if (myChart) myChart.destroy();
+
+            // 3. 繪製圖表
+            myChart = new Chart(ctx, {
+                type: 'bar', // 改成 'line' 就變折線圖
+                data: {
+                    labels: result.labels.map(m => m + "月"), // X軸
+                    datasets: [{
+                        label: `${year} 年雨量 (mm)`,
+                        data: result.data, // Y軸數據
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        // 網頁載入時先畫一次
+        updateChart();
+    </script>
+
+</body>
+</html>
