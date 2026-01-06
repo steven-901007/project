@@ -3,10 +3,10 @@ import shutil
 import os
 import sys
 
-year = sys.argv[1] if len(sys.argv) > 1 else '2021'
-month =  sys.argv[2] if len(sys.argv) > 1 else "05" 
-day = sys.argv[3] if len(sys.argv) > 1 else "31" 
-station = sys.argv[4] if len(sys.argv) > 1 else 'RCWF'
+year = sys.argv[1] if len(sys.argv) > 1 else '2025'
+month =  sys.argv[2] if len(sys.argv) > 1 else "07" 
+day = sys.argv[3] if len(sys.argv) > 1 else "28" 
+station = sys.argv[4] if len(sys.argv) > 1 else 'RCCG'
 
 import platform
 if platform.system() == 'Windows':

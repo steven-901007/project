@@ -9,10 +9,10 @@ import os
 year = '2021'
 month = '05'
 day = '30'
-pid = 'way' #park or way(魏) 使用哪個PID
+pid = 'park' #park or way(魏) 使用哪個PID
 station = 'RCWF'
 hh = '05'
-mm = '55'
+mm = '07'
 
 
 ss = '00'
@@ -34,6 +34,7 @@ points = lon_lat_set(
     data_top_path,
     year, month, day,
     hh, mm, ss,
+    station,
     add_flash,
     flash_data_top_path
 )
@@ -48,8 +49,8 @@ else:
 
 
 
-cross_section_map(data_top_path,year,month,day,hh,mm,ss,lon0,lat0,lon1,lat1,show,add_flash,flash_data_top_path)
+cross_section_map(data_top_path,year,month,day,hh,mm,ss,lon0,lat0,lon1,lat1,show,station,add_flash,flash_data_top_path)
 
-hydrometeor_cross_section(data_top_path,year,month,day,hh,mm,ss,lon0, lat0, lon1, lat1,pid,show)
-pid = 'park' #park or way(魏) 使用哪個PID
-hydrometeor_cross_section(data_top_path,year,month,day,hh,mm,ss,lon0, lat0, lon1, lat1,pid,show)
+hydrometeor_cross_section(data_top_path,year,month,day,hh,mm,ss,lon0, lat0, lon1, lat1,pid,show,station)
+# pid = 'park' #park or way(魏) 使用哪個PID
+# hydrometeor_cross_section(data_top_path,year,month,day,hh,mm,ss,lon0, lat0, lon1, lat1,pid,show)

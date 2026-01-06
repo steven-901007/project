@@ -6,8 +6,8 @@ from tqdm import tqdm
 import sys
 
 
-month =  sys.argv[2] if len(sys.argv) > 1 else "05" 
-year = sys.argv[1] if len(sys.argv) > 1 else '2021'
+month =  sys.argv[2] if len(sys.argv) > 1 else "11" 
+year = sys.argv[1] if len(sys.argv) > 1 else '2024'
 
 data_time_zone = 'LCT'  # LCT or UTC
 
@@ -19,7 +19,10 @@ elif platform.system() == 'Linux':
 
 
 
-month_path = f"{data_top_path}/flash_data/EN/sort_by_time/{year}/{month}"
+if year == '2021':
+    month_path = f"{data_top_path}/rain_data/raw_data/{year}/{month}/{month}"
+elif year == '2024':
+    month_path = f"{data_top_path}/rain_data/raw_data/{year}/{month}"
 os.makedirs(month_path, exist_ok=True)
 print(f"{month_path} 已建立")
 

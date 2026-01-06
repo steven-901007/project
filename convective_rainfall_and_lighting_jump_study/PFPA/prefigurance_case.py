@@ -6,7 +6,7 @@ from tqdm import tqdm
 import sys
 
 month =  sys.argv[2] if len(sys.argv) > 1 else "05" 
-year = sys.argv[1] if len(sys.argv) > 1 else '2021'
+year = sys.argv[1] if len(sys.argv) > 1 else '2024'
 
 dis = 36
 data_source = 'EN'#flash_data來源

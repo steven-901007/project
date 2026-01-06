@@ -7,8 +7,8 @@ import sys
 
 ## === 參數設定 ===
 
-month =  sys.argv[2] if len(sys.argv) > 1 else "05" 
-year = sys.argv[1] if len(sys.argv) > 1 else '2021'
+month =  sys.argv[2] if len(sys.argv) > 1 else "11" 
+year = sys.argv[1] if len(sys.argv) > 1 else '2024'
 dis = 36  # 半徑(km)
 
 import platform

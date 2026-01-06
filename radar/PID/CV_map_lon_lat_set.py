@@ -19,14 +19,18 @@ def lon_lat_set(
     mm,
     ss,
     station,
+    point_num,
+    range_radius,
     add_flash=False,
-    flash_data_top_path=None
+    flash_data_top_path=None,
+
+
 ):
     """
     畫 composite reflectivity+剖面線+雷達位置，可疊加 EN 閃電點。
 
     - add_flash: 是否加閃電（預設 False）
-    - flash_data_top_path: 閃電主目錄（必填，若 add_flash=True）
+
     """
 
     shapefile_path = f"{data_top_path}/Taiwan_map_data/COUNTY_MOI_1090820.shp"
@@ -86,7 +90,7 @@ def lon_lat_set(
 
         # ==== 閃電資料處理 ====
         flash_data_all = []
-        flash_colors = ['#000000','#8000FF', "#0011FF", '#FF69B4', "#C408F39B"]  # 對應 0~4 分鐘前
+        flash_colors = ['#000000', "#151515", "#232323", "#333333", "#3E3E3E"]
         if add_flash and flash_data_top_path is not None:
             try:
                 base_time = datetime.strptime(time_str_for_flash, "%Y%m%d%H%M")
@@ -116,14 +120,16 @@ def lon_lat_set(
 
         mesh = ax.pcolormesh(
             lon_grid, lat_grid, comp_reflect,
+            # cmap='pyart_NWSRef',
             cmap='NWSRef',
             vmin=0, vmax=65,
-            transform=ccrs.PlateCarree()
+            transform=ccrs.PlateCarree(),
+            zorder = 2,alpha=0.9
         )
 
         # 標題與 colorbar
         ax.set_title(
-            f"CV 測站:RCWF(五分山)\n觀測時間:{time_str_LCT}",
+            f"CV 測站:{station}\n觀測時間:{time_str_LCT}",
             fontproperties=title_font
         )
         cbar = plt.colorbar(mesh, ax=ax, shrink=0.8)
@@ -154,28 +160,50 @@ def lon_lat_set(
         # 把第二段的角度往後平移 90°
         circle2 = np.roll(circle2, shift=90, axis=0)
 
-        # 畫兩段
+        
         ax.plot(circle1[:, 0], circle1[:, 1], color='lime',linestyle='--', transform=ccrs.PlateCarree())
         ax.plot(circle2[:, 0], circle2[:, 1], color='lime',linestyle='--', transform=ccrs.PlateCarree(), label=f'{dis}km')
 
-        # ax.plot(radar_lon, radar_lat, 'x', color='r', zorder=5, markersize=15, label='Radar')
+        ax.plot(radar_lon, radar_lat, 'x', color='r', zorder=5, markersize=15, label='Radar')
 
         # ==== 閃電點（每分鐘一種顏色）====
         if add_flash and (flash_data_all_df is not None) and (not flash_data_all_df.empty):
             for i in range(5):
                 df_minute = flash_data_all_df[flash_data_all_df["minute_offset"] == -i]
                 if not df_minute.empty:
+                    label = (time_dt - timedelta(minutes=i)+timedelta(hours=8)).strftime("%H:%M")
                     ax.scatter(
                         df_minute['lon'], df_minute['lat'],
-                        s=50,
+                        s=100,
+                        marker="x",
                         c=[flash_colors[i]],
-                        edgecolors='white',  # ✅ 加上白框
-                        linewidths=0.5,       # ✅ 邊框線寬
-                        label=f"-{i}",
+                        edgecolors='black',
+                        linewidths=2,
+                        alpha = 0.7,
+                        label= f'{label}',
                         transform=ccrs.PlateCarree(),
-                        zorder=10-i
+                        zorder=1
                     )
-            ax.legend(loc='upper right', fontsize=10, prop=myfont)
+                    # ax.scatter(
+                    #     df_minute['lon'], df_minute['lat'],
+                    #     s=100,
+                    #     marker="x",
+                    #     c='black',
+                    #     linewidths=3,
+                    #     alpha = 1,
+                    #     transform=ccrs.PlateCarree(),
+                    #     label= f'{label}',
+                    #     zorder=2
+                    # )
+            ax.legend(
+                loc='upper right',
+                fontsize=10,
+                prop=myfont,
+                frameon=True,        # 顯示外框
+                framealpha=0.8,        # 透明度
+                facecolor="#D0EFD1FF",   # 圖例背景色
+                edgecolor='black'
+            )
         else:
             # 沒有閃電或未指定資料夾，不顯示 legend
             pass
@@ -196,9 +224,16 @@ def lon_lat_set(
 
         selected_points = []
 
-        print("請用滑鼠在圖上點選兩個點，將回傳經緯度")
-        points = plt.ginput(2, timeout=0)  # 等你點兩下
-        selected_points = points
+        print(f"請用滑鼠在圖上點選 {point_num} 個點，將回傳經緯度")
+        points = plt.ginput(point_num, timeout=0)  # 等你點n下
+        if point_num == 1:
+            lon_center, lat_center = points[0]
+            selected_points = [
+                (lon_center - range_radius, lat_center - range_radius),
+                (lon_center + range_radius, lat_center + range_radius)
+            ]
+        elif point_num == 2:
+            selected_points = points
         for i, (lon, lat) in enumerate(selected_points):
             print(f'第{i+1}點：經度={lon:.5f}, 緯度={lat:.5f}')
         plt.close()

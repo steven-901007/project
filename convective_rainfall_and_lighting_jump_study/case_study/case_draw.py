@@ -152,7 +152,7 @@ def case_draw(year,month,day,time_start,time_end,dis,station_name,data_top_path,
     # ax2.axhline(10,c = "r" , ls = "--" , lw = 2)
     ax2.set_ylabel('雨量',size = 20, fontproperties=myfont)
 
-    ax2.set_ylim(0, 2669)##調整y軸的最大值可以跟多個時間比較
+    ax2.set_ylim(0, 800)##調整y軸的最大值可以跟多個時間比較
     
 
     # 繪製SR6和lighting jump的SR6，左側y軸

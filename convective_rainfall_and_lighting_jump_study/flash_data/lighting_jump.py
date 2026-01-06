@@ -4,11 +4,11 @@ from tqdm import tqdm
 import os
 import sys
 
-month =  sys.argv[2] if len(sys.argv) > 1 else "05" 
-year = sys.argv[1] if len(sys.argv) > 1 else '2021'
+month =  sys.argv[2] if len(sys.argv) > 1 else "11" 
+year = sys.argv[1] if len(sys.argv) > 1 else '2024'
 alpha = 2         # 統計檢定
 dis = 36          #檢定區半徑
-data_source = 'TLDS'#flash_data來源
+data_source = 'EN'#flash_data來源
 
 
 import platform

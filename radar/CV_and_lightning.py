@@ -150,26 +150,26 @@ for vol_file in vol_files:
             linewidth=1,
         )
 
-        # 雷達中心與 36km 圓
-        ax.plot(radar_lon, radar_lat, 'ro', transform=ccrs.PlateCarree())
-        circle = geodesic.Geodesic().circle(lon=radar_lon, lat=radar_lat, radius=36000, n_samples=360)
-        circle_lons, circle_lats = zip(*circle)
-        ax.plot(circle_lons, circle_lats, color='black', linewidth=2, linestyle='-', transform=ccrs.PlateCarree())
-        lon_min = np.min(lon_grid)
-        lon_max = np.max(lon_grid)
-        lat_min = np.min(lat_grid)
-        lat_max = np.max(lat_grid)
-        margin_lon = (lon_max - lon_min) * 0.02
-        margin_lat = (lat_max - lat_min) * 0.02
-        ax.set_extent([lon_min - margin_lon, lon_max + margin_lon,
-                    lat_min - margin_lat, lat_max + margin_lat])
-        gl = ax.gridlines(draw_labels=True)
-        gl.right_labels = False
+        # # 雷達中心與 36km 圓
+        # ax.plot(radar_lon, radar_lat, 'ro', transform=ccrs.PlateCarree())
+        # circle = geodesic.Geodesic().circle(lon=radar_lon, lat=radar_lat, radius=36000, n_samples=360)
+        # circle_lons, circle_lats = zip(*circle)
+        # ax.plot(circle_lons, circle_lats, color='black', linewidth=2, linestyle='-', transform=ccrs.PlateCarree())
+        # lon_min = np.min(lon_grid)
+        # lon_max = np.max(lon_grid)
+        # lat_min = np.min(lat_grid)
+        # lat_max = np.max(lat_grid)
+        # margin_lon = (lon_max - lon_min) * 0.02
+        # margin_lat = (lat_max - lat_min) * 0.02
+        # ax.set_extent([lon_min - margin_lon, lon_max + margin_lon,
+        #             lat_min - margin_lat, lat_max + margin_lat])
+        # gl = ax.gridlines(draw_labels=True)
+        # gl.right_labels = False
 
 
 
         plt.tight_layout()
-        output_path = f"{save_dir}/{time_str}00_CV.png"
+        output_path = f"{save_dir}/{time_str}00_CV_and_lightning.png"
         plt.savefig(output_path, dpi=150)
         if draw_one_or_all == 'one':
             plt.show()

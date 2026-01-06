@@ -7,8 +7,8 @@ from geopy.distance import geodesic
 
 import sys
 ##變數設定
-month =  sys.argv[2] if len(sys.argv) > 1 else "05" 
-year = sys.argv[1] if len(sys.argv) > 1 else '2021'
+month =  sys.argv[2] if len(sys.argv) > 1 else "11" 
+year = sys.argv[1] if len(sys.argv) > 1 else '2024'
 dis = 36
 
 import platform
@@ -68,7 +68,10 @@ lon_data_list, lat_data_list ,station_name_data_list ,real_name_data_list = [],[
 
 ##確認所有資料的測站都有被記錄
 ## 讀取每月資料
-month_path = f"{data_top_path}/rain_data/raw_data/{year}/{month}/{month}"
+if year == '2021':
+    month_path = f"{data_top_path}/rain_data/raw_data/{year}/{month}/{month}"
+elif year == '2024':
+    month_path = f"{data_top_path}/rain_data/raw_data/{year}/{month}"
 result  =glob.glob(month_path+"/*")
 for day_path in tqdm(result,desc=f'{year}{month}測站資料'):
     # print(day_path)

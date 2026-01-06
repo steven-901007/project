@@ -2,226 +2,266 @@ import pyart
 import numpy as np
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
+from cartopy import geodesic  # 畫地理圓
 from datetime import datetime, timedelta
 from cartopy.io.shapereader import Reader
 from pyart.graph import GridMapDisplay
-import matplotlib.patches as mpatches
-import sys
-import os
+import platform, os, sys
 from glob import glob
-import platform
 from matplotlib.font_manager import FontProperties
-from matplotlib.colors import ListedColormap
+from matplotlib.colors import ListedColormap, BoundaryNorm
+from matplotlib.patches import Patch
+from matplotlib.ticker import FormatStrFormatter
+import matplotlib.ticker as mticker
+plt.rcParams['axes.grid'] = False
 
-## ==== 參數區（維持你的預設與格式）==== ##
-year  = sys.argv[1] if len(sys.argv) > 1 else '2024'
-month = sys.argv[2] if len(sys.argv) > 2 else '06'
-day   = sys.argv[3] if len(sys.argv) > 3 else '02'
+# =========================
+# 基本參數（請確認路徑與欄位）
+# =========================
+year  = sys.argv[1] if len(sys.argv) > 1 else '2021'
+month = sys.argv[2] if len(sys.argv) > 2 else '05'
+day   = sys.argv[3] if len(sys.argv) > 3 else '24'
 station = sys.argv[4] if len(sys.argv) > 4 else 'RCWF'
-draw_one_or_all = sys.argv[5] if len(sys.argv) > 5 else 'all'   # 'one' or 'all'
-pid = sys.argv[6] if len(sys.argv) > 6 else 'park'               # 'park' 或 'way'
-hh = '05'
-mm = '17'
-ss = '00'
-z_target = 4000  # m
+draw_mode = sys.argv[5] if len(sys.argv) > 5 else 'all'   # "one" 或 "all"
+pid = sys.argv[6] if len(sys.argv) > 6 else 'park'        # "park" 或 "way"
+hh, mm, ss = "08", "24", "00"
+z_target = float(sys.argv[7]) if len(sys.argv) > 7 else 3000  # m
 
-## ==== 路徑設定 ==== ##
+# 可選：圈線寬、標數字的步長（1=每格都標；大一點更快更不擁擠）
+circle_linewidth = 0.5
+label_stride = 1
+
 if platform.system() == 'Windows':
     data_top_path = "C:/Users/steve/python_data/radar"
-    flash_data_top_path = "C:/Users/steve/python_data/convective_rainfall_and_lighting_jump"
 else:
     data_top_path = "/home/steven/python_data/radar"
-    flash_data_top_path = "/home/steven/python_data/convective_rainfall_and_lighting_jump"
 
-## 測站中文名（沿用你的對照）
-if station == 'RCWF':
-    station_realname = '五分山'
-elif station == 'RCCG':
-    station_realname = '七股'
-elif station == 'RCKT':
-    station_realname = '墾丁'
-elif station == 'RCHL':
-    station_realname = '花蓮'
-
-
-## ==== 共用資源（font/shp 等只建一次）==== ##
 shapefile_path = f"{data_top_path}/Taiwan_map_data/COUNTY_MOI_1090820.shp"
 shp_reader = Reader(shapefile_path)
-
 myfont = FontProperties(fname=f'{data_top_path}/msjh.ttc', size=12)
 title_font = FontProperties(fname=f'{data_top_path}/msjh.ttc', size=18)
-plt.rcParams['axes.unicode_minus'] = False
 
-## 儲存資料夾
-save_dir = f"{data_top_path}/PID_CAPPI/{year}{month}{day}"
+save_dir = f"{data_top_path}/PID_CAPPI/{year}{month}{day}/{station}/{round(z_target/1000)}km"
 os.makedirs(save_dir, exist_ok=True)
 
-## ==== 依 pid 準備離散色盤與標籤 ==== ##
-def get_pid_cmap_and_labels(pid_name: str):
-    if pid_name == 'park':
-        # 索引 0..5
-        custom_colors = [
-            "#1FE4F3FF",  # 0 Rain
-            "#ebff0e",    # 1 Melting Layer
-            "#2ca02c",    # 2 Wet Snow
-            "#27d638",    # 3 Dry Snow
-            "#f51010",    # 4 Graupel
-            "#3c00ff",    # 5 Hail
-        ]
-        label_names = ['Rain', 'Melting Layer', 'Wet Snow', 'Dry Snow', 'Graupel', 'Hail']
-    elif pid == 'way':
-        # 索引 0..10
-        custom_colors = [
-            "#1FE4F3FF",  # 0 Drizzle
-            "#1FE4F3FF",  # 1 Rain（與 0 同色：依你提供）
-            "#2ca02c",    # 2 Weak Snow
-            "#2ca02c",    # 3 Strong Snow
-            "#2ca02c",    # 4 Wet Snow
-            "#f51010",    # 5 Dry Graupel
-            "#f51010",    # 6 Wet Graupel
-            "#3c00ff",    # 7 Small Hail
-            "#3c00ff",    # 8 Large Hail
-            "#ebff0e",    # 9 Rain-Hail Mixture
-            "#f49d07",    # 10 Supercooled water
-        ]
-        label_names = [
-            'Drizzle', 'Rain', 'Weak Snow', 'Strong Snow', 'Wet Snow',
-            'Dry Graupel', 'Wet Graupel', 'Small Hail', 'Large Hail',
-            'Rain-Hail Mixture', 'Supercooled water'
-        ]
-    cmap = ListedColormap(custom_colors)
-    vmin, vmax = 0, len(custom_colors) - 1
-    return cmap, label_names, vmin, vmax
+# ===== 固定仰角列表（照你的截圖） =====
+fixed_elevations_deg_list = [
+    0.48, 0.48, 0.88, 0.88, 1.32, 1.32, 1.80, 2.42,
+    3.12, 4.00, 5.10, 6.42, 8.00, 10.02, 12.00, 14.02,
+    16.70, 19.51
+]
 
-## ==== 資料處理：讀 radar → 建 grid → 找 z_index ==== ##
-def process_pid_to_grid(file_path_str, z_target_int):
-    """
-    讀單一 PID 檔（.nc），建 3D grid，回傳 grid、z_index、時間字串（LCT）、時間物件（UTC）。
-    """
-    radar = pyart.io.read(file_path_str)
+# =========================
+# color/label 定義
+# =========================
+def make_discrete_colorbar(pid_str: str):
+    # 只定義離散顏色，不使用 pyart.graph.cm
+    if pid_str == "park":
+        colors = ["#1FE4F3FF", "#ebff0e", "#2ca02c", "#27d638", "#f51010", "#3c00ff"]
+        labels = ["Rain", "Melting Layer", "Wet Snow", "Dry Snow", "Graupel", "Hail"]
+        vmin, vmax = 0, len(colors) - 1
+    else:
+        colors = ["#1FE4F3FF", "#1FE4F3FF", "#2ca02c", "#2ca02c", "#2ca02c",
+                  "#f51010", "#f51010", "#3c00ff", "#3c00ff", "#ebff0e", "#f49d07"]
+        labels = ["Drizzle", "Rain", "Weak Snow", "Strong Snow", "Wet Snow",
+                  "Dry Graupel", "Wet Graupel", "Small Hail", "Large Hail",
+                  "Rain-Hail Mix", "Supercooled water"]
+        vmin, vmax = 0, len(colors) - 1
+    cmap = ListedColormap(colors)
+    return cmap, labels, vmin, vmax
 
-    # 由檔名推時間（YYYYMMDDHHMMSS.nc）
-    base_name_str = os.path.basename(file_path_str).replace('.nc', '')
-    time_dt_obj = datetime.strptime(base_name_str, "%Y%m%d%H%M%S")
-    time_str_LCT_str = (time_dt_obj + timedelta(hours=8)).strftime("%Y/%m/%d %H:%M")
+# =========================
+# 讀檔→gridding→回傳 grid 與 z 索引、雷達經緯
+# =========================
+def process_pid_to_grid(station,file_path: str, z_target_m: float):
+    radar = pyart.io.read(file_path)
+    base = os.path.basename(file_path).replace(".nc", "")
+    t_utc_dt = datetime.strptime(base, "%Y%m%d%H%M%S")
+    t_lct_str = (t_utc_dt + timedelta(hours=8)).strftime("%Y/%m/%d %H:%M")
 
-    # 建 grid（沿你的設定）
-    grid_obj = pyart.map.grid_from_radars(
-        radar,
-        grid_shape=(21, 400, 400),
-        grid_limits=((0, 10000), (-150000, 150000), (-150000, 150000)),
-        fields=['hydro_class'],
-        gridding_algo='map_gates_to_grid',
-        weighting_function='Barnes',
-        roi_func='dist_beam',
-    )
 
-    # 找最接近 z_target 的層
-    z_levels_arr = grid_obj.z['data']
-    z_index_int = np.abs(z_levels_arr - z_target_int).argmin()
+    if station == 'RCWF':
+        grid = pyart.map.grid_from_radars(
+            radar,
+            grid_shape=(21, 400, 400),
+            grid_limits=((0, 10000), (-150000, 150000), (-150000, 150000)),
+            fields=["hydro_class"],
+            gridding_algo="map_gates_to_grid",
+            weighting_function="Nearest",
+            roi_func="dist",        # ← 改用距離相依 ROI
+            z_factor=0.04,          # 每↑1 m（高度），ROI 增 0.04 m
+            xy_factor=0.005,         # 每↑1 m（水平距），ROI 增 0.005 m
+            min_radius=500.0,       # ROI 不小於 500 m
+            copy_field_data=True
+        )
+    elif station == 'RCCG':
+        grid = pyart.map.grid_from_radars(
+            radar,
+            grid_shape=(21, 400, 400),
+            grid_limits=((0, 10000), (-125000, 125000), (-125000, 125000)),
+            fields=["hydro_class"],
+            gridding_algo="map_gates_to_grid",
+            weighting_function="Nearest",
+            roi_func="dist",        # ← 改用距離相依 ROI
+            z_factor=0.04,          # 每↑1 m（高度），ROI 增 0.04 m
+            xy_factor=0.009,         # 每↑1 m（水平距），ROI 增 0.009 m
+            min_radius=600.0,       # ROI 不小於 600 m
+            copy_field_data=True
+        )
 
-    return grid_obj, z_index_int, time_str_LCT_str, time_dt_obj
+    # 印原始代碼確認
+    pid_grid = grid.fields["hydro_class"]["data"]
+    raw_vals = np.unique(pid_grid.compressed().astype(int)) if np.ma.is_masked(pid_grid) else np.unique(pid_grid.astype(int))
+    print("Grid 上的 hydro_class 原始代碼：", raw_vals)
 
-## ==== 繪圖：給 grid、z_index → 畫 CAPPI 並儲存（依 pid 上色+colorbar） ==== ##
-def plot_cappi_and_save(grid_obj, z_index_int, title_time_LCT_str, time_dt_obj,
-                        z_target_int, save_dir_str, station_realname_str, pid_name: str):
-    """
-    將指定層（z_index）之 'hydro_class' 畫成 CAPPI，使用 pid 對應的離散 colormap 與 colorbar。
-    """
-    # 依 pid 取色盤與標籤
-    cmap, label_names, vmin, vmax = get_pid_cmap_and_labels(pid_name)
+    z_index = int(np.abs(grid.z["data"] - z_target_m).argmin())
 
-    display = GridMapDisplay(grid_obj)
+    radar_lat = float(radar.latitude['data'][0])
+    radar_lon = float(radar.longitude['data'][0])
+
+    return grid, z_index, t_lct_str, t_utc_dt, radar_lat, radar_lon
+
+# =========================
+def plot_cappi(grid, z_index: int, t_lct: str, t_utc, z_target_m: float,
+               pid_str: str, radar_lat: float, radar_lon: float):
+    import matplotlib as mpl  # 放在函式內，避免全域缺少
+
+    # --- 類別與色表 ---
+    cmap, labels, vmin, vmax = make_discrete_colorbar(pid_str)
+    ncat = len(labels)
+
+    # --- 取該層資料，先「變成整數類別」(0..ncat-1)，保留 mask ---
+    layer_ma = grid.fields["hydro_class"]["data"][z_index]   # (ny, nx) MaskedArray
+    layer_codes = np.rint(layer_ma)                          # 四捨五入
+    layer_codes = np.ma.clip(layer_codes, 0, ncat - 1)       # 夾在合法類別
+    codes_int = layer_codes.astype(np.int16)                 # 轉整數代碼 (仍保留 mask)
+
+    # --- 取得該層每個格點中心的經緯度 ---
+    lats_2d = grid.point_latitude['data'][z_index]   # (ny, nx)
+    lons_2d = grid.point_longitude['data'][z_index]  # (ny, nx)
+
+    # --- 直接把代碼映射成 RGBA 顏色陣列（逐格指定顏色，不做任何 norm） ---
+    ny, nx = codes_int.shape
+    rgba_grid = np.zeros((ny, nx, 4), dtype=float)          # 預設透明
+    valid_mask = ~np.ma.getmaskarray(codes_int)             # 有效格
+    # 建 LUT：把離散色表轉成 RGBA
+    lut = np.array([mpl.colors.to_rgba(c) for c in cmap.colors])  # (ncat, 4)
+    # 依代碼索引 LUT 填色
+    if np.any(valid_mask):
+        rgba_grid[valid_mask] = lut[codes_int[valid_mask]]
+
+    # --- 畫底圖/座標系 ---
     fig = plt.figure(figsize=(10, 10))
     ax = plt.subplot(1, 1, 1, projection=ccrs.PlateCarree())
 
-    pm = display.plot_grid(
-        field='hydro_class',
-        level=z_index_int,
-        ax=ax,
-        cmap=cmap,
-        vmin=vmin,
-        vmax=vmax,
-        colorbar_flag=False,   # 我們自己畫離散 colorbar
-        embellish=False,
-        add_grid_lines=False
+    # 直接用顏色網格畫（不經 colormap/norm），確保顏色==數字
+    # 用 shading='nearest' 讓每個中心值填滿自己的格
+    quad = ax.pcolormesh(
+        lons_2d, lats_2d, rgba_grid,
+        shading='nearest', transform=ccrs.PlateCarree()
     )
 
-    # Title
-    z_val_m = grid_obj.z['data'][z_index_int]
-    ax.set_title(
-        f"PID CAPPI（{station_realname_str}）@ {z_val_m/1000:.1f} km\n{title_time_LCT_str}",
-        fontproperties=title_font
-    )
+    ax.set_xlabel(""); ax.set_ylabel("")
 
-    # 台灣邊界
-    ax.add_geometries(shp_reader.geometries(), crs=ccrs.PlateCarree(),
-                      facecolor='none', edgecolor='green')
-
-    # 經緯換算（沿你做法）
-    radar_lon = grid_obj.radar_longitude['data'][0]
-    radar_lat = grid_obj.radar_latitude['data'][0]
-    x_km = grid_obj.x['data'] / 1000
-    y_km = grid_obj.y['data'] / 1000
-    lon_grid = radar_lon + (x_km / 111) / np.cos(np.radians(radar_lat))
-    lat_grid = radar_lat + (y_km / 111)
-
-    # 顯示範圍
-    lon_min = np.min(lon_grid); lon_max = np.max(lon_grid)
-    lat_min = np.min(lat_grid); lat_max = np.max(lat_grid)
-    margin_lon = (lon_max - lon_min) * 0.02
-    margin_lat = (lat_max - lat_min) * 0.02
-    ax.set_extent([lon_min - margin_lon, lon_max + margin_lon,
-                   lat_min - margin_lat, lat_max + margin_lat])
-
-    # Gridlines
-    gl = ax.gridlines(draw_labels=True)
-    gl.right_labels = False
-
-    # ====== 離散 colorbar（依索引 0..N-1 打刻度+標籤）======
-    cbar = plt.colorbar(pm, ax=ax, fraction=0.046, pad=0.02)
-    ticks = np.arange(vmin, vmax + 1, 1)
-    cbar.set_ticks(ticks)
-    # 避免標籤過長擠在一起，可視需要縮小字或旋轉；先用較小字體
-    cbar.ax.set_yticklabels(label_names, fontproperties=myfont)
-
-    # 輸出檔名：沿用 time_str 與高度(km)
-    time_str_for_name = time_dt_obj.strftime("%Y%m%d%H%M%S")
-    save_path = f"{save_dir_str}/{time_str_for_name}_{int(z_target_int/1000)}km_{pid_name}.png"
-    plt.tight_layout()
-    plt.savefig(save_path, dpi=300)
-    plt.close()
-    print(f"✅ 儲存圖檔：{save_path}")
-
-## ==== 依 one / all 模式組合檔案清單並執行 ==== ##
-def main_run():
-    date_tag_str = f"{year}{month}{day}"
-    pid_dir_str = f"{data_top_path}/PID/{date_tag_str}_{station}_{pid}"
-
-    if draw_one_or_all == 'one':
-        time_str = f"{year}{month}{day}{hh}{mm}{ss}"
-        file_path = f"{pid_dir_str}/{time_str}.nc"
-        file_list = [file_path]
+    # --- ticks / extent 與地圖邊界 ---
+    if station == 'RCWF':
+        xtick_list = [120,120.5,121,121.5,122,122.5,123,123.5]
+        ytick_list = [23.5,24,24.5,25,25.5,26,26.5]
+    elif station == 'RCCG':
+        xtick_list = [118.5,119,119.5,120,120.5,121,121.5,122]
+        ytick_list = [21.5,22,22.5,23,23.5,24,24.5]
     else:
-        file_list = sorted(glob(f"{pid_dir_str}/*.nc"))
+        xtick_list = [120,120.5,121,121.5,122,122.5]
+        ytick_list = [23.5,24,24.5,25,25.5]
 
-    if not file_list:
-        print(f"⚠️ 找不到檔案：{pid_dir_str}")
-        return
+    ax.set_xticks(xtick_list, crs=ccrs.PlateCarree())
+    ax.set_yticks(ytick_list, crs=ccrs.PlateCarree())
+    ax.set_extent([min(xtick_list), max(xtick_list), min(ytick_list), max(ytick_list)],
+                  crs=ccrs.PlateCarree())
 
-    for file_path in file_list:
+    ax.xaxis.set_major_formatter(FormatStrFormatter("%.1f"))
+    ax.yaxis.set_major_formatter(FormatStrFormatter("%.1f"))
+    gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=False,
+                      linestyle='-', linewidth=1, color='gray', alpha=0.6)
+    gl.xlocator = mticker.FixedLocator(xtick_list)
+    gl.ylocator = mticker.FixedLocator(ytick_list)
+
+    ax.add_geometries(shp_reader.geometries(), ccrs.PlateCarree(),
+                      facecolor="none", edgecolor="black")
+
+    # # --- 疊上每格數字（與顏色完全同源：codes_int） ---
+    # # label_stride=1 會很密，必要時可調大
+    # for j in range(0, ny, label_stride):
+    #     row = codes_int[j]
+    #     for i in range(0, nx, label_stride):
+    #         if np.ma.is_masked(row[i]):
+    #             continue
+    #         iv = int(row[i])
+    #         ax.text(lons_2d[j, i], lats_2d[j, i], str(iv),
+    #                 transform=ccrs.PlateCarree(),
+    #                 fontsize=1, ha='center', va='center', alpha=1)
+
+    # # --- 畫仰角圈（每個 sweep 不同顏色） ---
+    # G = geodesic.Geodesic()
+    # sweep_cmap = plt.get_cmap('tab20', len(fixed_elevations_deg_list))
+    # circle_handles_list, circle_labels_list = [], []
+    # for si, elev_deg in enumerate(fixed_elevations_deg_list):
+    #     if elev_deg <= 0:
+    #         continue
+    #     dis_km = (z_target_m / 1000.0) / np.tan(np.deg2rad(elev_deg))
+    #     radius_m = dis_km * 1000.0
+    #     color_i = sweep_cmap(si)
+    #     circle = G.circle(lon=radar_lon, lat=radar_lat,
+    #                       radius=radius_m, n_samples=180, endpoint=False)
+    #     h, = ax.plot(circle[:, 0], circle[:, 1], color=color_i, linestyle='--',
+    #                  linewidth=circle_linewidth, transform=ccrs.PlateCarree())
+    #     circle_handles_list.append(h)
+    #     circle_labels_list.append(f"S{si}  {elev_deg:.2f}°")
+
+    # --- 標題與圖例 ---
+    z_val_m = float(grid.z["data"][z_index])
+    ax.set_title(f"{z_val_m/1000:.1f} km PID = {pid_str}\n{t_lct} LST",
+                 fontproperties=title_font)
+
+    # PID legend（用離散色表的第 i 色）
+    pid_legend_handles = [
+        Patch(facecolor=cmap.colors[i], edgecolor='k', label=labels[i])
+        for i in range(ncat)
+    ]
+    leg_pid = ax.legend(handles=pid_legend_handles, loc='lower right',
+                        fontsize=10, frameon=True, prop=myfont, title="PID")
+
+    # leg_ang = ax.legend(circle_handles_list, circle_labels_list, loc='upper left',
+    #                     fontsize=9, frameon=True,
+    #                     title=f"仰角圈 (z={z_target_m/1000:.1f} km)")
+    ax.add_artist(leg_pid)
+
+    # --- 存檔 ---
+    out_path = f"{save_dir}/{station}_{t_utc.strftime('%Y%m%d%H%M%S')}_{int(z_target_m/1000)}km_{pid_str}.png"
+    plt.savefig(out_path, dpi=300, bbox_inches="tight", pad_inches=0.1)
+    plt.close()
+    print("✅", out_path)
+
+# =========================
+# 主程式
+# =========================
+date_tag = f"{year}{month}{day}"
+pid_dir = f"{data_top_path}/PID/{date_tag}_{station}_{pid}"
+
+if draw_mode == "one":
+    time_str = f"{year}{month}{day}{hh}{mm}{ss}"
+    file_list = [f"{pid_dir}/{time_str}.nc"]
+else:
+    file_list = sorted(glob(f"{pid_dir}/*.nc"))
+
+if not file_list:
+    print("⚠️ 找不到檔案：", pid_dir)
+else:
+    for f in file_list:
         try:
-            grid_obj, z_index_int, time_str_LCT_str, time_dt_obj = process_pid_to_grid(
-                file_path, z_target
-            )
-            print(f"選擇切層 z_index={z_index_int}, 對應高度為 {grid_obj.z['data'][z_index_int]} m")
-
-            plot_cappi_and_save(
-                grid_obj, z_index_int, time_str_LCT_str, time_dt_obj,
-                z_target, save_dir, station_realname, pid
-            )
+            grid, z_idx, t_lct, t_utc, radar_lat, radar_lon = process_pid_to_grid(station,f, z_target)
+            if "hydro_class" not in grid.fields:
+                raise KeyError("Grid 內找不到欄位 'hydro_class'")
+            plot_cappi(grid, z_idx, t_lct, t_utc, z_target, pid, radar_lat, radar_lon)
         except Exception as e:
-            print(f"❌ 讀取/繪圖失敗：{file_path}\n原因：{e}")
-
-if __name__ == "__main__":
-    main_run()
+            print("❌", f, e)
